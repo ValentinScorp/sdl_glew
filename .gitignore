@@ -1,5 +1,5 @@
 projects/.build-debug
 projects/.codelite
 projects/Makefile
-projects/glew_2_1_0/debug
+projects/glew/debug
 projects/oasis/debug

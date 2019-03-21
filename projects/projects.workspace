@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="projects" Database="" Version="10.0.0">
   <Project Name="oasis" Path="oasis/proj/oasis.project" Active="Yes"/>
-  <Project Name="glew_2_1_0" Path="glew/proj/glew_2_1_0.project" Active="No"/>
+  <Project Name="glew" Path="glew/proj/glew.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Environment/>
