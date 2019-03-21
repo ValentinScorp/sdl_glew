@@ -171,14 +171,14 @@ int main(int argc, char **argv)
         currentTime = SDL_GetTicks(); 
         deltaTime = currentTime - lastTime;       
         lastTime = currentTime;        
-        SDL_Log("%d - %d = %d\n", currentTime, lastTime, deltaTime);        
+        //SDL_Log("%d - %d = %d\n", currentTime, lastTime, deltaTime);        
         
         SDL_GL_MakeCurrent(window, gl_context);
 
         glClearColor(0.0f, 0.8f, 0.8f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
-        glViewport(0, 0, (GLsizei)SCREEN_RESOLUTION_W, (GLsizei) SCREEN_RESOLUTION_H);
+        glViewport(0, 0, (GLsizei)SCREEN_RESOLUTION_W, (GLsizei)SCREEN_RESOLUTION_H);
         
         glUseProgram(program);
         
