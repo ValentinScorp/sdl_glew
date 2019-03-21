@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="projects" Database="" Version="10.0.0">
   <Project Name="oasis" Path="oasis/proj/oasis.project" Active="Yes"/>
-  <Project Name="glew_2_1_0" Path="glew_2_1_0/glew_2_1_0.project" Active="No"/>
+  <Project Name="glew_2_1_0" Path="glew/proj/glew_2_1_0.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Environment/>
       <Project Name="oasis" ConfigName="Debug"/>
-      <Project Name="oasis" ConfigName="Debug"/>
-      <Project Name="glew_2_1_0" ConfigName="Debug"/>
+      <Project Name="glew" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Environment/>
       <Project Name="oasis" ConfigName="Release"/>
-      <Project Name="oasis" ConfigName="Release"/>
-      <Project Name="glew_2_1_0" ConfigName="Release"/>
+      <Project Name="glew" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

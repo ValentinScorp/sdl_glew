@@ -5,15 +5,15 @@
 ## Debug
 ProjectName            :=oasis
 ConfigurationName      :=Debug
-WorkspacePath          :=C:/Users/valen/Documents/projects
-ProjectPath            :=C:/Users/valen/Documents/projects/oasis/proj
+WorkspacePath          :=C:/Users/valen/Documents/sdl_glew/projects
+ProjectPath            :=C:/Users/valen/Documents/sdl_glew/projects/oasis/proj
 IntermediateDirectory  :=./../debug
 OutDir                 := $(IntermediateDirectory)
 CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=valen
-Date                   :=18/03/2019
+Date                   :=21/03/2019
 CodeLitePath           :="C:/Program Files/CodeLite"
 LinkerName             :=C:/MinGW/bin/g++.exe
 SharedObjectLinkerName :=C:/MinGW/bin/g++.exe -shared -fPIC
@@ -38,12 +38,12 @@ MakeDirCommand         :=makedir
 RcCmpOptions           := 
 RcCompilerName         :=C:/MinGW/bin/windres.exe
 LinkOptions            :=  
-IncludePath            :=  $(IncludeSwitch). $(IncludeSwitch). $(IncludeSwitch)./../include $(IncludeSwitch)./../../glew_2_1_0/GL 
+IncludePath            :=  $(IncludeSwitch). $(IncludeSwitch). $(IncludeSwitch)./../include $(IncludeSwitch)./../../glew 
 IncludePCH             := 
 RcIncludePath          := 
-Libs                   := $(LibrarySwitch)mingw32 $(LibrarySwitch)glew_2_1_0 $(LibrarySwitch)opengl32 $(LibrarySwitch)SDL2main $(LibrarySwitch)SDL2 $(LibrarySwitch)ole32 
-ArLibs                 :=  "mingw32" "glew_2_1_0" "opengl32" "SDL2main" "SDL2" "ole32" 
-LibPath                := $(LibraryPathSwitch). $(LibraryPathSwitch)./../lib $(LibraryPathSwitch)./../../glew_2_1_0/debug 
+Libs                   := $(LibrarySwitch)mingw32 $(LibrarySwitch)glew $(LibrarySwitch)opengl32 $(LibrarySwitch)SDL2main $(LibrarySwitch)SDL2 
+ArLibs                 :=  "mingw32" "glew" "opengl32" "SDL2main" "SDL2" 
+LibPath                := $(LibraryPathSwitch). $(LibraryPathSwitch)./../lib $(LibraryPathSwitch)./../../glew/debug 
 
 ##
 ## Common variables
@@ -74,15 +74,15 @@ Objects=$(Objects0)
 .PHONY: all clean PreBuild PrePreBuild PostBuild MakeIntermediateDirs
 all: $(OutputFile)
 
-$(OutputFile): $(IntermediateDirectory)/.d "..\..\.build-debug\glew_2_1_0" $(Objects) 
+$(OutputFile): $(IntermediateDirectory)/.d "..\..\.build-debug\glew" $(Objects) 
 	@$(MakeDirCommand) $(@D)
 	@echo "" > $(IntermediateDirectory)/.d
 	@echo $(Objects0)  > $(ObjectsFileList)
 	$(LinkerName) $(OutputSwitch)$(OutputFile) @$(ObjectsFileList) $(LibPath) $(Libs) $(LinkOptions)
 
-"..\..\.build-debug\glew_2_1_0":
+"..\..\.build-debug\glew":
 	@$(MakeDirCommand) "..\..\.build-debug"
-	@echo stam > "..\..\.build-debug\glew_2_1_0"
+	@echo stam > "..\..\.build-debug\glew"
 
 
 
@@ -101,7 +101,7 @@ PreBuild:
 ## Objects
 ##
 $(IntermediateDirectory)/up_src_main.cpp$(ObjectSuffix): ../src/main.cpp $(IntermediateDirectory)/up_src_main.cpp$(DependSuffix)
-	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/projects/oasis/src/main.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_main.cpp$(ObjectSuffix) $(IncludePath)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/main.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_main.cpp$(ObjectSuffix) $(IncludePath)
 $(IntermediateDirectory)/up_src_main.cpp$(DependSuffix): ../src/main.cpp
 	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/up_src_main.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/up_src_main.cpp$(DependSuffix) -MM ../src/main.cpp
 

@@ -1,268 +1,205 @@
-#include <stdio.h>
-#include <string>
-
 #define GLEW_STATIC
-#include "glew.h"
+#include <GL/glew.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
 
-#include <SDL2\SDL.h>
-#include <SDL2\SDL_opengl.h>
-
-//Screen dimension constants
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
-
-bool init();
-bool initGL();
-void handleKeys( unsigned char key, int x, int y );
-void update();
-void render();
-void close();
-
-void printProgramLog( GLuint program );
-void printShaderLog( GLuint shader );
-
-SDL_Window* gWindow = NULL;
-SDL_GLContext gContext;
-
-bool gRenderQuad = true;
+#include <conio.h>
 #include <stdio.h>
+#include <vector>
 #include <string>
 
-GLuint gProgramID = 0;
-GLint gVertexPos2DLocation = -1;
-GLuint gVBO = 0;
-GLuint gIBO = 0;
+#define SCREEN_RESOLUTION_W 800
+#define SCREEN_RESOLUTION_H 600
 
-void showVersion() {    
-    printf("opengl version: %s\n", glGetString(GL_VERSION));
-}
+static SDL_Window *window = NULL;
+static SDL_GLContext gl_context;
 
-bool init()
-{
-	bool success = true;
+const float vertexPositions[] = {
+    0.75f, 0.75f, 0.0f, 1.0f,
+    0.75f, -0.75f, 0.0f, 1.0f,
+    -0.75f, -0.75f, 0.0f, 1.0f,
+};
+GLuint positionBufferObject;
+GLuint vao;
 
-	if (SDL_Init(SDL_INIT_VIDEO ) < 0) {
-		printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
-		success = false;
-	} else {		
-		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
-		SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 3 );
-		SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
+const std::string strVertexShader(
+    "#version 330\n"
+    "layout(location = 0) in vec4 position;\n"
+    "void main()\n"
+    "{\n"
+    "   gl_Position = position;\n"
+    "}\n"
+);
 
-		gWindow = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
-		if (gWindow == NULL) {
-			printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
-			success = false;
-		} else {			
-			gContext = SDL_GL_CreateContext(gWindow);
-			if (gContext == NULL) {
-				printf("OpenGL context could not be created! SDL Error: %s\n", SDL_GetError());
-				success = false;
-			} else {				
-				glewExperimental = GL_TRUE; 
-				GLenum glewError = glewInit();
-				if (glewError != GLEW_OK) {
-					printf("Error initializing GLEW! %s\n", glewGetErrorString(glewError));
-				}
-				if (SDL_GL_SetSwapInterval(1) < 0) {
-					printf("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
-				}				
-				if (!initGL()) {
-					printf("Unable to initialize OpenGL!\n");
-					success = false;
-				}
-			}
-		}
-	}
+const std::string strFragmentShader(
+    "#version 330\n"
+    "out vec4 outputColor;\n"
+    "void main()\n"
+    "{\n"
+    "   outputColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);\n"
+    "}\n"
+);
 
-	return success;
-}
+int main(int argc, char **argv)
+{    
+    SDL_version compiledVer;
+    SDL_version linkedVer;
 
-bool initGL() {
-	
-	bool success = true;
-	gProgramID = glCreateProgram();
-	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	const GLchar* vertexShaderSource[] = 
-    {
-		"#version 330\nlayout(location = 0) in vec2 LVertexPos2D; void main() { gl_Position = vec4( LVertexPos2D.x, LVertexPos2D.y, 0, 1 ); }"
-	};
-	glShaderSource(vertexShader, 1, vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
+    SDL_VERSION(&compiledVer);
+    SDL_GetVersion(&linkedVer);
+    SDL_Log("Compiled SDL version -> %d.%d.%d\n", compiledVer.major, compiledVer.minor, compiledVer.patch);
+    SDL_Log("Linking SDL version -> %d.%d.%d\n", linkedVer.major, linkedVer.minor, linkedVer.patch);
+ 
+    if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_EVENTS) != 0) {
+        SDL_Log("Failed to initialize SDL -> %s", SDL_GetError());
+        SDL_Quit();
+        getch();
+        return -1;
+    }
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);    
+    
+    window = SDL_CreateWindow("Window title", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_RESOLUTION_W, SCREEN_RESOLUTION_H, SDL_WINDOW_OPENGL);
+    if (window == NULL) {
+        SDL_Log("Failed to create SDL window -> %s", SDL_GetError());
+        SDL_Quit();
+        getch();
+        return -1;
+    }   
+    
+    gl_context = SDL_GL_CreateContext(window);
+    if (gl_context == NULL) {
+        SDL_Log("Failed to create GL context -> %s", SDL_GetError());
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        getch();
+        return -1;        
+    }
+    SDL_Log("OpenGL version -> %s", glGetString(GL_VERSION));
+    
+    GLenum err = glewInit();
+    if (err != GLEW_OK) {
+        SDL_Log("Failed to init GLEW -> %s", glewGetErrorString(err));
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        getch();
+        return -1;
+    }
+    SDL_Log("Using GLEW version -> %s\n", glewGetString(GLEW_VERSION));
+    
+    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    const char *ptrStrVertexShader = strVertexShader.c_str();
+    glShaderSource(vertexShader, 1, &ptrStrVertexShader, NULL);
+    glCompileShader(vertexShader);    
+    GLint vertexShaderCompileStatus;
+    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &vertexShaderCompileStatus);
+    if (vertexShaderCompileStatus == GL_FALSE) {
+        GLint infoLogLength;
+        glGetShaderiv(vertexShader, GL_INFO_LOG_LENGTH, &infoLogLength);
 
-	GLint vShaderCompiled = GL_FALSE;
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &vShaderCompiled);
-	if (vShaderCompiled != GL_TRUE)	{
-		printf("Unable to compile vertex shader %d!\n", vertexShader);
-		printShaderLog(vertexShader);
-        success = false;
-	} else {
-		glAttachShader(gProgramID, vertexShader);
-		GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-		const GLchar* fragmentShaderSource[] = 
-        {
-			"#version 330\nout vec4 color; void main() { color = vec4( 1.0, 1.0, 1.0, 1.0 ); }"
-		};		
-		glShaderSource(fragmentShader, 1, fragmentShaderSource, NULL);
-		glCompileShader(fragmentShader);
-		GLint fShaderCompiled = GL_FALSE;
-		glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &fShaderCompiled);
-		if (fShaderCompiled != GL_TRUE) {
-			printf("Unable to compile fragment shader %d!\n", fragmentShader);
-			printShaderLog(fragmentShader);
-			success = false;
-		} else {
-			glAttachShader(gProgramID, fragmentShader);
+        GLchar *strInfoLog = new GLchar[infoLogLength + 1];
+        glGetShaderInfoLog(vertexShader, infoLogLength, NULL, strInfoLog);
+        SDL_Log("Compile failure in vertex shader -> \n%s\n", strInfoLog);
+        delete[] strInfoLog;
+    }
+    
+    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    const char *ptrStrFragmentShader = strFragmentShader.c_str();
+    glShaderSource(fragmentShader, 1, &ptrStrFragmentShader, NULL);
+    glCompileShader(fragmentShader);    
+    GLint fragmentShaderCompileStatus;
+    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &fragmentShaderCompileStatus);
+    if (fragmentShaderCompileStatus == GL_FALSE) {
+        GLint infoLogLength;
+        glGetShaderiv(fragmentShader, GL_INFO_LOG_LENGTH, &infoLogLength);
 
-			glLinkProgram(gProgramID);
-			GLint programSuccess = GL_TRUE;
-			glGetProgramiv(gProgramID, GL_LINK_STATUS, &programSuccess);
-			if (programSuccess != GL_TRUE) {
-				printf("Error linking program %d!\n", gProgramID);
-				printProgramLog(gProgramID);
-				success = false;
-			} else {
-				gVertexPos2DLocation = glGetAttribLocation(gProgramID, "LVertexPos2D");
-				if (gVertexPos2DLocation == -1) {
-					printf("LVertexPos2D is not a valid glsl program variable!\n");
-					success = false;
-				} else {					
-					glClearColor( 0.f, 0.f, 0.f, 1.f );
+        GLchar *strInfoLog = new GLchar[infoLogLength + 1];
+        glGetShaderInfoLog(fragmentShader, infoLogLength, NULL, strInfoLog);
+        SDL_Log("Compile failure in fragment shader -> \n%s\n", strInfoLog);
+        delete[] strInfoLog;
+    }
+    
+    // create and link shader program
+    GLuint program = glCreateProgram();
+    glAttachShader(program, vertexShader);
+    glAttachShader(program, fragmentShader);
+    glLinkProgram(program);
+    GLint linkProgramStatus = GL_FALSE;
+    glGetProgramiv (program, GL_LINK_STATUS, &linkProgramStatus);
+    if (linkProgramStatus == GL_FALSE) {
+        GLint infoLogLength;
+        glGetProgramiv(program, GL_INFO_LOG_LENGTH, &infoLogLength);
 
-					GLfloat vertexData[] =
-					{
-						-0.5f, -0.5f,
-						 0.5f, -0.5f,
-						 0.5f,  0.5f,
-						-0.5f,  0.5f
-					};
+        GLchar *strInfoLog = new GLchar[infoLogLength + 1];
+        glGetProgramInfoLog(program, infoLogLength, NULL, strInfoLog);
+        SDL_Log("Link shader program failure -> %s\n", strInfoLog);
+        delete[] strInfoLog;
+    }
+    glDetachShader(program, vertexShader);
+    glDetachShader(program, fragmentShader);
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+    
+    // init vertex buffer
+    glGenBuffers(1, &positionBufferObject);
+    glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertexPositions), vertexPositions, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    
+    // vertex array object
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+    
+    SDL_GL_SetSwapInterval(1);
+        
+    Uint32 currentTime = SDL_GetTicks();
+    Uint32 lastTime = currentTime;
+    Uint32 deltaTime = currentTime - lastTime;
+    
+    bool runMainLoop = true;
+    while (runMainLoop) {
+        SDL_Event event;
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) {
+                runMainLoop = false;
+            }
+        }
+        
+        currentTime = SDL_GetTicks(); 
+        deltaTime = currentTime - lastTime;       
+        lastTime = currentTime;        
+        SDL_Log("%d - %d = %d\n", currentTime, lastTime, deltaTime);        
+        
+        SDL_GL_MakeCurrent(window, gl_context);
 
-					GLuint indexData[] = { 0, 1, 2, 3 };
+        glClearColor(0.0f, 0.8f, 0.8f, 0.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        
+        glViewport(0, 0, (GLsizei)SCREEN_RESOLUTION_W, (GLsizei) SCREEN_RESOLUTION_H);
+        
+        glUseProgram(program);
+        
+        glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
-					glGenBuffers( 1, &gVBO );
-					glBindBuffer( GL_ARRAY_BUFFER, gVBO );
-					glBufferData( GL_ARRAY_BUFFER, 2 * 4 * sizeof(GLfloat), vertexData, GL_STATIC_DRAW );
+        glDrawArrays(GL_TRIANGLES, 0, 3);
 
-					glGenBuffers( 1, &gIBO );
-					glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, gIBO );
-					glBufferData( GL_ELEMENT_ARRAY_BUFFER, 4 * sizeof(GLuint), indexData, GL_STATIC_DRAW );
-				}
-			}
-		}
-	}
-	
-	return success;
-}
+        glDisableVertexAttribArray(0);
+        glUseProgram(0);
 
-void handleKeys(unsigned char key, int x, int y) {
-	if (key == 'q') {
-		gRenderQuad = !gRenderQuad;
-	}
-}
+        SDL_GL_SwapWindow(window);
 
-void update() {
-	//No per frame update needed
-}
-
-void render() {	
-	glClear( GL_COLOR_BUFFER_BIT );
-	
-	if (gRenderQuad) {
-		
-		glUseProgram( gProgramID );
-		glEnableVertexAttribArray( gVertexPos2DLocation );
-		glBindBuffer( GL_ARRAY_BUFFER, gVBO );
-		glVertexAttribPointer( gVertexPos2DLocation, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), NULL );
-		
-		glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, gIBO );
-		glDrawElements( GL_TRIANGLE_FAN, 4, GL_UNSIGNED_INT, NULL );
-
-		glDisableVertexAttribArray( gVertexPos2DLocation );
-
-		glUseProgram(NULL);
-	}
-}
-
-void close() {	
-	glDeleteProgram( gProgramID );
-
-	SDL_DestroyWindow( gWindow );
-	gWindow = NULL;
-
-	SDL_Quit();
-}
-
-void printProgramLog(GLuint program) {
-	//Make sure name is shader
-	if (glIsProgram(program)) {
-		
-		int infoLogLength = 0;
-		int maxLength = infoLogLength;
-		glGetProgramiv( program, GL_INFO_LOG_LENGTH, &maxLength );
-		
-		char* infoLog = new char[ maxLength ];
-				
-		glGetProgramInfoLog(program, maxLength, &infoLogLength, infoLog);
-		if (infoLogLength > 0) {			
-			printf( "%s\n", infoLog );
-		}
-		delete[] infoLog;
-	}
-	else {
-		printf("Name %d is not a program\n", program);
-	}
-}
-
-void printShaderLog( GLuint shader )
-{	
-	if (glIsShader(shader)) {
-		
-		int infoLogLength = 0;
-		int maxLength = infoLogLength;		
-		
-		glGetShaderiv( shader, GL_INFO_LOG_LENGTH, &maxLength );		
-		
-		char* infoLog = new char[ maxLength ];
-		
-		glGetShaderInfoLog( shader, maxLength, &infoLogLength, infoLog );
-		if (infoLogLength > 0) {			
-			printf( "%s\n", infoLog );
-		}
-		delete[] infoLog;
-	} else {
-		printf("Name %d is not a shader\n", shader);
-	}
-}
-
-int main(int argc, char* args[])
-{
-	if (!init()) {
-		printf("Failed to initialize!\n");
-	} else {
-        bool quit = false;
-		SDL_Event e;
-		SDL_StartTextInput();        
-		
-		while (!quit) {
-			while (SDL_PollEvent(&e) != 0) {
-				if(e.type == SDL_QUIT) {
-					quit = true;
-				}				
-				else if( e.type == SDL_TEXTINPUT ) {
-					int x = 0, y = 0;
-					SDL_GetMouseState( &x, &y );
-					handleKeys( e.text.text[ 0 ], x, y );
-				}
-			}
-			render();
-
-			SDL_GL_SwapWindow( gWindow );
-		}
-
-		SDL_StopTextInput();
-	}
-
-	close();
-
-	return 0;
+        SDL_Delay(2);
+    }
+    
+     
+    SDL_DestroyWindow(window); 
+    SDL_Quit();    
+    
+    getch();
+    return 0;
 }

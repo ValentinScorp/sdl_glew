@@ -11,8 +11,9 @@
     <File Name="../src/main.cpp"/>
   </VirtualDirectory>
   <Dependencies Name="Debug">
-    <Project Name="glew_2_1_0"/>
+    <Project Name="glew"/>
   </Dependencies>
+  <Dependencies Name="Release"/>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -27,17 +28,16 @@
       <Compiler Options="-g;-O0;-Wall" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="./../include"/>
-        <IncludePath Value="./../../glew_2_1_0/GL"/>
+        <IncludePath Value="./../../glew"/>
       </Compiler>
       <Linker Options="" Required="yes">
         <LibraryPath Value="./../lib"/>
-        <LibraryPath Value="./../../glew_2_1_0/debug"/>
+        <LibraryPath Value="./../../glew/debug"/>
         <Library Value="mingw32"/>
-        <Library Value="glew_2_1_0"/>
+        <Library Value="glew"/>
         <Library Value="opengl32"/>
         <Library Value="SDL2main"/>
         <Library Value="SDL2"/>
-        <Library Value="ole32"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./../debug" Command="$(ProjectPath)/$(IntermediateDirectory)/$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(ProjectPath)/../lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
