@@ -2,6 +2,9 @@
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/ext.hpp>
 
 #include <conio.h>
 #include <stdio.h>
@@ -14,6 +17,17 @@
 static SDL_Window *window = NULL;
 static SDL_GLContext gl_context;
 
+const float plane[] = {
+    0.0f, 0.0f, 0.0f, 1.0f,  0.0f, 1.0f, 0.0f, 1.0f,  1.0f, 1.0f, 0.0f, 1.0f,
+    0.0f, 0.0f, 0.0f, 1.0f,  1.0f, 1.0f, 0.0f, 1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+};
+
+glm::vec3 camPosition(0.0f, 0.0f, 1.0f);
+glm::vec3 camUpVector(0.0f, 1.0f, 0.0f);
+float camNearPlane = 0.5f;
+float camFarPlane = 10.0f;
+float screenAspectRatio = SCREEN_RESOLUTION_W / SCREEN_RESOLUTION_H;
+
 const float vertexPositions[] = {
     0.75f, 0.75f, 0.0f, 1.0f,
     0.75f, -0.75f, 0.0f, 1.0f,
@@ -25,9 +39,17 @@ GLuint vao;
 const std::string strVertexShader(
     "#version 330\n"
     "layout(location = 0) in vec4 position;\n"
+    "layout(std140) uniform GlobalMatrices\n"
+    "{\n"
+    "   mat4 cameraToClipMatrix;\n"
+    "   mat4 worldToCameraMatrix;\n"
+    "};\n"
+    "uniform mat4 modelToWorldMatrix;\n"
     "void main()\n"
     "{\n"
-    "   gl_Position = position;\n"
+    "   vec4 temp = modelToWorldMatrix * position;\n"
+    "   temp = worldToCameraMatrix * temp;\n"
+    "   gl_Position = cameraToClipMatrix * temp;\n"
     "}\n"
 );
 
@@ -39,6 +61,8 @@ const std::string strFragmentShader(
     "   outputColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);\n"
     "}\n"
 );
+
+static const int g_iGlobalMatricesBindingIndex = 0;
 
 int main(int argc, char **argv)
 {    
@@ -143,10 +167,24 @@ int main(int argc, char **argv)
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
     
+    // get matrices from program
+    GLuint modelToWorldMatrixUnif = glGetUniformLocation(program, "modelToWorldMatrix");
+    GLuint globalUniformBlockIndex = glGetUniformBlockIndex(program, "GlobalMatrices");    
+    glUniformBlockBinding(program, globalUniformBlockIndex, g_iGlobalMatricesBindingIndex);
+    
+    // generate matrices
+    GLuint matricesUbo;
+    glGenBuffers(1, &matricesUbo);
+    glBindBuffer(GL_UNIFORM_BUFFER, matricesUbo);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) * 2, NULL, GL_STREAM_DRAW);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    
+    glBindBufferRange(GL_UNIFORM_BUFFER, g_iGlobalMatricesBindingIndex, matricesUbo, 0, sizeof(glm::mat4) * 2);
+    
     // init vertex buffer
     glGenBuffers(1, &positionBufferObject);
     glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertexPositions), vertexPositions, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(plane), plane, GL_STREAM_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     
     // vertex array object
@@ -158,6 +196,34 @@ int main(int argc, char **argv)
     Uint32 currentTime = SDL_GetTicks();
     Uint32 lastTime = currentTime;
     Uint32 deltaTime = currentTime - lastTime;
+    
+    // fill view + cam matrices
+    glm::mat4 viewMatrix = glm::perspective(glm::radians(45.0f), screenAspectRatio, camNearPlane, camFarPlane);
+    glBindBuffer(GL_UNIFORM_BUFFER, matricesUbo);
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(viewMatrix));
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    
+    glm::mat4 camMatrix = glm::lookAt(camPosition, glm::vec3(0.0, 0.0, 0.0), camUpVector);
+    glBindBuffer(GL_UNIFORM_BUFFER, matricesUbo);
+    glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(camMatrix));
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    
+    // depth stuff
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CW);
+    
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE);
+    glDepthFunc(GL_LESS);
+    glDepthRange(0.0f, 10.0);
+    
+    glm::mat4 objectPositionMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f,0.0f,0.0f));    
+    
+    GLenum err1;
+    while ((err1 = glGetError()) != GL_NO_ERROR) {
+        SDL_Log("OpenGL init error -> %d\n", err1);
+    }    
     
     bool runMainLoop = true;
     while (runMainLoop) {
@@ -182,11 +248,14 @@ int main(int argc, char **argv)
         
         glUseProgram(program);
         
+        glm::mat4 objectPositionMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -5.0f));
+        glUniformMatrix4fv(modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(objectPositionMatrix));
+        
         glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject);
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
 
         glDisableVertexAttribArray(0);
         glUseProgram(0);
@@ -194,9 +263,13 @@ int main(int argc, char **argv)
         SDL_GL_SwapWindow(window);
 
         SDL_Delay(2);
+        
+        GLenum err2;
+        while ((err2 = glGetError()) != GL_NO_ERROR) {
+            SDL_Log("OpenGL cycle error -> %d\n", err2);
+        }  
     }
-    
-     
+        
     SDL_DestroyWindow(window); 
     SDL_Quit();    
     
