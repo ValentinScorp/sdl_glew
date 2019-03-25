@@ -1,1 +1,1 @@
-./../debug/up_src_main.cpp.o   
+./../debug/up_src_Model.cpp.o ./../debug/up_src_main.cpp.o   

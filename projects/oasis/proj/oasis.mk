@@ -13,7 +13,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=valen
-Date                   :=22/03/2019
+Date                   :=25/03/2019
 CodeLitePath           :="C:/Program Files/CodeLite"
 LinkerName             :=C:/MinGW/bin/g++.exe
 SharedObjectLinkerName :=C:/MinGW/bin/g++.exe -shared -fPIC
@@ -41,8 +41,8 @@ LinkOptions            :=
 IncludePath            :=  $(IncludeSwitch). $(IncludeSwitch). $(IncludeSwitch)./../include $(IncludeSwitch)./../../glew/src 
 IncludePCH             := 
 RcIncludePath          := 
-Libs                   := $(LibrarySwitch)mingw32 $(LibrarySwitch)glew $(LibrarySwitch)opengl32 $(LibrarySwitch)SDL2main $(LibrarySwitch)SDL2 
-ArLibs                 :=  "mingw32" "glew" "opengl32" "SDL2main" "SDL2" 
+Libs                   := $(LibrarySwitch)mingw32 $(LibrarySwitch)glew $(LibrarySwitch)opengl32 $(LibrarySwitch)SDL2main $(LibrarySwitch)SDL2 $(LibrarySwitch)SDL2_image 
+ArLibs                 :=  "mingw32" "glew" "opengl32" "SDL2main" "SDL2" "SDL2_image" 
 LibPath                := $(LibraryPathSwitch). $(LibraryPathSwitch)./../lib $(LibraryPathSwitch)./../../glew/debug 
 
 ##
@@ -62,7 +62,7 @@ AS       := C:/MinGW/bin/as.exe
 ## User defined environment variables
 ##
 CodeLiteDir:=C:\Program Files\CodeLite
-Objects0=$(IntermediateDirectory)/up_src_main.cpp$(ObjectSuffix) 
+Objects0=$(IntermediateDirectory)/up_src_Model.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_main.cpp$(ObjectSuffix) 
 
 
 
@@ -100,6 +100,14 @@ PreBuild:
 ##
 ## Objects
 ##
+$(IntermediateDirectory)/up_src_Model.cpp$(ObjectSuffix): ../src/Model.cpp $(IntermediateDirectory)/up_src_Model.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/Model.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_Model.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/up_src_Model.cpp$(DependSuffix): ../src/Model.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/up_src_Model.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/up_src_Model.cpp$(DependSuffix) -MM ../src/Model.cpp
+
+$(IntermediateDirectory)/up_src_Model.cpp$(PreprocessSuffix): ../src/Model.cpp
+	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_Model.cpp$(PreprocessSuffix) ../src/Model.cpp
+
 $(IntermediateDirectory)/up_src_main.cpp$(ObjectSuffix): ../src/main.cpp $(IntermediateDirectory)/up_src_main.cpp$(DependSuffix)
 	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/main.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_main.cpp$(ObjectSuffix) $(IncludePath)
 $(IntermediateDirectory)/up_src_main.cpp$(DependSuffix): ../src/main.cpp

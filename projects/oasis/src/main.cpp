@@ -1,15 +1,4 @@
-#define GLEW_STATIC
-#include <GL/glew.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_opengl.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/ext.hpp>
-
-#include <conio.h>
-#include <stdio.h>
-#include <vector>
-#include <string>
+#include "Precompiled.h"
 
 #define SCREEN_RESOLUTION_W 800
 #define SCREEN_RESOLUTION_H 600
@@ -17,9 +6,24 @@
 static SDL_Window *window = NULL;
 static SDL_GLContext gl_context;
 
-const float plane[] = {
-    0.0f, 0.0f, 0.0f, 1.0f,  0.0f, 1.0f, 0.0f, 1.0f,  1.0f, 1.0f, 0.0f, 1.0f,
-    0.0f, 0.0f, 0.0f, 1.0f,  1.0f, 1.0f, 0.0f, 1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+const float plane1[] = {
+    0.0f, 0.0f, 0.0f, 1.0f,  0.0f, 0.0f,
+    0.0f, 1.0f, 0.0f, 1.0f,  0.0f, 1.0f,
+    1.0f, 1.0f, 0.0f, 1.0f,  1.0f, 1.0f,
+    
+    0.0f, 0.0f, 0.0f, 1.0f,  0.0f, 0.0f,
+    1.0f, 1.0f, 0.0f, 1.0f,  1.0f, 1.0f,
+    1.0f, 0.0f, 0.0f, 1.0f,  1.0f, 0.0f,
+};
+
+const float plane2[] = {
+    -1.0f, 0.0f, 0.0f, 1.0f,  0.0f, 0.0f,
+    -1.0f, 1.0f, 0.0f, 1.0f,  0.0f, 1.0f,
+    0.0f, 1.0f, 0.0f, 1.0f,  1.0f, 1.0f,
+    
+    -1.0f, 0.0f, 0.0f, 1.0f,  0.0f, 0.0f,
+    0.0f, 1.0f, 0.0f, 1.0f,  1.0f, 1.0f,
+    0.0f, 0.0f, 0.0f, 1.0f,  1.0f, 0.0f,
 };
 
 glm::vec3 camPosition(0.0f, 0.0f, 1.0f);
@@ -28,17 +32,15 @@ float camNearPlane = 0.5f;
 float camFarPlane = 10.0f;
 float screenAspectRatio = SCREEN_RESOLUTION_W / SCREEN_RESOLUTION_H;
 
-const float vertexPositions[] = {
-    0.75f, 0.75f, 0.0f, 1.0f,
-    0.75f, -0.75f, 0.0f, 1.0f,
-    -0.75f, -0.75f, 0.0f, 1.0f,
-};
-GLuint positionBufferObject;
+GLuint positionBufferObject1;
+GLuint positionBufferObject2;
 GLuint vao;
 
 const std::string strVertexShader(
     "#version 330\n"
     "layout(location = 0) in vec4 position;\n"
+    "layout(location = 1) in vec2 texCoord;\n"
+    "out vec2 colorCoord;"
     "layout(std140) uniform GlobalMatrices\n"
     "{\n"
     "   mat4 cameraToClipMatrix;\n"
@@ -50,19 +52,112 @@ const std::string strVertexShader(
     "   vec4 temp = modelToWorldMatrix * position;\n"
     "   temp = worldToCameraMatrix * temp;\n"
     "   gl_Position = cameraToClipMatrix * temp;\n"
+    "   colorCoord = texCoord;\n"
     "}\n"
 );
 
 const std::string strFragmentShader(
     "#version 330\n"
-    "out vec4 outputColor;\n"
+    "in vec2 colorCoord;\n"
+    "uniform sampler2D colorTexture;\n"    
+    "out vec4 outputColor;\n"    
     "void main()\n"
     "{\n"
-    "   outputColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);\n"
+    "   outputColor = texture(colorTexture, colorCoord);\n"
     "}\n"
 );
 
 static const int g_iGlobalMatricesBindingIndex = 0;
+
+SDL_Surface* flipVertical(SDL_Surface* sfc) {
+     SDL_Surface* result = SDL_CreateRGBSurface(sfc->flags, sfc->w, sfc->h,
+         sfc->format->BytesPerPixel * 8, sfc->format->Rmask, sfc->format->Gmask,
+         sfc->format->Bmask, sfc->format->Amask);
+     const auto pitch = sfc->pitch;
+     const auto pxlength = pitch*sfc->h;
+     auto pixels = static_cast<Uint8*>(sfc->pixels) + pxlength;
+     auto rpixels = static_cast<Uint8*>(result->pixels) ;
+     for(auto line = 0; line < sfc->h; ++line) {
+         memcpy(rpixels,pixels,pitch);
+         pixels -= pitch;
+         rpixels += pitch;
+     }
+     return result;
+}
+
+GLuint loadTexture1() {     
+    int imgFlags = IMG_INIT_PNG;
+    if(!(IMG_Init(imgFlags) & imgFlags)) {
+        SDL_Log("SDL_image could'n init! SDL_image error -> %s\n", IMG_GetError());
+    }    
+    SDL_Surface *surface = IMG_Load("img/castle.png");
+    if (surface == NULL) {
+        SDL_Log("Unable to load image! SDL error -> %s\n", SDL_GetError());
+    }
+    int mode = 0;
+    if (surface->format->BytesPerPixel == 3) {
+        mode = GL_RGB;
+    }
+    if (surface->format->BytesPerPixel == 4) {
+        mode = GL_RGBA;
+    }
+    
+    SDL_Surface* flippedSurface = flipVertical(surface);   
+    
+    GLuint textureId = 0;
+    glGenTextures(1, &textureId);
+    glBindTexture(GL_TEXTURE_2D, textureId);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+       
+    glTexImage2D(GL_TEXTURE_2D, 0, mode, flippedSurface->w, flippedSurface->h, 0, mode, GL_UNSIGNED_BYTE, (GLvoid*)flippedSurface->pixels);
+    
+    glBindTexture(GL_TEXTURE_2D, 0);
+        
+    SDL_FreeSurface(surface);
+    SDL_FreeSurface(flippedSurface);
+    
+    return textureId;
+}
+
+GLuint loadTexture2() {     
+    int imgFlags = IMG_INIT_PNG;
+    if(!(IMG_Init(imgFlags) & imgFlags)) {
+        SDL_Log("SDL_image could'n init! SDL_image error -> %s\n", IMG_GetError());
+    }    
+    SDL_Surface *surface = IMG_Load("img/ukr.png");
+    if (surface == NULL) {
+        SDL_Log("Unable to load image! SDL error -> %s\n", SDL_GetError());
+    }
+    int mode = 0;
+    if (surface->format->BytesPerPixel == 3) {
+        mode = GL_RGB;
+    }
+    if (surface->format->BytesPerPixel == 4) {
+        mode = GL_RGBA;
+    }
+    
+    SDL_Surface* flippedSurface = flipVertical(surface);   
+    
+    GLuint textureId = 0;
+    glGenTextures(1, &textureId);
+    glBindTexture(GL_TEXTURE_2D, textureId);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+       
+    glTexImage2D(GL_TEXTURE_2D, 0, mode, flippedSurface->w, flippedSurface->h, 0, mode, GL_UNSIGNED_BYTE, (GLvoid*)flippedSurface->pixels);
+    
+    glBindTexture(GL_TEXTURE_2D, 0);
+        
+    SDL_FreeSurface(surface);
+    SDL_FreeSurface(flippedSurface);
+    
+    return textureId;
+}
 
 int main(int argc, char **argv)
 {    
@@ -113,7 +208,14 @@ int main(int argc, char **argv)
         return -1;
     }
     SDL_Log("Using GLEW version -> %s\n", glewGetString(GLEW_VERSION));
+      
+    GLuint textureId1 = loadTexture1();
+    GLuint textureId2 = loadTexture2();
     
+    Model model;
+    model.loadMesh("model/object.obj");
+    
+    // shader load
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
     const char *ptrStrVertexShader = strVertexShader.c_str();
     glShaderSource(vertexShader, 1, &ptrStrVertexShader, NULL);
@@ -166,7 +268,7 @@ int main(int argc, char **argv)
     glDetachShader(program, fragmentShader);
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
-    
+   
     // get matrices from program
     GLuint modelToWorldMatrixUnif = glGetUniformLocation(program, "modelToWorldMatrix");
     GLuint globalUniformBlockIndex = glGetUniformBlockIndex(program, "GlobalMatrices");    
@@ -182,9 +284,14 @@ int main(int argc, char **argv)
     glBindBufferRange(GL_UNIFORM_BUFFER, g_iGlobalMatricesBindingIndex, matricesUbo, 0, sizeof(glm::mat4) * 2);
     
     // init vertex buffer
-    glGenBuffers(1, &positionBufferObject);
-    glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(plane), plane, GL_STREAM_DRAW);
+    glGenBuffers(1, &positionBufferObject1);
+    glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject1);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(plane1), plane1, GL_STREAM_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    
+    glGenBuffers(1, &positionBufferObject2);
+    glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject2);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(plane2), plane2, GL_STREAM_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     
     // vertex array object
@@ -218,8 +325,12 @@ int main(int argc, char **argv)
     glDepthFunc(GL_LESS);
     glDepthRange(0.0f, 10.0);
     
-    glm::mat4 objectPositionMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f,0.0f,0.0f));    
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
+    glm::mat4 objectPositionMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f,0.0f,0.0f));
+    
+    // init gl error check
     GLenum err1;
     while ((err1 = glGetError()) != GL_NO_ERROR) {
         SDL_Log("OpenGL init error -> %d\n", err1);
@@ -246,19 +357,51 @@ int main(int argc, char **argv)
         
         glViewport(0, 0, (GLsizei)SCREEN_RESOLUTION_W, (GLsizei)SCREEN_RESOLUTION_H);
         
-        glUseProgram(program);
         
-        glm::mat4 objectPositionMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -5.0f));
+        // object 1
+        glUseProgram(program);        
+        
+        glBindTexture(GL_TEXTURE_2D, textureId1);        
+        
+        objectPositionMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -5.0f));
         glUniformMatrix4fv(modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(objectPositionMatrix));
         
-        glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject);
+        glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject1);        
+        
+        glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 0);
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
-
+        
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(4 * sizeof(float)));
+        glEnableVertexAttribArray(1);
+     
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
         glDisableVertexAttribArray(0);
+        glDisableVertexAttribArray(1);
         glUseProgram(0);
+        
+        // object 2
+        glUseProgram(program);        
+        
+        glBindTexture(GL_TEXTURE_2D, textureId2);        
+        
+        objectPositionMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -2.0f));
+        glUniformMatrix4fv(modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(objectPositionMatrix));
+        
+        glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject2);        
+        
+        glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 0);
+        glEnableVertexAttribArray(0);
+        
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(4 * sizeof(float)));
+        glEnableVertexAttribArray(1);
+     
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        glDisableVertexAttribArray(0);
+        glDisableVertexAttribArray(1);
+        glUseProgram(0);
+        
 
         SDL_GL_SwapWindow(window);
 
@@ -271,7 +414,9 @@ int main(int argc, char **argv)
     }
         
     SDL_DestroyWindow(window); 
-    SDL_Quit();    
+    SDL_Quit();
+    
+    SDL_Log("To quit application press any key ...\n");
     
     getch();
     return 0;
