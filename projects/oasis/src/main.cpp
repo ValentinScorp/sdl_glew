@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+ #include "Precompiled.h"
 
 #define SCREEN_RESOLUTION_W 800
 #define SCREEN_RESOLUTION_H 600
@@ -28,13 +28,16 @@ const float plane2[] = {
 
 glm::vec3 camPosition(0.0f, 0.0f, 1.0f);
 glm::vec3 camUpVector(0.0f, 1.0f, 0.0f);
-float camNearPlane = 0.5f;
-float camFarPlane = 10.0f;
-float screenAspectRatio = SCREEN_RESOLUTION_W / SCREEN_RESOLUTION_H;
+float camNearPlane = 0.1f;
+float camFarPlane = 100.0f;
+float screenAspectRatio = (float)SCREEN_RESOLUTION_W / (float)SCREEN_RESOLUTION_H;
 
 GLuint positionBufferObject1;
 GLuint positionBufferObject2;
 GLuint vao;
+
+GLuint matricesUbo;
+GLfloat rotationAngle = 0;
 
 const std::string strVertexShader(
     "#version 330\n"
@@ -49,9 +52,10 @@ const std::string strVertexShader(
     "uniform mat4 modelToWorldMatrix;\n"
     "void main()\n"
     "{\n"
-    "   vec4 temp = modelToWorldMatrix * position;\n"
-    "   temp = worldToCameraMatrix * temp;\n"
-    "   gl_Position = cameraToClipMatrix * temp;\n"
+    //"   vec4 temp = modelToWorldMatrix * position;\n"
+    //"   temp = worldToCameraMatrix * temp;\n"
+    //"   gl_Position = cameraToClipMatrix * temp;\n"
+    "   gl_Position = cameraToClipMatrix * worldToCameraMatrix * modelToWorldMatrix * position;\n"
     "   colorCoord = texCoord;\n"
     "}\n"
 );
@@ -68,6 +72,7 @@ const std::string strFragmentShader(
 );
 
 static const int g_iGlobalMatricesBindingIndex = 0;
+float fovy = 45.0f;
 
 SDL_Surface* flipVertical(SDL_Surface* sfc) {
      SDL_Surface* result = SDL_CreateRGBSurface(sfc->flags, sfc->w, sfc->h,
@@ -198,6 +203,7 @@ int main(int argc, char **argv)
         return -1;        
     }
     SDL_Log("OpenGL version -> %s", glGetString(GL_VERSION));
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32);
     
     GLenum err = glewInit();
     if (err != GLEW_OK) {
@@ -274,8 +280,7 @@ int main(int argc, char **argv)
     GLuint globalUniformBlockIndex = glGetUniformBlockIndex(program, "GlobalMatrices");    
     glUniformBlockBinding(program, globalUniformBlockIndex, g_iGlobalMatricesBindingIndex);
     
-    // generate matrices
-    GLuint matricesUbo;
+    // generate matrices    
     glGenBuffers(1, &matricesUbo);
     glBindBuffer(GL_UNIFORM_BUFFER, matricesUbo);
     glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) * 2, NULL, GL_STREAM_DRAW);
@@ -323,7 +328,7 @@ int main(int argc, char **argv)
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE);
     glDepthFunc(GL_LESS);
-    glDepthRange(0.0f, 10.0);
+    glDepthRange(0.1f, 100.0);
     
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -340,8 +345,38 @@ int main(int argc, char **argv)
     while (runMainLoop) {
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) {
-                runMainLoop = false;
+            switch(event.type) {
+                case SDL_QUIT: 
+                    runMainLoop = false;
+                    break;
+                case SDL_KEYDOWN:
+                    if (event.key.keysym.sym == SDLK_q) {
+                        if (event.key.keysym.mod & KMOD_SHIFT) {
+                            // shift modifier
+                            //printf("Q\n");
+                        } else {
+                            //printf("q\n");
+                            fovy += 1.0;
+                            printf("%f\n", fovy);
+                            // fill view + cam matrices
+                            glm::mat4 viewMatrix = glm::perspective(glm::radians(fovy), screenAspectRatio, camNearPlane, camFarPlane);
+                                                        
+                            glBindBuffer(GL_UNIFORM_BUFFER, matricesUbo);
+                            glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(viewMatrix));
+                            glBindBuffer(GL_UNIFORM_BUFFER, 0);
+                        }
+                    }
+                    if (event.key.keysym.sym == SDLK_e) {
+                        fovy -= 1.0;
+                        glm::mat4 viewMatrix = glm::perspective(glm::radians(fovy), screenAspectRatio, camNearPlane, camFarPlane);
+                        glBindBuffer(GL_UNIFORM_BUFFER, matricesUbo);
+                        glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(viewMatrix));
+                        glBindBuffer(GL_UNIFORM_BUFFER, 0);
+                        printf("%f\n", fovy);
+                    }
+                    break;
+                default:
+                    break;
             }
         }
         
@@ -354,16 +389,17 @@ int main(int argc, char **argv)
 
         glClearColor(0.0f, 0.8f, 0.8f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
-        glViewport(0, 0, (GLsizei)SCREEN_RESOLUTION_W, (GLsizei)SCREEN_RESOLUTION_H);
+                
+        //glViewport(0, 0, (GLsizei)SCREEN_RESOLUTION_W, (GLsizei)SCREEN_RESOLUTION_H);
         
         
         // object 1
         glUseProgram(program);        
         
         glBindTexture(GL_TEXTURE_2D, textureId2);        
-        
+        rotationAngle += 0.01;
         objectPositionMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -5.0f));
+        objectPositionMatrix = glm::rotate(objectPositionMatrix, rotationAngle, glm::vec3(0.0f, 1.0f, 0.0f));
         glUniformMatrix4fv(modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(objectPositionMatrix));
         
         glBindBuffer(GL_ARRAY_BUFFER, model.glBufferId);
