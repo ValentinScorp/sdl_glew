@@ -284,9 +284,9 @@ int main(int argc, char **argv)
     glBindBufferRange(GL_UNIFORM_BUFFER, g_iGlobalMatricesBindingIndex, matricesUbo, 0, sizeof(glm::mat4) * 2);
     
     // init vertex buffer
-    glGenBuffers(1, &positionBufferObject1);
-    glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject1);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(plane1), plane1, GL_STREAM_DRAW);
+    glGenBuffers(1, &model.glBufferId);
+    glBindBuffer(GL_ARRAY_BUFFER, model.glBufferId);
+    glBufferData(GL_ARRAY_BUFFER, model.getVertexBufferSize(), model.getVertexBufferData(), GL_STREAM_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     
     glGenBuffers(1, &positionBufferObject2);
@@ -361,12 +361,12 @@ int main(int argc, char **argv)
         // object 1
         glUseProgram(program);        
         
-        glBindTexture(GL_TEXTURE_2D, textureId1);        
+        glBindTexture(GL_TEXTURE_2D, textureId2);        
         
         objectPositionMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -5.0f));
         glUniformMatrix4fv(modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(objectPositionMatrix));
         
-        glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject1);        
+        glBindBuffer(GL_ARRAY_BUFFER, model.glBufferId);
         
         glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 0);
         glEnableVertexAttribArray(0);
@@ -374,8 +374,8 @@ int main(int argc, char **argv)
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(4 * sizeof(float)));
         glEnableVertexAttribArray(1);
      
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-
+        glDrawArrays(GL_TRIANGLES, 0, model.getVertexLen());
+        
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
         glUseProgram(0);
@@ -383,7 +383,7 @@ int main(int argc, char **argv)
         // object 2
         glUseProgram(program);        
         
-        glBindTexture(GL_TEXTURE_2D, textureId2);        
+        glBindTexture(GL_TEXTURE_2D, textureId1);        
         
         objectPositionMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -2.0f));
         glUniformMatrix4fv(modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(objectPositionMatrix));
