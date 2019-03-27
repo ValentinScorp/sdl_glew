@@ -15,4 +15,6 @@
 #include <fstream>
 #include <sstream>
 
+#include "Configuration.h"
 #include "Model.h"
+#include "Camera.h"

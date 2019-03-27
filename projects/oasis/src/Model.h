@@ -38,11 +38,8 @@ public:
     GLsizeiptr getVertexBufferSize();
     GLvoid* getVertexBufferData();
     GLsizei getVertexLen();
-    
-    GLuint glBufferId = 0;
+        
     std::vector<Vertex> vertexes;
     std::string name;
-    
-    float *vertexArray = nullptr;
 };
 

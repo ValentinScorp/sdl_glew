@@ -27,9 +27,6 @@ Model::Model() {
 }
 
 Model::~Model() {
-    if (vertexArray != nullptr) {
-        delete [] vertexArray;
-    }
 }
 
 void Model::loadMesh(std::string fileName) {
@@ -43,7 +40,7 @@ void Model::loadMesh(std::string fileName) {
         }
         file.close();
     } else {
-        SDL_Log("Unable to open file -> %s\n", fileName.c_str());
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Unable to open file -> %s\n", fileName.c_str());
     }
     vector<glm::vec4> pos;
     vector<glm::vec2> tex;
@@ -57,7 +54,7 @@ void Model::loadMesh(std::string fileName) {
         }
         if (words.size() > 1) {
             if (words[0] == "o") {
-                SDL_Log("Loaded object -> %s\n", words[1].c_str());
+                SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Loaded object -> %s\n", words[1].c_str());
             }
             if (words[0] == "v") {
                 glm::vec4 v(stof(words[1]), stof(words[2]), stof(words[3]), 1.0f);
@@ -74,7 +71,7 @@ void Model::loadMesh(std::string fileName) {
                 getline(a, tmpa, '/');
                 inda.x = std::stoi(tmpa);
                 getline(a, tmpa, '/');
-                inda.y = std::stoi(tmpa);                
+                inda.y = std::stoi(tmpa);
                 indexes.push_back(inda-1);
                 
                 stringstream b(words[2]);
@@ -83,7 +80,7 @@ void Model::loadMesh(std::string fileName) {
                 getline(b, tmpb, '/');
                 indb.x = std::stoi(tmpb);
                 getline(b, tmpb, '/');
-                indb.y = std::stoi(tmpb);                
+                indb.y = std::stoi(tmpb);
                 indexes.push_back(indb-1);
                 
                 stringstream c(words[3]);
@@ -92,24 +89,14 @@ void Model::loadMesh(std::string fileName) {
                 getline(c, tmpc, '/');
                 indc.x = std::stoi(tmpc);
                 getline(c, tmpc, '/');
-                indc.y = std::stoi(tmpc);                
-                indexes.push_back(indc-1);                
+                indc.y = std::stoi(tmpc);
+                indexes.push_back(indc-1);
             }
         }
-    }    
-    for (auto i: indexes) {     
+    }
+    for (auto i: indexes) {
         Vertex v(pos[i.x], tex[i.y]);
         vertexes.push_back(v);
-    }
-    
-    vertexArray = new float[vertexes.size() * 6];
-    for (int i = 0; i < vertexes.size(); i++) {
-        vertexArray[i*6]      = vertexes[i].pos.x;
-        vertexArray[i*6+1]    = vertexes[i].pos.y;
-        vertexArray[i*6+2]    = vertexes[i].pos.z;
-        vertexArray[i*6+3]    = vertexes[i].pos.w;
-        vertexArray[i*6+4]    = vertexes[i].tex.s;
-        vertexArray[i*6+5]    = vertexes[i].tex.t;
     }
 }
 GLsizeiptr Model::getVertexBufferSize() {

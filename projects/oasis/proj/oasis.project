@@ -8,6 +8,10 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
+    <File Name="../src/Configuration.cpp"/>
+    <File Name="../src/Configuration.h"/>
+    <File Name="../src/Camera.cpp"/>
+    <File Name="../src/Camera.h"/>
     <File Name="../src/Precompiled.h"/>
     <File Name="../src/Model.cpp"/>
     <File Name="../src/Model.h"/>

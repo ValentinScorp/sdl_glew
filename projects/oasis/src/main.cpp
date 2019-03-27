@@ -1,8 +1,5 @@
  #include "Precompiled.h"
 
-#define SCREEN_RESOLUTION_W 800
-#define SCREEN_RESOLUTION_H 600
-
 static SDL_Window *window = NULL;
 static SDL_GLContext gl_context;
 
@@ -18,23 +15,23 @@ const float plane1[] = {
 
 const float plane2[] = {
     -1.0f, 0.0f, 0.0f, 1.0f,  0.0f, 0.0f,
-    -1.0f, 1.0f, 0.0f, 1.0f,  0.0f, 1.0f,
     0.0f, 1.0f, 0.0f, 1.0f,  1.0f, 1.0f,
+    -1.0f, 1.0f, 0.0f, 1.0f,  0.0f, 1.0f,
     
     -1.0f, 0.0f, 0.0f, 1.0f,  0.0f, 0.0f,
-    0.0f, 1.0f, 0.0f, 1.0f,  1.0f, 1.0f,
     0.0f, 0.0f, 0.0f, 1.0f,  1.0f, 0.0f,
+    0.0f, 1.0f, 0.0f, 1.0f,  1.0f, 1.0f,
 };
 
 glm::vec3 camPosition(0.0f, 0.0f, 1.0f);
 glm::vec3 camUpVector(0.0f, 1.0f, 0.0f);
 float camNearPlane = 0.1f;
 float camFarPlane = 100.0f;
-float screenAspectRatio = (float)SCREEN_RESOLUTION_W / (float)SCREEN_RESOLUTION_H;
 
-GLuint positionBufferObject1;
-GLuint positionBufferObject2;
-GLuint vao;
+//GLuint positionBufferObject1;
+//GLuint positionBufferObject2;
+GLuint vao1;
+GLuint vao2;
 
 GLuint matricesUbo;
 GLfloat rotationAngle = 0;
@@ -93,11 +90,11 @@ SDL_Surface* flipVertical(SDL_Surface* sfc) {
 GLuint loadTexture1() {     
     int imgFlags = IMG_INIT_PNG;
     if(!(IMG_Init(imgFlags) & imgFlags)) {
-        SDL_Log("SDL_image could'n init! SDL_image error -> %s\n", IMG_GetError());
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "SDL_image could'n init! SDL_image error -> %s\n", IMG_GetError());
     }    
     SDL_Surface *surface = IMG_Load("img/castle.png");
     if (surface == NULL) {
-        SDL_Log("Unable to load image! SDL error -> %s\n", SDL_GetError());
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Unable to load image! SDL error -> %s\n", SDL_GetError());
     }
     int mode = 0;
     if (surface->format->BytesPerPixel == 3) {
@@ -127,14 +124,14 @@ GLuint loadTexture1() {
     return textureId;
 }
 
-GLuint loadTexture2() {     
+GLuint loadTexture2() {
     int imgFlags = IMG_INIT_PNG;
     if(!(IMG_Init(imgFlags) & imgFlags)) {
-        SDL_Log("SDL_image could'n init! SDL_image error -> %s\n", IMG_GetError());
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "SDL_image could'n init! SDL_image error -> %s\n", IMG_GetError());
     }    
     SDL_Surface *surface = IMG_Load("img/ukr.png");
     if (surface == NULL) {
-        SDL_Log("Unable to load image! SDL error -> %s\n", SDL_GetError());
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Unable to load image! SDL error -> %s\n", SDL_GetError());
     }
     int mode = 0;
     if (surface->format->BytesPerPixel == 3) {
@@ -144,7 +141,7 @@ GLuint loadTexture2() {
         mode = GL_RGBA;
     }
     
-    SDL_Surface* flippedSurface = flipVertical(surface);   
+    SDL_Surface* flippedSurface = flipVertical(surface);
     
     GLuint textureId = 0;
     glGenTextures(1, &textureId);
@@ -164,31 +161,49 @@ GLuint loadTexture2() {
     return textureId;
 }
 
+void updateCamera(Camera &cam, GLuint matricesIdInShader) {
+    glm::mat4 viewMatrix = cam.getViewMatrix();
+    glBindBuffer(GL_UNIFORM_BUFFER, matricesIdInShader);
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(viewMatrix));
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    
+    glm::mat4 camMatrix = cam.getCamMatrix();    
+    glBindBuffer(GL_UNIFORM_BUFFER, matricesIdInShader);
+    glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(camMatrix));
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+
 int main(int argc, char **argv)
-{    
+{
+    SDL_LogSetAllPriority(SDL_LOG_PRIORITY_ERROR);
+    SDL_LogSetPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO);
+    
+    Configuration config("data/config.ini");
+    
     SDL_version compiledVer;
     SDL_version linkedVer;
 
     SDL_VERSION(&compiledVer);
     SDL_GetVersion(&linkedVer);
-    SDL_Log("Compiled SDL version -> %d.%d.%d\n", compiledVer.major, compiledVer.minor, compiledVer.patch);
-    SDL_Log("Linking SDL version -> %d.%d.%d\n", linkedVer.major, linkedVer.minor, linkedVer.patch);
+    SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "Compiled SDL version -> %d.%d.%d\n", compiledVer.major, compiledVer.minor, compiledVer.patch);
+    SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "Linking SDL version -> %d.%d.%d\n", linkedVer.major, linkedVer.minor, linkedVer.patch);    
  
     if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_EVENTS) != 0) {
-        SDL_Log("Failed to initialize SDL -> %s", SDL_GetError());
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to initialize SDL -> %s", SDL_GetError());
         SDL_Quit();
         getch();
         return -1;
     }
+    
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);    
     
-    window = SDL_CreateWindow("Window title", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_RESOLUTION_W, SCREEN_RESOLUTION_H, SDL_WINDOW_OPENGL);
+    window = SDL_CreateWindow("Window title", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, config.screenResolutionWidth, config.screenResolutionHeight, SDL_WINDOW_OPENGL);
     if (window == NULL) {
-        SDL_Log("Failed to create SDL window -> %s", SDL_GetError());
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to create SDL window -> %s", SDL_GetError());
         SDL_Quit();
         getch();
         return -1;
@@ -196,25 +211,31 @@ int main(int argc, char **argv)
     
     gl_context = SDL_GL_CreateContext(window);
     if (gl_context == NULL) {
-        SDL_Log("Failed to create GL context -> %s", SDL_GetError());
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to create GL context -> %s", SDL_GetError());
         SDL_DestroyWindow(window);
         SDL_Quit();
         getch();
         return -1;        
     }
-    SDL_Log("OpenGL version -> %s", glGetString(GL_VERSION));
+    SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "OpenGL version -> %s", glGetString(GL_VERSION));
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32);
     
     GLenum err = glewInit();
     if (err != GLEW_OK) {
-        SDL_Log("Failed to init GLEW -> %s", glewGetErrorString(err));
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to init GLEW -> %s", glewGetErrorString(err));
         SDL_DestroyWindow(window);
         SDL_Quit();
         getch();
         return -1;
     }
-    SDL_Log("Using GLEW version -> %s\n", glewGetString(GLEW_VERSION));
+    SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "Using GLEW version -> %s\n", glewGetString(GLEW_VERSION));
       
+      
+    //scene objects
+    // todo
+    Camera camera(config.getScreenAspectRatio(), config.camPosition, camUpVector, glm::vec3(0.0f, 0.0f, 0.0f));
+    //camera.init(&config);
+    
     GLuint textureId1 = loadTexture1();
     GLuint textureId2 = loadTexture2();
     
@@ -234,7 +255,7 @@ int main(int argc, char **argv)
 
         GLchar *strInfoLog = new GLchar[infoLogLength + 1];
         glGetShaderInfoLog(vertexShader, infoLogLength, NULL, strInfoLog);
-        SDL_Log("Compile failure in vertex shader -> \n%s\n", strInfoLog);
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Compile failure in vertex shader -> \n%s\n", strInfoLog);
         delete[] strInfoLog;
     }
     
@@ -250,7 +271,7 @@ int main(int argc, char **argv)
 
         GLchar *strInfoLog = new GLchar[infoLogLength + 1];
         glGetShaderInfoLog(fragmentShader, infoLogLength, NULL, strInfoLog);
-        SDL_Log("Compile failure in fragment shader -> \n%s\n", strInfoLog);
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Compile failure in fragment shader -> \n%s\n", strInfoLog);
         delete[] strInfoLog;
     }
     
@@ -267,7 +288,7 @@ int main(int argc, char **argv)
 
         GLchar *strInfoLog = new GLchar[infoLogLength + 1];
         glGetProgramInfoLog(program, infoLogLength, NULL, strInfoLog);
-        SDL_Log("Link shader program failure -> %s\n", strInfoLog);
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Link shader program failure -> %s\n", strInfoLog);
         delete[] strInfoLog;
     }
     glDetachShader(program, vertexShader);
@@ -288,20 +309,35 @@ int main(int argc, char **argv)
     
     glBindBufferRange(GL_UNIFORM_BUFFER, g_iGlobalMatricesBindingIndex, matricesUbo, 0, sizeof(glm::mat4) * 2);
     
-    // init vertex buffer
-    glGenBuffers(1, &model.glBufferId);
-    glBindBuffer(GL_ARRAY_BUFFER, model.glBufferId);
+    // generate VBO for objects and send vertex data to it
+    GLuint vbo1;
+    glGenBuffers(1, &vbo1);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo1);
     glBufferData(GL_ARRAY_BUFFER, model.getVertexBufferSize(), model.getVertexBufferData(), GL_STREAM_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    
-    glGenBuffers(1, &positionBufferObject2);
-    glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject2);
+  
+    GLuint vbo2;
+    glGenBuffers(1, &vbo2);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo2);
     glBufferData(GL_ARRAY_BUFFER, sizeof(plane2), plane2, GL_STREAM_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     
-    // vertex array object
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
+    // generate VAO and link VBO and it's internal datal layout to it
+    glGenVertexArrays(1, &vao1);
+    glBindVertexArray(vao1);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo1);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 0);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(4 * sizeof(float)));
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+    
+    glGenVertexArrays(1, &vao2);
+    glBindVertexArray(vao2);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo2);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 0);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(4 * sizeof(float)));
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
     
     SDL_GL_SetSwapInterval(1);
         
@@ -309,21 +345,12 @@ int main(int argc, char **argv)
     Uint32 lastTime = currentTime;
     Uint32 deltaTime = currentTime - lastTime;
     
-    // fill view + cam matrices
-    glm::mat4 viewMatrix = glm::perspective(glm::radians(45.0f), screenAspectRatio, camNearPlane, camFarPlane);
-    glBindBuffer(GL_UNIFORM_BUFFER, matricesUbo);
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(viewMatrix));
-    glBindBuffer(GL_UNIFORM_BUFFER, 0);
-    
-    glm::mat4 camMatrix = glm::lookAt(camPosition, glm::vec3(0.0, 0.0, 0.0), camUpVector);
-    glBindBuffer(GL_UNIFORM_BUFFER, matricesUbo);
-    glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(camMatrix));
-    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    updateCamera(camera, matricesUbo);
     
     // depth stuff
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
-    glFrontFace(GL_CW);
+    glFrontFace(GL_CCW);
     
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE);
@@ -338,8 +365,8 @@ int main(int argc, char **argv)
     // init gl error check
     GLenum err1;
     while ((err1 = glGetError()) != GL_NO_ERROR) {
-        SDL_Log("OpenGL init error -> %d\n", err1);
-    }    
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "OpenGL init error -> %d\n", err1);
+    }
     
     bool runMainLoop = true;
     while (runMainLoop) {
@@ -359,7 +386,7 @@ int main(int argc, char **argv)
                             fovy += 1.0;
                             printf("%f\n", fovy);
                             // fill view + cam matrices
-                            glm::mat4 viewMatrix = glm::perspective(glm::radians(fovy), screenAspectRatio, camNearPlane, camFarPlane);
+                            glm::mat4 viewMatrix = glm::perspective(glm::radians(fovy), config.getScreenAspectRatio(), camNearPlane, camFarPlane);
                                                         
                             glBindBuffer(GL_UNIFORM_BUFFER, matricesUbo);
                             glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(viewMatrix));
@@ -368,11 +395,19 @@ int main(int argc, char **argv)
                     }
                     if (event.key.keysym.sym == SDLK_e) {
                         fovy -= 1.0;
-                        glm::mat4 viewMatrix = glm::perspective(glm::radians(fovy), screenAspectRatio, camNearPlane, camFarPlane);
+                        glm::mat4 viewMatrix = glm::perspective(glm::radians(fovy), config.getScreenAspectRatio(), camNearPlane, camFarPlane);
                         glBindBuffer(GL_UNIFORM_BUFFER, matricesUbo);
                         glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(viewMatrix));
                         glBindBuffer(GL_UNIFORM_BUFFER, 0);
                         printf("%f\n", fovy);
+                    }
+                    if (event.key.keysym.sym == SDLK_w) {
+                        camera.moveUp();
+                        updateCamera(camera, matricesUbo);
+                    }
+                    if (event.key.keysym.sym == SDLK_s) {
+                        camera.moveDown();
+                        updateCamera(camera, matricesUbo);
                     }
                     break;
                 default:
@@ -390,52 +425,40 @@ int main(int argc, char **argv)
         glClearColor(0.0f, 0.8f, 0.8f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 
-        //glViewport(0, 0, (GLsizei)SCREEN_RESOLUTION_W, (GLsizei)SCREEN_RESOLUTION_H);
-        
-        
         // object 1
-        glUseProgram(program);        
+        glUseProgram(program);
         
-        glBindTexture(GL_TEXTURE_2D, textureId2);        
         rotationAngle += 0.01;
         objectPositionMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -5.0f));
         objectPositionMatrix = glm::rotate(objectPositionMatrix, rotationAngle, glm::vec3(0.0f, 1.0f, 0.0f));
-        glUniformMatrix4fv(modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(objectPositionMatrix));
+        glUniformMatrix4fv(modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(objectPositionMatrix));        
         
-        glBindBuffer(GL_ARRAY_BUFFER, model.glBufferId);
-        
-        glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 0);
+        // object1
+        glBindVertexArray(vao1);        
         glEnableVertexAttribArray(0);
-        
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(4 * sizeof(float)));
         glEnableVertexAttribArray(1);
-     
+        glBindTexture(GL_TEXTURE_2D, textureId2);
         glDrawArrays(GL_TRIANGLES, 0, model.getVertexLen());
-        
         glDisableVertexAttribArray(0);
-        glDisableVertexAttribArray(1);
-        glUseProgram(0);
+        glDisableVertexAttribArray(1);        
+        glBindVertexArray(0);
         
+        glBindTexture(GL_TEXTURE_2D, 0);
+                
         // object 2
-        glUseProgram(program);        
-        
-        glBindTexture(GL_TEXTURE_2D, textureId1);        
-        
         objectPositionMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -2.0f));
-        glUniformMatrix4fv(modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(objectPositionMatrix));
+        glUniformMatrix4fv(modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(objectPositionMatrix));                
         
-        glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject2);        
-        
-        glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 0);
+        glBindVertexArray(vao2);
         glEnableVertexAttribArray(0);
-        
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(4 * sizeof(float)));
         glEnableVertexAttribArray(1);
-     
+        glBindTexture(GL_TEXTURE_2D, textureId1);
         glDrawArrays(GL_TRIANGLES, 0, 6);
-
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
+        glBindVertexArray(0);
+        
+        glBindTexture(GL_TEXTURE_2D, 0);
         glUseProgram(0);
         
 
@@ -445,14 +468,14 @@ int main(int argc, char **argv)
         
         GLenum err2;
         while ((err2 = glGetError()) != GL_NO_ERROR) {
-            SDL_Log("OpenGL cycle error -> %d\n", err2);
-        }  
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "OpenGL cycle error -> %d\n", err2);
+        }
     }
         
     SDL_DestroyWindow(window); 
     SDL_Quit();
     
-    SDL_Log("To quit application press any key ...\n");
+    SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "To quit application press any key ...\n");
     
     getch();
     return 0;
