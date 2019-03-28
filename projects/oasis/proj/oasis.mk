@@ -13,7 +13,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=valen
-Date                   :=27/03/2019
+Date                   :=28/03/2019
 CodeLitePath           :="C:/Program Files/CodeLite"
 LinkerName             :=C:/MinGW/bin/g++.exe
 SharedObjectLinkerName :=C:/MinGW/bin/g++.exe -shared -fPIC
@@ -62,7 +62,7 @@ AS       := C:/MinGW/bin/as.exe
 ## User defined environment variables
 ##
 CodeLiteDir:=C:\Program Files\CodeLite
-Objects0=$(IntermediateDirectory)/up_src_Configuration.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_Model.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_main.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_Camera.cpp$(ObjectSuffix) 
+Objects0=$(IntermediateDirectory)/up_src_main.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_Configuration.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_Camera.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_Model.cpp$(ObjectSuffix) 
 
 
 
@@ -100,22 +100,6 @@ PreBuild:
 ##
 ## Objects
 ##
-$(IntermediateDirectory)/up_src_Configuration.cpp$(ObjectSuffix): ../src/Configuration.cpp $(IntermediateDirectory)/up_src_Configuration.cpp$(DependSuffix)
-	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/Configuration.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_Configuration.cpp$(ObjectSuffix) $(IncludePath)
-$(IntermediateDirectory)/up_src_Configuration.cpp$(DependSuffix): ../src/Configuration.cpp
-	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/up_src_Configuration.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/up_src_Configuration.cpp$(DependSuffix) -MM ../src/Configuration.cpp
-
-$(IntermediateDirectory)/up_src_Configuration.cpp$(PreprocessSuffix): ../src/Configuration.cpp
-	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_Configuration.cpp$(PreprocessSuffix) ../src/Configuration.cpp
-
-$(IntermediateDirectory)/up_src_Model.cpp$(ObjectSuffix): ../src/Model.cpp $(IntermediateDirectory)/up_src_Model.cpp$(DependSuffix)
-	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/Model.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_Model.cpp$(ObjectSuffix) $(IncludePath)
-$(IntermediateDirectory)/up_src_Model.cpp$(DependSuffix): ../src/Model.cpp
-	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/up_src_Model.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/up_src_Model.cpp$(DependSuffix) -MM ../src/Model.cpp
-
-$(IntermediateDirectory)/up_src_Model.cpp$(PreprocessSuffix): ../src/Model.cpp
-	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_Model.cpp$(PreprocessSuffix) ../src/Model.cpp
-
 $(IntermediateDirectory)/up_src_main.cpp$(ObjectSuffix): ../src/main.cpp $(IntermediateDirectory)/up_src_main.cpp$(DependSuffix)
 	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/main.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_main.cpp$(ObjectSuffix) $(IncludePath)
 $(IntermediateDirectory)/up_src_main.cpp$(DependSuffix): ../src/main.cpp
@@ -124,6 +108,14 @@ $(IntermediateDirectory)/up_src_main.cpp$(DependSuffix): ../src/main.cpp
 $(IntermediateDirectory)/up_src_main.cpp$(PreprocessSuffix): ../src/main.cpp
 	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_main.cpp$(PreprocessSuffix) ../src/main.cpp
 
+$(IntermediateDirectory)/up_src_Configuration.cpp$(ObjectSuffix): ../src/Configuration.cpp $(IntermediateDirectory)/up_src_Configuration.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/Configuration.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_Configuration.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/up_src_Configuration.cpp$(DependSuffix): ../src/Configuration.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/up_src_Configuration.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/up_src_Configuration.cpp$(DependSuffix) -MM ../src/Configuration.cpp
+
+$(IntermediateDirectory)/up_src_Configuration.cpp$(PreprocessSuffix): ../src/Configuration.cpp
+	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_Configuration.cpp$(PreprocessSuffix) ../src/Configuration.cpp
+
 $(IntermediateDirectory)/up_src_Camera.cpp$(ObjectSuffix): ../src/Camera.cpp $(IntermediateDirectory)/up_src_Camera.cpp$(DependSuffix)
 	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/Camera.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_Camera.cpp$(ObjectSuffix) $(IncludePath)
 $(IntermediateDirectory)/up_src_Camera.cpp$(DependSuffix): ../src/Camera.cpp
@@ -131,6 +123,14 @@ $(IntermediateDirectory)/up_src_Camera.cpp$(DependSuffix): ../src/Camera.cpp
 
 $(IntermediateDirectory)/up_src_Camera.cpp$(PreprocessSuffix): ../src/Camera.cpp
 	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_Camera.cpp$(PreprocessSuffix) ../src/Camera.cpp
+
+$(IntermediateDirectory)/up_src_Model.cpp$(ObjectSuffix): ../src/Model.cpp $(IntermediateDirectory)/up_src_Model.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/Model.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_Model.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/up_src_Model.cpp$(DependSuffix): ../src/Model.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/up_src_Model.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/up_src_Model.cpp$(DependSuffix) -MM ../src/Model.cpp
+
+$(IntermediateDirectory)/up_src_Model.cpp$(PreprocessSuffix): ../src/Model.cpp
+	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_Model.cpp$(PreprocessSuffix) ../src/Model.cpp
 
 
 -include $(IntermediateDirectory)/*$(DependSuffix)

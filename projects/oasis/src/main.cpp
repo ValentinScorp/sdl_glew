@@ -35,7 +35,7 @@ GLuint vao2;
 
 GLuint matricesUbo;
 GLfloat rotationAngle = 0;
-
+/*
 const std::string strVertexShader(
     "#version 330\n"
     "layout(location = 0) in vec4 position;\n"
@@ -49,9 +49,6 @@ const std::string strVertexShader(
     "uniform mat4 modelToWorldMatrix;\n"
     "void main()\n"
     "{\n"
-    //"   vec4 temp = modelToWorldMatrix * position;\n"
-    //"   temp = worldToCameraMatrix * temp;\n"
-    //"   gl_Position = cameraToClipMatrix * temp;\n"
     "   gl_Position = cameraToClipMatrix * worldToCameraMatrix * modelToWorldMatrix * position;\n"
     "   colorCoord = texCoord;\n"
     "}\n"
@@ -67,8 +64,7 @@ const std::string strFragmentShader(
     "   outputColor = texture(colorTexture, colorCoord);\n"
     "}\n"
 );
-
-static const int g_iGlobalMatricesBindingIndex = 0;
+*/
 float fovy = 45.0f;
 
 SDL_Surface* flipVertical(SDL_Surface* sfc) {
@@ -85,6 +81,92 @@ SDL_Surface* flipVertical(SDL_Surface* sfc) {
          rpixels += pitch;
      }
      return result;
+}
+
+void loadFile(std::string fileName, std::string *fileContent) {
+    std::ifstream file(fileName);
+    if (file.is_open()) {
+        std::string line;
+        while (file.good()) {
+            line.clear();
+            std::getline(file, line);
+            (*fileContent).append(line + '\n');
+        }
+        file.close();
+    } else {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Unable to open file -> %s\n", fileName.c_str());
+    }  
+}
+
+void loadShader(std::string fileName, GLenum shaderType, GLuint *shaderHandler) {
+    std::string stringShader;
+    loadFile(fileName, &stringShader);
+    
+    (*shaderHandler) = glCreateShader(shaderType);
+    const char *ptrStrVertexShader = stringShader.c_str();
+    glShaderSource((*shaderHandler), 1, &ptrStrVertexShader, NULL);
+    glCompileShader((*shaderHandler));
+    GLint shaderCompileStatus;
+    glGetShaderiv((*shaderHandler), GL_COMPILE_STATUS, &shaderCompileStatus);
+    if (shaderCompileStatus == GL_FALSE) {
+        GLint infoLogLength;
+        glGetShaderiv((*shaderHandler), GL_INFO_LOG_LENGTH, &infoLogLength);
+
+        GLchar *strInfoLog = new GLchar[infoLogLength + 1];
+        glGetShaderInfoLog((*shaderHandler), infoLogLength, NULL, strInfoLog);
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Compile failure in vertex shader -> %s\n%s\n", fileName.c_str(), strInfoLog);
+        delete[] strInfoLog;
+    }
+}
+
+void unloadShader(GLuint *shaderHandler) {
+    glDeleteShader(*shaderHandler);
+    (*shaderHandler) = 0;
+}
+
+void createProgram(GLuint *program, GLuint vertexShader, GLuint fragmentShader) {
+    (*program) = glCreateProgram();
+    glAttachShader((*program), vertexShader);
+    glAttachShader((*program), fragmentShader);
+    glLinkProgram(*program);
+    GLint linkProgramStatus = GL_FALSE;
+    glGetProgramiv ((*program), GL_LINK_STATUS, &linkProgramStatus);
+    if (linkProgramStatus == GL_FALSE) {
+        GLint infoLogLength;
+        glGetProgramiv((*program), GL_INFO_LOG_LENGTH, &infoLogLength);
+
+        GLchar *strInfoLog = new GLchar[infoLogLength + 1];
+        glGetProgramInfoLog((*program), infoLogLength, NULL, strInfoLog);
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Link shader program failure -> %s\n", strInfoLog);
+        delete[] strInfoLog;
+    }
+    glDetachShader((*program), vertexShader);
+    glDetachShader((*program), fragmentShader);
+}
+
+void getParamFromProgram(GLuint program, std::string paramName, GLuint *paramId) {
+    (*paramId) = glGetUniformLocation(program, paramName.c_str());
+}
+
+void getUniformParamFromProgram(GLuint program, std::string paramName, GLsizeiptr size, GLuint *paramId) {
+    int uniformBlockBinding = 0;
+    GLuint uniformBlockIndex = glGetUniformBlockIndex(program, paramName.c_str());
+    glUniformBlockBinding(program, uniformBlockIndex, uniformBlockBinding);
+    
+    // generate matrices
+    glGenBuffers(1, paramId);
+    glBindBuffer(GL_UNIFORM_BUFFER, (*paramId));
+    glBufferData(GL_UNIFORM_BUFFER, size, NULL, GL_STREAM_DRAW);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    
+    glBindBufferRange(GL_UNIFORM_BUFFER, uniformBlockBinding, (*paramId), 0, size);
+}
+
+void genVbo(const GLvoid *data, GLsizeiptr size, GLuint *vboId) {
+    glGenBuffers(1, vboId);
+    glBindBuffer(GL_ARRAY_BUFFER, (*vboId));
+    glBufferData(GL_ARRAY_BUFFER, size, data, GL_STREAM_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 GLuint loadTexture1() {     
@@ -233,94 +315,53 @@ int main(int argc, char **argv)
       
     //scene objects
     // todo
-    Camera camera(config.getScreenAspectRatio(), config.camPosition, camUpVector, glm::vec3(0.0f, 0.0f, 0.0f));
-    //camera.init(&config);
+    Camera camera;
+    camera.init(&config);
     
     GLuint textureId1 = loadTexture1();
     GLuint textureId2 = loadTexture2();
-    
+   
+    // model 1 ====================
     Model model;
     model.loadMesh("model/object.obj");
-    
-    // shader load
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    const char *ptrStrVertexShader = strVertexShader.c_str();
-    glShaderSource(vertexShader, 1, &ptrStrVertexShader, NULL);
-    glCompileShader(vertexShader);    
-    GLint vertexShaderCompileStatus;
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &vertexShaderCompileStatus);
-    if (vertexShaderCompileStatus == GL_FALSE) {
-        GLint infoLogLength;
-        glGetShaderiv(vertexShader, GL_INFO_LOG_LENGTH, &infoLogLength);
-
-        GLchar *strInfoLog = new GLchar[infoLogLength + 1];
-        glGetShaderInfoLog(vertexShader, infoLogLength, NULL, strInfoLog);
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Compile failure in vertex shader -> \n%s\n", strInfoLog);
-        delete[] strInfoLog;
-    }
-    
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    const char *ptrStrFragmentShader = strFragmentShader.c_str();
-    glShaderSource(fragmentShader, 1, &ptrStrFragmentShader, NULL);
-    glCompileShader(fragmentShader);    
-    GLint fragmentShaderCompileStatus;
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &fragmentShaderCompileStatus);
-    if (fragmentShaderCompileStatus == GL_FALSE) {
-        GLint infoLogLength;
-        glGetShaderiv(fragmentShader, GL_INFO_LOG_LENGTH, &infoLogLength);
-
-        GLchar *strInfoLog = new GLchar[infoLogLength + 1];
-        glGetShaderInfoLog(fragmentShader, infoLogLength, NULL, strInfoLog);
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Compile failure in fragment shader -> \n%s\n", strInfoLog);
-        delete[] strInfoLog;
-    }
-    
-    // create and link shader program
-    GLuint program = glCreateProgram();
-    glAttachShader(program, vertexShader);
-    glAttachShader(program, fragmentShader);
-    glLinkProgram(program);
-    GLint linkProgramStatus = GL_FALSE;
-    glGetProgramiv (program, GL_LINK_STATUS, &linkProgramStatus);
-    if (linkProgramStatus == GL_FALSE) {
-        GLint infoLogLength;
-        glGetProgramiv(program, GL_INFO_LOG_LENGTH, &infoLogLength);
-
-        GLchar *strInfoLog = new GLchar[infoLogLength + 1];
-        glGetProgramInfoLog(program, infoLogLength, NULL, strInfoLog);
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Link shader program failure -> %s\n", strInfoLog);
-        delete[] strInfoLog;
-    }
-    glDetachShader(program, vertexShader);
-    glDetachShader(program, fragmentShader);
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
+    GLuint vertexShader = 0;
+    loadShader("data/shader.vert", GL_VERTEX_SHADER, &vertexShader);
+    GLuint fragmentShader = 0;
+    loadShader("data/shader.frag", GL_FRAGMENT_SHADER, &fragmentShader);
+    GLuint program = 0;
+    createProgram(&program, vertexShader, fragmentShader);
+    unloadShader(&vertexShader);
+    unloadShader(&fragmentShader);
    
+    // model2 ================================
+    Model model2;
+    model.loadSmaMesh("model/Cube.002.sma");
+    GLuint smaVertexShader = 0;
+    loadShader("data/smaShader.vert", GL_VERTEX_SHADER, &smaVertexShader);
+    GLuint smaFragmentShader = 0;
+    loadShader("data/smaShader.frag", GL_FRAGMENT_SHADER, &smaFragmentShader);
+    GLuint smaProgram = 0;
+    createProgram(&smaProgram, smaVertexShader, smaFragmentShader);
+    unloadShader(&smaVertexShader);
+    unloadShader(&smaFragmentShader);
+    
+    // model1 =================================================
     // get matrices from program
-    GLuint modelToWorldMatrixUnif = glGetUniformLocation(program, "modelToWorldMatrix");
-    GLuint globalUniformBlockIndex = glGetUniformBlockIndex(program, "GlobalMatrices");    
-    glUniformBlockBinding(program, globalUniformBlockIndex, g_iGlobalMatricesBindingIndex);
-    
-    // generate matrices    
-    glGenBuffers(1, &matricesUbo);
-    glBindBuffer(GL_UNIFORM_BUFFER, matricesUbo);
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) * 2, NULL, GL_STREAM_DRAW);
-    glBindBuffer(GL_UNIFORM_BUFFER, 0);
-    
-    glBindBufferRange(GL_UNIFORM_BUFFER, g_iGlobalMatricesBindingIndex, matricesUbo, 0, sizeof(glm::mat4) * 2);
-    
+    GLuint modelToWorldMatrixUnif = 0;
+    getParamFromProgram(program, "modelToWorldMatrix", &modelToWorldMatrixUnif);    
+    getUniformParamFromProgram(program, "GlobalMatrices", sizeof(glm::mat4) * 2, &matricesUbo);
+
     // generate VBO for objects and send vertex data to it
+    
     GLuint vbo1;
-    glGenBuffers(1, &vbo1);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo1);
-    glBufferData(GL_ARRAY_BUFFER, model.getVertexBufferSize(), model.getVertexBufferData(), GL_STREAM_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    genVbo(model.getVertexBufferData(), model.getVertexBufferSize(), &vbo1);
   
     GLuint vbo2;
-    glGenBuffers(1, &vbo2);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo2);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(plane2), plane2, GL_STREAM_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    genVbo(plane2, sizeof(plane2), &vbo2);
+    //glGenBuffers(1, &vbo2);
+    //glBindBuffer(GL_ARRAY_BUFFER, vbo2);
+    //glBufferData(GL_ARRAY_BUFFER, sizeof(plane2), plane2, GL_STREAM_DRAW);
+    //glBindBuffer(GL_ARRAY_BUFFER, 0);
     
     // generate VAO and link VBO and it's internal datal layout to it
     glGenVertexArrays(1, &vao1);
@@ -425,40 +466,38 @@ int main(int argc, char **argv)
         glClearColor(0.0f, 0.8f, 0.8f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 
-        // object 1
+        // model 1 =====================
         glUseProgram(program);
         
+        // object1
         rotationAngle += 0.01;
         objectPositionMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -5.0f));
         objectPositionMatrix = glm::rotate(objectPositionMatrix, rotationAngle, glm::vec3(0.0f, 1.0f, 0.0f));
-        glUniformMatrix4fv(modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(objectPositionMatrix));        
-        
-        // object1
-        glBindVertexArray(vao1);        
+        glUniformMatrix4fv(modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(objectPositionMatrix));
+                
+        glBindVertexArray(vao1);
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
         glBindTexture(GL_TEXTURE_2D, textureId2);
         glDrawArrays(GL_TRIANGLES, 0, model.getVertexLen());
-        glDisableVertexAttribArray(0);
-        glDisableVertexAttribArray(1);        
-        glBindVertexArray(0);
-        
         glBindTexture(GL_TEXTURE_2D, 0);
+        glDisableVertexAttribArray(0);
+        glDisableVertexAttribArray(1);
+        glBindVertexArray(0);
                 
         // object 2
         objectPositionMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -2.0f));
-        glUniformMatrix4fv(modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(objectPositionMatrix));                
+        glUniformMatrix4fv(modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(objectPositionMatrix));
         
         glBindVertexArray(vao2);
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
         glBindTexture(GL_TEXTURE_2D, textureId1);
         glDrawArrays(GL_TRIANGLES, 0, 6);
+        glBindTexture(GL_TEXTURE_2D, 0);
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
         glBindVertexArray(0);
-        
-        glBindTexture(GL_TEXTURE_2D, 0);
         glUseProgram(0);
         
 

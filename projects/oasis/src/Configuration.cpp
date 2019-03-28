@@ -32,12 +32,20 @@ Configuration::Configuration(std::string fileName) {
                         }
                     }
                     if (sectionName == "Camera") {
-                        //position=0.0, 0.0, 1.0
-                        //upVector=0.0, 1.0, 0.0
-                        //nearPlane=0.1
-                        //farPlane=100.0
                         if (paramName == "position") {
-                            convertStrToVec3("[" + sectionName + "] " + paramName, paramValue, &camPosition);                            
+                            convertStrToVec3("[" + sectionName + "] " + paramName, paramValue, &camPosition);
+                        }
+                        if (paramName == "upVector") {
+                            convertStrToVec3("[" + sectionName + "] " + paramName, paramValue, &camUpVec);
+                        }
+                        if (paramName == "lookAt") {
+                            convertStrToVec3("[" + sectionName + "] " + paramName, paramValue, &camLookAt);
+                        }
+                        if (paramName == "nearPlane") {
+                            convertStrToFloat("[" + sectionName + "] " + paramName, paramValue, &camNearPlane);
+                        }
+                        if (paramName == "farPlane") {
+                            convertStrToFloat("[" + sectionName + "] " + paramName, paramValue, &camFarPlane);
                         }
                     }
                 }
@@ -50,8 +58,12 @@ Configuration::~Configuration()
 {
 }
 
-float Configuration::getScreenAspectRatio() {
-    return (screenResolutionWidth / screenResolutionHeight);
+void Configuration::convertStrToFloat(std::string paramName, std::string paramValue, float *var) {
+    try {
+        (*var) = std::stof(paramValue);
+    } catch (std::exception &e) {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Configuraion file error in -> %s ... using default value!\n", paramName.c_str());
+    }
 }
 
 void Configuration::convertStrToVec3(std::string paramName, std::string paramValue, glm::vec3 *vec) {
@@ -72,3 +84,10 @@ void Configuration::convertStrToVec3(std::string paramName, std::string paramVal
     }
 }
 
+float Configuration::getScreenAspectRatio() {
+    if (screenResolutionHeight != 0) {
+        return screenResolutionWidth/screenResolutionHeight;
+    }
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error in Configuration::getScreenAspectRatio()\n");
+    return 1;
+}

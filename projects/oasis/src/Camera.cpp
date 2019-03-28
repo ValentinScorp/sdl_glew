@@ -4,13 +4,6 @@ Camera::Camera()
 {
 }
 
-Camera::Camera(float ar, glm::vec3 pos, glm::vec3 upVec, glm::vec3 lookAt) {
-    aspectRatio = ar;
-    position = pos;
-    upVector = upVec;
-    lookTarget = lookAt;
-}
-
 Camera::~Camera() {
 }
 
@@ -34,4 +27,7 @@ void Camera::moveDown() {
 
 void Camera::init(Configuration* cfg) {
     position = cfg->camPosition;
+    aspectRatio = cfg->getScreenAspectRatio();
+    upVector = cfg->camUpVec;
+    lookTarget = cfg->camLookAt;
 }

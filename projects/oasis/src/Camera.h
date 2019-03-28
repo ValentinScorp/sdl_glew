@@ -7,7 +7,6 @@ class Camera
 {
 public:
     Camera();
-    Camera(float ar, glm::vec3 position, glm::vec3 upVector, glm::vec3 lookAt);
     virtual ~Camera();
     
     void init(Configuration *cfg);
@@ -18,12 +17,12 @@ public:
     void moveUp();
     void moveDown();
 
-    glm::vec3 position;
-    glm::vec3 upVector;
-    glm::vec3 lookTarget;
+    glm::vec3 position = {0.0f, 0.0f, 0.0f};;
+    glm::vec3 upVector = {0.0f, 0.0f, 0.0f};;
+    glm::vec3 lookTarget = {0.0f, 0.0f, 0.0f};;
     
-    float aspectRatio = 1;
-    float moveSpeed = 0.01;
+    float aspectRatio = 0.0f;
+    float moveSpeed = 0.0f;
 };
 
 
