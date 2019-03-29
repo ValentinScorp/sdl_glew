@@ -56,6 +56,9 @@ public:
         for (auto v: vertexes) {
             v.print();
         }
+        for (auto v: smaVerts) {
+            v.print();
+        }
     }
     
     void loadMesh(std::string fileName);

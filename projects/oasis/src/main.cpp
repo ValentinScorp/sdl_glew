@@ -28,46 +28,17 @@ glm::vec3 camUpVector(0.0f, 1.0f, 0.0f);
 float camNearPlane = 0.1f;
 float camFarPlane = 100.0f;
 
-//GLuint positionBufferObject1;
-//GLuint positionBufferObject2;
 GLuint vao1;
 GLuint vao2;
+GLuint vao3;
 
 GLuint matricesUbo;
+GLuint matricesUbo2;
 GLfloat rotationAngle = 0;
-/*
-const std::string strVertexShader(
-    "#version 330\n"
-    "layout(location = 0) in vec4 position;\n"
-    "layout(location = 1) in vec2 texCoord;\n"
-    "out vec2 colorCoord;"
-    "layout(std140) uniform GlobalMatrices\n"
-    "{\n"
-    "   mat4 cameraToClipMatrix;\n"
-    "   mat4 worldToCameraMatrix;\n"
-    "};\n"
-    "uniform mat4 modelToWorldMatrix;\n"
-    "void main()\n"
-    "{\n"
-    "   gl_Position = cameraToClipMatrix * worldToCameraMatrix * modelToWorldMatrix * position;\n"
-    "   colorCoord = texCoord;\n"
-    "}\n"
-);
 
-const std::string strFragmentShader(
-    "#version 330\n"
-    "in vec2 colorCoord;\n"
-    "uniform sampler2D colorTexture;\n"    
-    "out vec4 outputColor;\n"    
-    "void main()\n"
-    "{\n"
-    "   outputColor = texture(colorTexture, colorCoord);\n"
-    "}\n"
-);
-*/
 float fovy = 45.0f;
 
-SDL_Surface* flipVertical(SDL_Surface* sfc) {
+SDL_Surface* flipSdlSurfaceVertical(SDL_Surface* sfc) {
      SDL_Surface* result = SDL_CreateRGBSurface(sfc->flags, sfc->w, sfc->h,
          sfc->format->BytesPerPixel * 8, sfc->format->Rmask, sfc->format->Gmask,
          sfc->format->Bmask, sfc->format->Amask);
@@ -168,52 +139,53 @@ void genVbo(const GLvoid *data, GLsizeiptr size, GLuint *vboId) {
     glBufferData(GL_ARRAY_BUFFER, size, data, GL_STREAM_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
-
-GLuint loadTexture1() {     
-    int imgFlags = IMG_INIT_PNG;
-    if(!(IMG_Init(imgFlags) & imgFlags)) {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "SDL_image could'n init! SDL_image error -> %s\n", IMG_GetError());
-    }    
-    SDL_Surface *surface = IMG_Load("img/castle.png");
-    if (surface == NULL) {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Unable to load image! SDL error -> %s\n", SDL_GetError());
+void genVao(GLuint vbo, GLsizeiptr attribNum1, GLsizeiptr attribNum2, GLsizeiptr attribNum3, GLsizeiptr componentSize, GLuint *vao) {
+    glGenVertexArrays(1, vao);
+    glBindVertexArray(*vao);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    GLsizeiptr vertexSize = (attribNum1 + attribNum2 + attribNum3) * componentSize;
+    if (attribNum1) {
+        glVertexAttribPointer(0, attribNum1, GL_FLOAT, GL_FALSE, vertexSize, 0);
     }
-    int mode = 0;
-    if (surface->format->BytesPerPixel == 3) {
-        mode = GL_RGB;
+    if (attribNum2) {
+        glVertexAttribPointer(1, attribNum2, GL_FLOAT, GL_FALSE, vertexSize, (void*)(attribNum1 * componentSize));
     }
-    if (surface->format->BytesPerPixel == 4) {
-        mode = GL_RGBA;
+    if (attribNum3) {
+        glVertexAttribPointer(2, attribNum3, GL_FLOAT, GL_FALSE, vertexSize, (void*)((attribNum1 + attribNum2) * componentSize));
     }
-    
-    SDL_Surface* flippedSurface = flipVertical(surface);   
-    
-    GLuint textureId = 0;
-    glGenTextures(1, &textureId);
-    glBindTexture(GL_TEXTURE_2D, textureId);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-       
-    glTexImage2D(GL_TEXTURE_2D, 0, mode, flippedSurface->w, flippedSurface->h, 0, mode, GL_UNSIGNED_BYTE, (GLvoid*)flippedSurface->pixels);
-    
-    glBindTexture(GL_TEXTURE_2D, 0);
-        
-    SDL_FreeSurface(surface);
-    SDL_FreeSurface(flippedSurface);
-    
-    return textureId;
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
 }
 
-GLuint loadTexture2() {
+void renderVao(GLuint vao, GLuint attrNum, GLuint tex, GLsizei vertNum) {
+    glBindVertexArray(vao);
+    if (attrNum > 0) {
+        glEnableVertexAttribArray(0);
+    }
+    if (attrNum > 1) {
+        glEnableVertexAttribArray(1);
+    }
+    if (attrNum > 2) {
+        glEnableVertexAttribArray(2);
+    }    
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glDrawArrays(GL_TRIANGLES, 0, vertNum);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+    glBindVertexArray(0);
+}
+
+void loadTexture(std::string fileName, GLuint *texture, bool flipImgVertical = 0) {
+    // todo -> unify for all textures
     int imgFlags = IMG_INIT_PNG;
     if(!(IMG_Init(imgFlags) & imgFlags)) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "SDL_image could'n init! SDL_image error -> %s\n", IMG_GetError());
-    }    
-    SDL_Surface *surface = IMG_Load("img/ukr.png");
+    }
+    // end
+    SDL_Surface *surface = IMG_Load(fileName.c_str());
     if (surface == NULL) {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Unable to load image! SDL error -> %s\n", SDL_GetError());
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Unable to load image %s! SDL error -> %s\n", fileName.c_str(), SDL_GetError());
     }
     int mode = 0;
     if (surface->format->BytesPerPixel == 3) {
@@ -223,24 +195,26 @@ GLuint loadTexture2() {
         mode = GL_RGBA;
     }
     
-    SDL_Surface* flippedSurface = flipVertical(surface);
-    
-    GLuint textureId = 0;
-    glGenTextures(1, &textureId);
-    glBindTexture(GL_TEXTURE_2D, textureId);
+    SDL_Surface* flippedSurface = flipSdlSurfaceVertical(surface);
+        
+    glGenTextures(1, texture);
+    glBindTexture(GL_TEXTURE_2D, (*texture));
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-       
-    glTexImage2D(GL_TEXTURE_2D, 0, mode, flippedSurface->w, flippedSurface->h, 0, mode, GL_UNSIGNED_BYTE, (GLvoid*)flippedSurface->pixels);
+    
+    // todo -> optimize this
+    if (flipImgVertical == true) {
+        glTexImage2D(GL_TEXTURE_2D, 0, mode, flippedSurface->w, flippedSurface->h, 0, mode, GL_UNSIGNED_BYTE, (GLvoid*)flippedSurface->pixels);
+    } else {
+        glTexImage2D(GL_TEXTURE_2D, 0, mode, surface->w, surface->h, 0, mode, GL_UNSIGNED_BYTE, (GLvoid*)surface->pixels);
+    }
     
     glBindTexture(GL_TEXTURE_2D, 0);
         
     SDL_FreeSurface(surface);
     SDL_FreeSurface(flippedSurface);
-    
-    return textureId;
 }
 
 void updateCamera(Camera &cam, GLuint matricesIdInShader) {
@@ -280,8 +254,8 @@ int main(int argc, char **argv)
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);    
     
     window = SDL_CreateWindow("Window title", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, config.screenResolutionWidth, config.screenResolutionHeight, SDL_WINDOW_OPENGL);
     if (window == NULL) {
@@ -300,7 +274,7 @@ int main(int argc, char **argv)
         return -1;        
     }
     SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "OpenGL version -> %s", glGetString(GL_VERSION));
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32);
+    
     
     GLenum err = glewInit();
     if (err != GLEW_OK) {
@@ -311,15 +285,21 @@ int main(int argc, char **argv)
         return -1;
     }
     SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "Using GLEW version -> %s\n", glewGetString(GLEW_VERSION));
-      
-      
+  
     //scene objects
     // todo
     Camera camera;
     camera.init(&config);
     
-    GLuint textureId1 = loadTexture1();
-    GLuint textureId2 = loadTexture2();
+    //GLuint textureId1 = loadTexture1();
+    //GLuint textureId2 = loadTexture2();
+   
+    GLuint textureId1 = 0;
+    GLuint textureId2 = 0;
+    GLuint textureId3 = 0;
+    loadTexture("img/castle.png", &textureId1, true);
+    loadTexture("img/ukr.png", &textureId2, true);
+    loadTexture("img/roman_tex_high.png", &textureId3, false);
    
     // model 1 ====================
     Model model;
@@ -335,7 +315,7 @@ int main(int argc, char **argv)
    
     // model2 ================================
     Model model2;
-    model.loadSmaMesh("model/Cube.002.sma");
+    model2.loadSmaMesh("model/Cube.002.sma");
     GLuint smaVertexShader = 0;
     loadShader("data/smaShader.vert", GL_VERTEX_SHADER, &smaVertexShader);
     GLuint smaFragmentShader = 0;
@@ -345,41 +325,36 @@ int main(int argc, char **argv)
     unloadShader(&smaVertexShader);
     unloadShader(&smaFragmentShader);
     
-    // model1 =================================================
     // get matrices from program
+    // model1 =================================================    
     GLuint modelToWorldMatrixUnif = 0;
     getParamFromProgram(program, "modelToWorldMatrix", &modelToWorldMatrixUnif);    
     getUniformParamFromProgram(program, "GlobalMatrices", sizeof(glm::mat4) * 2, &matricesUbo);
-
-    // generate VBO for objects and send vertex data to it
     
+    // model2 =================================================
+    GLuint modelToWorldMatrixUnif2 = 0;
+    getParamFromProgram(smaProgram, "modelToWorldMatrix", &modelToWorldMatrixUnif2);    
+    getUniformParamFromProgram(smaProgram, "GlobalMatrices", sizeof(glm::mat4) * 2, &matricesUbo2);
+
+   // generate VBO for objects and send vertex data to it
+    // model1 =================================================    
     GLuint vbo1;
-    genVbo(model.getVertexBufferData(), model.getVertexBufferSize(), &vbo1);
-  
+    genVbo(model.getVertexBufferData(), model.getVertexBufferSize(), &vbo1);  
     GLuint vbo2;
     genVbo(plane2, sizeof(plane2), &vbo2);
-    //glGenBuffers(1, &vbo2);
-    //glBindBuffer(GL_ARRAY_BUFFER, vbo2);
-    //glBufferData(GL_ARRAY_BUFFER, sizeof(plane2), plane2, GL_STREAM_DRAW);
-    //glBindBuffer(GL_ARRAY_BUFFER, 0);
     
-    // generate VAO and link VBO and it's internal datal layout to it
-    glGenVertexArrays(1, &vao1);
-    glBindVertexArray(vao1);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo1);
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(4 * sizeof(float)));
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+    // model2 =================================================    
+    GLuint vbo3;
+    genVbo(model2.smaVerts.data(), model2.smaVerts.size() * sizeof(SmaVertex), &vbo3);
     
-    glGenVertexArrays(1, &vao2);
-    glBindVertexArray(vao2);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo2);
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(4 * sizeof(float)));
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+    // generate VAO and link VBO and it's internal data layout to it    
+    // model1 =================================================    
+    genVao(vbo1, 4, 2, 0, sizeof(float), &vao1);
+    genVao(vbo2, 4, 2, 0, sizeof(float), &vao2);
     
+    // model2 =================================================    
+    genVao(vbo3, 3, 3, 2, sizeof(float), &vao3);    
+       
     SDL_GL_SetSwapInterval(1);
         
     Uint32 currentTime = SDL_GetTicks();
@@ -387,8 +362,12 @@ int main(int argc, char **argv)
     Uint32 deltaTime = currentTime - lastTime;
     
     updateCamera(camera, matricesUbo);
+    updateCamera(camera, matricesUbo2);
     
-    // depth stuff
+    // depth stuff    
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
@@ -396,12 +375,9 @@ int main(int argc, char **argv)
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE);
     glDepthFunc(GL_LESS);
-    glDepthRange(0.1f, 100.0);
+    glDepthRange(0.1f, 100.0f);
     
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    
-    glm::mat4 objectPositionMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f,0.0f,0.0f));
+    glm::mat4 objectPositionMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
     
     // init gl error check
     GLenum err1;
@@ -470,36 +446,29 @@ int main(int argc, char **argv)
         glUseProgram(program);
         
         // object1
+        objectPositionMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -2.0f));
+        glUniformMatrix4fv(modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(objectPositionMatrix));        
+        renderVao(vao2, 2, textureId1, 6);
+        
+        // object 2
         rotationAngle += 0.01;
         objectPositionMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -5.0f));
         objectPositionMatrix = glm::rotate(objectPositionMatrix, rotationAngle, glm::vec3(0.0f, 1.0f, 0.0f));
-        glUniformMatrix4fv(modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(objectPositionMatrix));
-                
-        glBindVertexArray(vao1);
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glBindTexture(GL_TEXTURE_2D, textureId2);
-        glDrawArrays(GL_TRIANGLES, 0, model.getVertexLen());
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glDisableVertexAttribArray(0);
-        glDisableVertexAttribArray(1);
-        glBindVertexArray(0);
-                
-        // object 2
-        objectPositionMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -2.0f));
-        glUniformMatrix4fv(modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(objectPositionMatrix));
+        glUniformMatrix4fv(modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(objectPositionMatrix));        
+        renderVao(vao1, 2, textureId2, model.getVertexLen());
         
-        glBindVertexArray(vao2);
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glBindTexture(GL_TEXTURE_2D, textureId1);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glDisableVertexAttribArray(0);
-        glDisableVertexAttribArray(1);
-        glBindVertexArray(0);
         glUseProgram(0);
         
+        // model2 =======================
+        glUseProgram(smaProgram);
+                
+        objectPositionMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -20.0f));
+        objectPositionMatrix = glm::rotate(objectPositionMatrix, rotationAngle, glm::vec3(1.0f, 0.0f, 0.0f));
+        glUniformMatrix4fv(modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(objectPositionMatrix));
+        
+        renderVao(vao3, 3, textureId3, model2.smaVerts.size());
+                
+        glUseProgram(0);
 
         SDL_GL_SwapWindow(window);
 

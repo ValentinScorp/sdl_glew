@@ -133,8 +133,8 @@ void Model::loadSmaMesh(std::string fileName) {
     
 	std::ifstream inputFile(fileName, std::ios::in | std::ios::binary);
 	if (inputFile.fail()) {
-		return;
-		//error("Open file error\n");
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Unable to open file -> %s\n", fileName.c_str());
+        return;
 	}
 
 	inputFile.seekg(0, std::ios::end);
@@ -150,6 +150,7 @@ void Model::loadSmaMesh(std::string fileName) {
 	char fileFormatSma[8] = "SMA";
 	memcpy(fileFormat, data_iterator, sizeof(char) * 8);
 	if (strcmp(fileFormat, fileFormatSma) != 0) {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "This is not sma file -> %s\n", fileName.c_str());
 		delete[] data;
 		return;
 	}
@@ -163,19 +164,19 @@ void Model::loadSmaMesh(std::string fileName) {
 	data_iterator += sizeof(char) * 32;
 	
 	// vertexes
-	unsigned short vertexTotal = *(unsigned short*)data_iterator;
+	unsigned short posTotal = *(unsigned short*)data_iterator;
 	data_iterator += sizeof(unsigned short);
-	std::vector<glm::vec3> vertexes;
-	if (vertexTotal) {
-		for (int i = 0; i < (vertexTotal / 3); i++) {
+	std::vector<glm::vec3> positions;
+	if (posTotal) {
+		for (int i = 0; i < (posTotal / 3); i++) {
 
 			float *x = (float*)data_iterator; data_iterator += sizeof(float);
 			float *y = (float*)data_iterator; data_iterator += sizeof(float);
 			float *z = (float*)data_iterator; data_iterator += sizeof(float);
 
-			glm::vec3 v((*x), *y, *z);
+			glm::vec3 p((*x), *y, *z);
 
-			vertexes.push_back(v);
+			positions.push_back(p);
 		}
 	}
 
@@ -199,7 +200,7 @@ void Model::loadSmaMesh(std::string fileName) {
 	unsigned short uvTotal = *(unsigned short*)data_iterator;
 	data_iterator += sizeof(unsigned short);
 	std::vector<glm::vec2> texcoords;
-	if (uvTotal > 0 && uvTotal == (vertexTotal / 3) * 2) {
+	if (uvTotal > 0 && uvTotal == (posTotal / 3) * 2) {
 		for (int i = 0; i < (uvTotal / 2); i++) {
 
 			float *s = (float*)data_iterator; data_iterator += sizeof(float);
@@ -234,8 +235,8 @@ void Model::loadSmaMesh(std::string fileName) {
 	}
     
     // smaVertexes
-    for (int i = 0; i < vertexes.size(); i++) {
-        SmaVertex vert(vertexes[i], normals[i], texcoords[i]);
+    for (int i = 0; i < positions.size(); i++) {
+        SmaVertex vert(positions[i], normals[i], texcoords[i]);
         smaVerts.push_back(vert);
         //vert.print();
     }
