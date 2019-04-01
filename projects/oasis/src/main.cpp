@@ -254,6 +254,10 @@ int main(int argc, char **argv)
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     
@@ -275,6 +279,8 @@ int main(int argc, char **argv)
     }
     SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "OpenGL version -> %s", glGetString(GL_VERSION));
     
+    int ds;
+    SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &ds);
     
     GLenum err = glewInit();
     if (err != GLEW_OK) {
@@ -313,7 +319,7 @@ int main(int argc, char **argv)
     unloadShader(&vertexShader);
     unloadShader(&fragmentShader);
    
-    // model2 ================================
+    // model2 roman ================================
     Model model2;
     model2.loadSmaMesh("model/Cube.002.sma");
     GLuint smaVertexShader = 0;
@@ -339,13 +345,14 @@ int main(int argc, char **argv)
    // generate VBO for objects and send vertex data to it
     // model1 =================================================    
     GLuint vbo1;
-    genVbo(model.getVertexBufferData(), model.getVertexBufferSize(), &vbo1);  
+    genVbo(model.getVertexBufferData(), model.getVertexBufferSize(), &vbo1);      
     GLuint vbo2;
     genVbo(plane2, sizeof(plane2), &vbo2);
     
-    // model2 =================================================    
+    // model2 roman =================================================    
     GLuint vbo3;
-    genVbo(model2.smaVerts.data(), model2.smaVerts.size() * sizeof(SmaVertex), &vbo3);
+    genVbo(model2.getVertexBufferData(), model2.getVertexBufferSize(), &vbo3);      
+    //genVbo(model2.smaVerts.data(), model2.smaVerts.size() * sizeof(SmaVertex), &vbo3);
     
     // generate VAO and link VBO and it's internal data layout to it    
     // model1 =================================================    
@@ -365,6 +372,9 @@ int main(int argc, char **argv)
     updateCamera(camera, matricesUbo2);
     
     // depth stuff    
+   // glAlphaFunc(GL_GREATER, 0.0);
+    //glEnable(GL_ALPHA_TEST);
+    
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
@@ -372,10 +382,10 @@ int main(int argc, char **argv)
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
     
-    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);    
     glDepthMask(GL_TRUE);
     glDepthFunc(GL_LESS);
-    glDepthRange(0.1f, 100.0f);
+    glDepthRange(0.1f, 100.0f);    
     
     glm::mat4 objectPositionMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
     
@@ -442,32 +452,36 @@ int main(int argc, char **argv)
         glClearColor(0.0f, 0.8f, 0.8f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 
-        // model 1 =====================
+        // model 1 object 2 (coub)
         glUseProgram(program);
-        
-        // object1
-        objectPositionMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -2.0f));
-        glUniformMatrix4fv(modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(objectPositionMatrix));        
-        renderVao(vao2, 2, textureId1, 6);
-        
-        // object 2
         rotationAngle += 0.01;
         objectPositionMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -5.0f));
         objectPositionMatrix = glm::rotate(objectPositionMatrix, rotationAngle, glm::vec3(0.0f, 1.0f, 0.0f));
         glUniformMatrix4fv(modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(objectPositionMatrix));        
-        renderVao(vao1, 2, textureId2, model.getVertexLen());
-        
+        renderVao(vao1, 2, textureId2, model.getVertexLen());        
         glUseProgram(0);
         
-        // model2 =======================
+        // model2 (roman) =======================
+        model2.update(rotationAngle);
         glUseProgram(smaProgram);
-                
-        objectPositionMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -20.0f));
-        objectPositionMatrix = glm::rotate(objectPositionMatrix, rotationAngle, glm::vec3(1.0f, 0.0f, 0.0f));
+        objectPositionMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -20.0f));        
+        objectPositionMatrix = glm::rotate(objectPositionMatrix, rotationAngle, glm::vec3(0.0f, 1.0f, 0.0f));
+        objectPositionMatrix = glm::rotate(objectPositionMatrix, 180.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+        
         glUniformMatrix4fv(modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(objectPositionMatrix));
         
+        //model2.smaVerts.data(), model2.smaVerts.size() * sizeof(SmaVertex), &vbo3
+        glBindBuffer(GL_ARRAY_BUFFER, vbo3);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, model2.getVertexBufferSize(), model2.getVertexBufferData());
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
         renderVao(vao3, 3, textureId3, model2.smaVerts.size());
-                
+        glUseProgram(0);
+        
+        // model 1 object 1 (castle) =====================
+        glUseProgram(program);        
+        objectPositionMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -2.0f));
+        glUniformMatrix4fv(modelToWorldMatrixUnif, 1, GL_FALSE, glm::value_ptr(objectPositionMatrix));        
+        renderVao(vao2, 2, textureId1, 6);        
         glUseProgram(0);
 
         SDL_GL_SwapWindow(window);

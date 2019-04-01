@@ -2,6 +2,7 @@
 
 #include "Precompiled.h"
 
+class AnimateModel;
 class Vertex {
 public:
     Vertex();
@@ -64,12 +65,17 @@ public:
     void loadMesh(std::string fileName);
     void loadSmaMesh(std::string fileName);
     
+    void update(float time);
+    
     GLsizeiptr getVertexBufferSize();
     GLvoid* getVertexBufferData();
+    GLvoid* getVertexBufferAnimData();
     GLsizei getVertexLen();
         
     std::vector<Vertex> vertexes;
     std::vector<SmaVertex> smaVerts;
     std::string name;
+    
+    AnimateModel *amesh = 0;
 };
 

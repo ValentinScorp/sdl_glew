@@ -17,4 +17,5 @@
 
 #include "Configuration.h"
 #include "Model.h"
+#include "AnimateModel.h"
 #include "Camera.h"

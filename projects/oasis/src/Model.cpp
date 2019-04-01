@@ -48,6 +48,9 @@ Model::Model() {
 }
 
 Model::~Model() {
+    if (amesh != 0) {
+        delete amesh;
+    }
 }
 
 void Model::loadMesh(std::string fileName) {
@@ -121,13 +124,27 @@ void Model::loadMesh(std::string fileName) {
     }
 }
 GLsizeiptr Model::getVertexBufferSize() {
-    return (vertexes.size() * sizeof(Vertex));
+    if (amesh == 0)
+        return 0;
+    return (amesh->vertexes.size() * sizeof(SmaVertex));
 }
 GLvoid* Model::getVertexBufferData() {
-    return vertexes.data();
+    if (amesh == 0)
+        return 0;
+    //std::cout << amesh->vertexes[0].pos.x << std::endl;
+    return amesh->vertexes.data();
+    //return vertexes.data();
 }
+
+GLvoid* Model::getVertexBufferAnimData() {
+    if (amesh == 0)
+        return 0;
+    return amesh->vertexes.data();
+    //return vertexes.data();
+}
+
 GLsizei Model::getVertexLen() {
-    return vertexes.size();
+    return smaVerts.size();
 }
 void Model::loadSmaMesh(std::string fileName) {
     
@@ -235,9 +252,114 @@ void Model::loadSmaMesh(std::string fileName) {
 	}
     
     // smaVertexes
+   
+    
+    //================================ animations =========================================
+	// skeleton
+	amesh = new AnimateModel();
+	//amesh->SetTexture(texName);
+
+	unsigned short numBones = *(unsigned short*)data_iterator;
+	data_iterator += sizeof(unsigned short);
+	
+	//auto animations = new Animations();
+
+	for (int i = 0; i < numBones; i++) {
+
+		short parentIdx = *(unsigned short*)data_iterator;
+		data_iterator += sizeof(unsigned short);
+		
+		glm::fvec3 rot, pos;
+		rot.x = (*(float*)data_iterator); data_iterator += sizeof(float);
+		rot.y = *(float*)data_iterator; data_iterator += sizeof(float);
+		rot.z = *(float*)data_iterator; data_iterator += sizeof(float);
+
+		pos.x = (*(float*)data_iterator); data_iterator += sizeof(float);
+		pos.y = *(float*)data_iterator; data_iterator += sizeof(float);
+		pos.z = *(float*)data_iterator; data_iterator += sizeof(float);
+		
+		amesh->AddBone(pos, rot);
+	}
+	
+	// vertex weights
+	unsigned short numVertWeights = *(unsigned short*)data_iterator;
+	data_iterator += sizeof(unsigned short);
+
+	for (int i = 0; i < numVertWeights; i++) {
+		unsigned short numWeights = *(unsigned short*)data_iterator;
+		data_iterator += sizeof(unsigned short);
+
+		std::vector<AnimateModel::Weight> vertexWeights;
+		for (int j = 0; j < numWeights; j++) {
+			short boneIndex = *(unsigned short*)data_iterator;
+			data_iterator += sizeof(unsigned short);
+
+			float weight = *(float*)data_iterator;
+			data_iterator += sizeof(float);
+
+			
+			AnimateModel::Bone *bone = nullptr;
+			if (boneIndex >= 0 && boneIndex < amesh->GetBonesNum()) {
+				bone = amesh->GetBone(boneIndex);
+			}
+			AnimateModel::Weight w(bone, weight);
+			vertexWeights.push_back(w);
+		}
+		amesh->AddVertexWeights(vertexWeights);	
+	}
+	// animations
+
+	unsigned short numAnimations = *(unsigned short*)data_iterator;
+	data_iterator += sizeof(unsigned short);
+	for (int i = 0; i < numAnimations; i++)	{
+		
+		char animName[64] = "None";
+		memcpy(animName, data_iterator, sizeof(char) * 64);
+		data_iterator += sizeof(char) * 64;
+
+		auto *animation = new AnimateModel::Animation(animName);
+        std::cout << "reading animation " << animName << std::endl;
+        
+		unsigned short numKeyframes = *(unsigned short*)data_iterator;
+		data_iterator += sizeof(unsigned short);
+		
+		for (int j = 0; j < numKeyframes; j++) {
+			AnimateModel::KeyFrame kf;
+			unsigned short keyframeIndex = *(unsigned short*)data_iterator;
+			data_iterator += sizeof(unsigned short);
+
+			kf.index = keyframeIndex;
+			for (int k = 0; k < numBones; k++) {
+				glm::fvec3 rotation;
+				glm::fvec3 position;
+
+				rotation.x = (*(float*)data_iterator); data_iterator += sizeof(float);
+				rotation.y = *(float*)data_iterator; data_iterator += sizeof(float);
+				rotation.z = *(float*)data_iterator; data_iterator += sizeof(float);
+				position.x = (*(float*)data_iterator); data_iterator += sizeof(float);
+				position.y = *(float*)data_iterator; data_iterator += sizeof(float);
+				position.z = *(float*)data_iterator; data_iterator += sizeof(float);
+
+				kf.rotations.push_back(rotation);
+				kf.positions.push_back(position);
+				kf.bone.push_back(amesh->GetBone(k));
+			}
+			animation->AddKeyframe(kf);
+		}
+		amesh->AddAnimation(animation);
+	}
+	amesh->BeginAnimation("Walk");
+    
+	delete[] data;
+	data_iterator = nullptr;
+    
     for (int i = 0; i < positions.size(); i++) {
         SmaVertex vert(positions[i], normals[i], texcoords[i]);
         smaVerts.push_back(vert);
-        //vert.print();
+        amesh->vertexes.push_back(vert);
     }
+}
+
+void Model::update(float time) {
+    amesh->UpdateAnimation(time, smaVerts);
 }

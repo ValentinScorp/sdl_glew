@@ -8,6 +8,8 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
+    <File Name="../src/AnimateModel.cpp"/>
+    <File Name="../src/AnimateModel.h"/>
     <File Name="../src/Configuration.cpp"/>
     <File Name="../src/Configuration.h"/>
     <File Name="../src/Camera.cpp"/>
