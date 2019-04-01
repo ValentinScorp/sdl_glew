@@ -131,9 +131,8 @@ GLsizeiptr Model::getVertexBufferSize() {
 GLvoid* Model::getVertexBufferData() {
     if (amesh == 0)
         return 0;
-    //std::cout << amesh->vertexes[0].pos.x << std::endl;
-    return amesh->vertexes.data();
-    //return vertexes.data();
+    
+    return amesh->vertexes.data();    
 }
 
 GLvoid* Model::getVertexBufferAnimData() {
@@ -318,7 +317,6 @@ void Model::loadSmaMesh(std::string fileName) {
 		data_iterator += sizeof(char) * 64;
 
 		auto *animation = new AnimateModel::Animation(animName);
-        std::cout << "reading animation " << animName << std::endl;
         
 		unsigned short numKeyframes = *(unsigned short*)data_iterator;
 		data_iterator += sizeof(unsigned short);

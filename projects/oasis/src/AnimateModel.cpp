@@ -3,42 +3,21 @@
 glm::mat4 AnimateModel::Bone::GetLocalToWorldMatrix()
 {
 	glm::mat4 FinalMat = glm::mat4(1.0f);
-	glm::mat4 MatTemp = glm::mat4(1.0f);;  // Temp matrix for rotations.
-	glm::mat4 MatRot = glm::mat4(1.0f);;   // Final rotation matrix, applied to 
-						 // pMatWorld.
+	glm::mat4 MatTemp = glm::mat4(1.0f);
+	glm::mat4 MatRot = glm::mat4(1.0f);
 
-						 // Using the left-to-right order of matrix concatenation,
-						 // apply the translation to the object's world position
-						 // before applying the rotations.
-//  D3DXMatrixIdentity(&FinalMat);
     FinalMat = glm::translate(FinalMat, glm::fvec3(position.x, position.y, position.z));
-	//D3DXMatrixTranslation(&FinalMat, position.x, position.y, position.z);
-//	D3DXMatrixIdentity(&MatRot);
-
-	// Now, apply the orientation variables to the world matrix
-
-	// Produce and combine the rotation matrices.
-	//D3DXMatrixRotationX(&MatTemp, rotation.x);         // Pitch
-	//D3DXMatrixMultiply(&MatRot, &MatRot, &MatTemp);
-	//D3DXMatrixRotationY(&MatTemp, rotation.y);           // Yaw
-	//D3DXMatrixMultiply(&MatRot, &MatRot, &MatTemp);
-	//D3DXMatrixRotationZ(&MatTemp, rotation.z);          // Roll
-	//D3DXMatrixMultiply(&MatRot, &MatRot, &MatTemp);
     
     MatTemp = glm::rotate(MatTemp, rotation.x, glm::fvec3(1.0f, 0.0f, 0.0f));
     MatRot =  MatTemp * MatRot;
     MatTemp = glm::mat4(1.0);
     MatTemp = glm::rotate(MatTemp, rotation.y, glm::fvec3(0.0f, 1.0f, 0.0f));
     MatRot =  MatTemp * MatRot;
-    //MatRot = MatRot * MatTemp;
     MatTemp = glm::mat4(1.0);
     MatTemp = glm::rotate(MatTemp, rotation.z, glm::fvec3(0.0f, 0.0f, 1.0f));
     MatRot =  MatTemp * MatRot;
-    //MatRot = MatRot * MatTemp;
-
-	// Apply the rotation matrices to complete the world matrix.
+    
 	FinalMat = FinalMat * MatRot;
-    //D3DXMatrixMultiply(&FinalMat, &MatRot, &FinalMat);
 
 	return FinalMat;
 }
@@ -107,8 +86,6 @@ void AnimateModel::addVertex(glm::fvec3 pos, glm::fvec3 nor, glm::fvec2 uv)
 void AnimateModel::addVertex(SmaVertex ver)
 {
 	vertexes.push_back(ver);
-
-	//Mesh::addVertex(ver);
 }
 
 void AnimateModel::UpdateAnimation(float dt, std::vector<SmaVertex> &smaVerts)
@@ -127,8 +104,7 @@ void AnimateModel::UpdateAnimation(float dt, std::vector<SmaVertex> &smaVerts)
 	}
 	if (currentFrame >= currentAnimation->GetKeyframesNum()) {
 		currentFrame = 0;
-	}
-    std::cout << currentFrame << std::endl;
+	}    
 	for (int i = 0; i < vertexes.size(); i++) {
 		glm::fvec3 finalVecPositin(0.0f, 0.0f, 0.0f);
 
