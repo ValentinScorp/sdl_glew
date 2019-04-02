@@ -15,6 +15,7 @@
 #include <fstream>
 #include <sstream>
 
+#include "graphics/Mesh.h"
 #include "Configuration.h"
 #include "Model.h"
 #include "AnimateModel.h"

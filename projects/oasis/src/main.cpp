@@ -38,6 +38,8 @@ GLfloat rotationAngle = 0;
 
 float fovy = 45.0f;
 
+Mesh mesh;
+
 SDL_Surface* flipSdlSurfaceVertical(SDL_Surface* sfc) {
      SDL_Surface* result = SDL_CreateRGBSurface(sfc->flags, sfc->w, sfc->h,
          sfc->format->BytesPerPixel * 8, sfc->format->Rmask, sfc->format->Gmask,
@@ -139,6 +141,7 @@ void genVbo(const GLvoid *data, GLsizeiptr size, GLuint *vboId) {
     glBufferData(GL_ARRAY_BUFFER, size, data, GL_STREAM_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
+
 void genVao(GLuint vbo, GLsizeiptr attribNum1, GLsizeiptr attribNum2, GLsizeiptr attribNum3, GLsizeiptr componentSize, GLuint *vao) {
     glGenVertexArrays(1, vao);
     glBindVertexArray(*vao);

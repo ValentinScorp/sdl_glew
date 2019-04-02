@@ -1,7 +1,6 @@
 #include "AnimateModel.h"
 
-glm::mat4 AnimateModel::Bone::GetLocalToWorldMatrix()
-{
+glm::mat4 AnimateModel::Bone::GetLocalToWorldMatrix() {
 	glm::mat4 FinalMat = glm::mat4(1.0f);
 	glm::mat4 MatTemp = glm::mat4(1.0f);
 	glm::mat4 MatRot = glm::mat4(1.0f);
@@ -22,17 +21,14 @@ glm::mat4 AnimateModel::Bone::GetLocalToWorldMatrix()
 	return FinalMat;
 }
 
-
-AnimateModel::AnimateModel()
-{
+AnimateModel::AnimateModel() {
 	currentAnimation = nullptr;
 	animCounter = 0;
 	currentFrame = 0;
 }
 
 
-AnimateModel::~AnimateModel()
-{
+AnimateModel::~AnimateModel() {
 	weights.clear();
 
 	for (auto a : animations)
@@ -44,36 +40,30 @@ AnimateModel::~AnimateModel()
 			delete b;
 }
 
-void AnimateModel::AddBone(glm::fvec3 p, glm::fvec3 r)
-{
+void AnimateModel::AddBone(glm::fvec3 p, glm::fvec3 r) {
 	auto b = new Bone(p, r);
 	bones.push_back(b);
 }
 
-AnimateModel::Bone * AnimateModel::GetBone(size_t id)
-{
+AnimateModel::Bone * AnimateModel::GetBone(size_t id) {
 	if (id < bones.size())
 		return bones[id];
 	return nullptr;
 }
 
-size_t AnimateModel::GetBonesNum()
-{
+size_t AnimateModel::GetBonesNum() {
 	return bones.size();
 }
 
-void AnimateModel::AddVertexWeights(std::vector<Weight> w)
-{
+void AnimateModel::AddVertexWeights(std::vector<Weight> w) {
 	weights.push_back(w);
 }
 
-void AnimateModel::AddAnimation(Animation * anim)
-{
+void AnimateModel::AddAnimation(Animation * anim) {
 	animations.push_back(anim);
 }
 
-void AnimateModel::addVertex(glm::fvec3 pos, glm::fvec3 nor, glm::fvec2 uv)
-{
+void AnimateModel::addVertex(glm::fvec3 pos, glm::fvec3 nor, glm::fvec2 uv) {
 	SmaVertex v;
 	v.pos = pos;
 	v.nor = nor;
@@ -83,13 +73,11 @@ void AnimateModel::addVertex(glm::fvec3 pos, glm::fvec3 nor, glm::fvec2 uv)
 	vertexes.push_back(SmaVertex(pos, nor, uv));
 }
 
-void AnimateModel::addVertex(SmaVertex ver)
-{
+void AnimateModel::addVertex(SmaVertex ver) {
 	vertexes.push_back(ver);
 }
 
-void AnimateModel::UpdateAnimation(float dt, std::vector<SmaVertex> &smaVerts)
-{
+void AnimateModel::UpdateAnimation(float dt, std::vector<SmaVertex> &smaVerts) {
 	if (currentAnimation == nullptr) {
 		return;
 	}
@@ -104,7 +92,7 @@ void AnimateModel::UpdateAnimation(float dt, std::vector<SmaVertex> &smaVerts)
 	}
 	if (currentFrame >= currentAnimation->GetKeyframesNum()) {
 		currentFrame = 0;
-	}    
+	}
 	for (int i = 0; i < vertexes.size(); i++) {
 		glm::fvec3 finalVecPositin(0.0f, 0.0f, 0.0f);
 
@@ -132,8 +120,7 @@ void AnimateModel::UpdateAnimation(float dt, std::vector<SmaVertex> &smaVerts)
 	}
 }
 
-void AnimateModel::BeginAnimation(std::string aname)
-{
+void AnimateModel::BeginAnimation(std::string aname) {
 	for (auto a : animations) {
 		if (a->GetName() == aname) {
 			currentAnimation = a;
@@ -141,16 +128,14 @@ void AnimateModel::BeginAnimation(std::string aname)
 	}
 }
 
-void AnimateModel::StopAnimation()
-{
+void AnimateModel::StopAnimation() {
 	for (int i = 0; i < vertexes.size(); i++) {
 		vertexes[i] = vertexes[i];
 	}
 	currentAnimation = nullptr;	
 }
 
-AnimateModel::Animation * AnimateModel::getAnimation(std::string aname)
-{
+AnimateModel::Animation * AnimateModel::getAnimation(std::string aname) {
 	for (auto a : animations) {
 		if (a->GetName() == aname) {
 			return a;
@@ -159,18 +144,15 @@ AnimateModel::Animation * AnimateModel::getAnimation(std::string aname)
 	return nullptr;
 }
 
-size_t AnimateModel::GetVertexesNum()
-{
+size_t AnimateModel::GetVertexesNum() {
 	return vertexes.size();
 }
 
-size_t AnimateModel::GetVertexSize()
-{
+size_t AnimateModel::GetVertexSize() {
 	return sizeof(SmaVertex);
 }
 
-SmaVertex* AnimateModel::GetVertexes()
-{
+SmaVertex* AnimateModel::GetVertexes() {
 	return &vertexes[0];
 }
 

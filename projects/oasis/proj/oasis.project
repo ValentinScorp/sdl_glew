@@ -8,6 +8,10 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
+    <VirtualDirectory Name="graphics">
+      <File Name="../src/graphics/Mesh.h"/>
+      <File Name="../src/graphics/Mesh.cpp"/>
+    </VirtualDirectory>
     <File Name="../src/AnimateModel.cpp"/>
     <File Name="../src/AnimateModel.h"/>
     <File Name="../src/Configuration.cpp"/>

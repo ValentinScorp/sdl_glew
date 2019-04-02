@@ -13,16 +13,29 @@ Configuration::Configuration(std::string fileName) {
     } else {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Unable to open file -> %s\n", fileName.c_str());
     }
-    std::string sectionName;
+    std::string sectionName, sectionName_old;
+    Section sect;
     for (auto line: fileContent) {
         if (line.size() > 1) {
             if (line[0] == '[') {
                 sectionName = line.substr(1, (line.size() - 2));
             } else {
                 if (line[0] != ';' && line[0] != '#') {
+                    if (sectionName != sectionName_old) {
+                        if (sectionName_old != "") {
+                            sections.push_back(sect);
+                        }
+                        sectionName_old = sectionName;
+                        sect.name = sectionName;
+                        sect.parameters.clear();
+                    }
                     size_t delimPos = line.find('=');
                     std::string paramName = line.substr(0, delimPos);
                     std::string paramValue = line.substr(delimPos + 1, line.size());
+                    std::pair<std::string, std::string> param;
+                    param.first = paramName;
+                    param.second = paramValue;
+                    sect.parameters.push_back(param);
                     if (sectionName == "Window") {
                         if (paramName == "width") {
                             screenResolutionWidth = std::atoi(paramValue.c_str());
@@ -50,6 +63,14 @@ Configuration::Configuration(std::string fileName) {
                     }
                 }
             }
+        }
+    }
+    sections.push_back(sect);
+    
+    for (auto s: sections) {
+        std::cout << "[" << s.name << "]" << std::endl;
+        for (auto p: s.parameters) {
+            std::cout << p.first << "=" << p.second << std::endl;
         }
     }
 }
