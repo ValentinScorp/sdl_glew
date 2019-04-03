@@ -4,31 +4,48 @@
 
 class Configuration
 {
-    
     class Parameter {
-    public:
-        virtual float floatValue() = 0;
-        virtual glm::fvec3 fvec3Value() = 0;
-        virtual ~Parameter() = 0;
-    };
-    class Float : public Parameter {
     private:
-        float v;
+        
+        void errorDescr() {
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Configuraion file error! Parameter -> %s ... using default value!\n", value.c_str());
+        }
     public:
-        float floatValue() { return v; }
-        virtual glm::fvec3 fvec3Value() { SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Unable to get fvec3 value from float\n"); }
-        Float(float iv) : v(iv) {}
-        ~Float() {}
+        std::string value;
+            
+        float toFloat() {
+            float var = 0;
+            try {
+                var = std::stof(value);
+            } catch (std::exception &e) {
+                errorDescr();
+            }
+            return var;
+        }
+        glm::fvec3 toFvec3() {
+            glm::fvec3 vec(0.0f);
+            try {
+                std::string::size_type firstComaPos = value.find(',');
+                std::string::size_type secondComaPos = value.find(',', firstComaPos + 1);
+                if (firstComaPos == std::string::npos || secondComaPos == std::string::npos) {
+                    throw std::exception();
+                }
+                std::string x = value.substr(0, firstComaPos);
+                std::string y = value.substr(firstComaPos + 1, (secondComaPos - firstComaPos - 1));
+                std::string z = value.substr(secondComaPos + 1, (value.size()- secondComaPos));
+                vec.x = std::stof(x);
+                vec.y = std::stof(y);
+                vec.z = std::stof(z);
+            } catch (std::exception &e) {
+                errorDescr();
+            }
+            return vec;
+        }
+        Parameter() {}
+        Parameter(std::string str) : value(str) {}
+        ~Parameter() {}
     };
-    class Vec3 : public Parameter {
-    private:
-        glm::fvec3 v;
-    public:
-        float floatValue() { SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Unable to get float value from fvec3 -> %s\n"); }
-        virtual glm::fvec3 fvec3Value() { return v; }
-        Vec3(glm::fvec3 iv) : v(iv) {}
-        ~Vec3() {}
-    };
+    
     class Section {
     public:
         Section() {
@@ -36,28 +53,21 @@ class Configuration
         ~Section() {
         }
         std::string name;
-        std::vector<std::pair<std::string, std::string>> parameters;
+        std::vector<std::pair<std::string, Parameter>> parameters;
     };
+    
 public:
     Configuration(std::string fileName);
     virtual ~Configuration();
     
+    void print();
     void convertStrToVec3(std::string paramName, std::string paramValue, glm::vec3 *vec);
     void convertStrToFloat(std::string paramName, std::string paramValue, float *var);
     
     float getScreenAspectRatio();
     
-    void getParameter(std::string sectionName, std::string parameter);
-    
-    float screenResolutionWidth = 640;
-    float screenResolutionHeight = 480;
-    
-    glm::vec3 camPosition = {0.0f, 0.0f, 0.0f};
-    glm::vec3 camUpVec = {0.0f, 0.0f, 0.0f};
-    glm::vec3 camLookAt = {0.0f, 0.0f, 0.0f};
-    float camNearPlane = 0;
-    float camFarPlane = 0;
-    
+    Parameter getParameter(std::string sectionName, std::string parameter);
+                
     std::vector<Section> sections;
 };
 

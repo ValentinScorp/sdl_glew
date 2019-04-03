@@ -7,17 +7,17 @@ layout(location = 2) in vec2 iUv;
 out vec3 normal;
 out vec2 uv;
 
-layout(std140) uniform GlobalMatrices
+layout(std140) uniform cameraMatrices
 {
-   mat4 cameraToClipMatrix;
-   mat4 worldToCameraMatrix;
+   mat4 projection;
+   mat4 view;   
 };
 
-uniform mat4 modelToWorldMatrix;
+uniform mat4 modelMatrix;
 
 void main()
 {
-   gl_Position = cameraToClipMatrix * worldToCameraMatrix * modelToWorldMatrix * vec4(iPosition, 1.0);
+   gl_Position = projection * view * modelMatrix * vec4(iPosition, 1.0);
    normal = iNormal;
    uv = iUv;
 }

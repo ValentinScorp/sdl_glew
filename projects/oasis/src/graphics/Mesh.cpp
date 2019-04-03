@@ -8,3 +8,6 @@ Mesh::~Mesh()
 {
 }
 
+void Mesh::load(std::string fileName) {
+    
+}

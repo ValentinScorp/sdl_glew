@@ -26,8 +26,8 @@ void Camera::moveDown() {
 }
 
 void Camera::init(Configuration* cfg) {
-    position = cfg->camPosition;
+    position = cfg->getParameter("Camera", "position").toFvec3();
     aspectRatio = cfg->getScreenAspectRatio();
-    upVector = cfg->camUpVec;
-    lookTarget = cfg->camLookAt;
+    upVector = cfg->getParameter("Camera", "upVector").toFvec3();
+    lookTarget = cfg->getParameter("Camera", "lookAt").toFvec3();
 }

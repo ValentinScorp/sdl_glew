@@ -8,5 +8,6 @@ public:
     Mesh();
     virtual ~Mesh();
 
+    void load(std::string fileName);
 };
 

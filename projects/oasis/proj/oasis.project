@@ -9,6 +9,10 @@
   <Dependencies/>
   <VirtualDirectory Name="src">
     <VirtualDirectory Name="graphics">
+      <File Name="../src/graphics/RenderObject.cpp"/>
+      <File Name="../src/graphics/RenderObject.h"/>
+      <File Name="../src/graphics/Renderer.h"/>
+      <File Name="../src/graphics/Renderer.cpp"/>
       <File Name="../src/graphics/Mesh.h"/>
       <File Name="../src/graphics/Mesh.cpp"/>
     </VirtualDirectory>

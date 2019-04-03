@@ -32,51 +32,28 @@ Configuration::Configuration(std::string fileName) {
                     size_t delimPos = line.find('=');
                     std::string paramName = line.substr(0, delimPos);
                     std::string paramValue = line.substr(delimPos + 1, line.size());
-                    std::pair<std::string, std::string> param;
+                    std::pair<std::string, Parameter> param;
                     param.first = paramName;
                     param.second = paramValue;
                     sect.parameters.push_back(param);
-                    if (sectionName == "Window") {
-                        if (paramName == "width") {
-                            screenResolutionWidth = std::atoi(paramValue.c_str());
-                        }
-                        if (paramName == "height") {
-                            screenResolutionHeight = std::atoi(paramValue.c_str());
-                        }
-                    }
-                    if (sectionName == "Camera") {
-                        if (paramName == "position") {
-                            convertStrToVec3("[" + sectionName + "] " + paramName, paramValue, &camPosition);
-                        }
-                        if (paramName == "upVector") {
-                            convertStrToVec3("[" + sectionName + "] " + paramName, paramValue, &camUpVec);
-                        }
-                        if (paramName == "lookAt") {
-                            convertStrToVec3("[" + sectionName + "] " + paramName, paramValue, &camLookAt);
-                        }
-                        if (paramName == "nearPlane") {
-                            convertStrToFloat("[" + sectionName + "] " + paramName, paramValue, &camNearPlane);
-                        }
-                        if (paramName == "farPlane") {
-                            convertStrToFloat("[" + sectionName + "] " + paramName, paramValue, &camFarPlane);
-                        }
-                    }
                 }
             }
         }
     }
     sections.push_back(sect);
-    
-    for (auto s: sections) {
-        std::cout << "[" << s.name << "]" << std::endl;
-        for (auto p: s.parameters) {
-            std::cout << p.first << "=" << p.second << std::endl;
-        }
-    }
 }
 
 Configuration::~Configuration()
 {
+}
+
+void Configuration::print() {
+    for (auto s: sections) {
+        std::cout << "[" << s.name << "]" << std::endl;
+        for (auto p: s.parameters) {
+            std::cout << p.first << "=" << p.second.value << std::endl;
+        }
+    }
 }
 
 void Configuration::convertStrToFloat(std::string paramName, std::string paramValue, float *var) {
@@ -106,9 +83,24 @@ void Configuration::convertStrToVec3(std::string paramName, std::string paramVal
 }
 
 float Configuration::getScreenAspectRatio() {
-    if (screenResolutionHeight != 0) {
-        return screenResolutionWidth/screenResolutionHeight;
+    float w = getParameter("Window", "width").toFloat();
+    float h = getParameter("Window", "height").toFloat();
+    if (w != 0 && h != 0) {
+        return w / h;
     }
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error in Configuration::getScreenAspectRatio()\n");
     return 1;
+}
+
+Configuration::Parameter Configuration::getParameter(std::string sectionName, std::string parameter) {
+    for (auto s: sections) {
+        if (s.name == sectionName) {
+            for (auto p: s.parameters) {
+                if (p.first == parameter) {
+                    return p.second;
+                }
+            }
+        }
+    }
+    return Parameter("Error");
 }
