@@ -74,9 +74,14 @@ int main(int argc, char **argv)
     Renderer renderer;
     renderer.init(&config);
     
+    //Mesh mesh();
+    //mesh.loadSmaMesh("model/Cube.002.sma");
+    
     RenderObject objectRoman;
     objectRoman.init(&renderer, &config, "Roman"); 
     objectRoman.setOrientation(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    
+    objectRoman.mesh->BeginAnimation("Walk");
 
     Uint32 currentTime = SDL_GetTicks();
     Uint32 lastTime = currentTime;
@@ -100,6 +105,7 @@ int main(int argc, char **argv)
                 case SDL_KEYDOWN:
                     if (event.key.keysym.sym == SDLK_q) {
                         if (event.key.keysym.mod & KMOD_SHIFT) {
+                        }
                     }
                     if (event.key.keysym.sym == SDLK_e) {
                         

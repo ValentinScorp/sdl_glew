@@ -15,10 +15,9 @@
 #include <fstream>
 #include <sstream>
 
+#include "graphics/Camera.h"
 #include "graphics/Mesh.h"
 #include "graphics/RenderObject.h"
 #include "graphics/Renderer.h"
 #include "Configuration.h"
-#include "Model.h"
-#include "AnimateModel.h"
-#include "Camera.h"
+

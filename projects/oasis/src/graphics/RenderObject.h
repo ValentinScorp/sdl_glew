@@ -3,7 +3,8 @@
 #include "../Precompiled.h"
 
 class Renderer;
-class Model;
+class Mesh;
+
 class RenderObject
 {
 public:
@@ -18,7 +19,7 @@ public:
     
     std::string name;
     
-    Model *model = nullptr;
+    Mesh *mesh = nullptr;
     GLuint glTexture = 0;
     GLuint glProgram = 0;
     GLuint glModelMatrixUniform = 0;

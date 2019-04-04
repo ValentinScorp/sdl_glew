@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Precompiled.h"
+#include "../Precompiled.h"
 
 class Configuration;
-class Camera
-{
+
+class Camera {
 public:
     Camera();
     virtual ~Camera();
