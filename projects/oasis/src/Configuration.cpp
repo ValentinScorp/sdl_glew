@@ -1,4 +1,4 @@
-#include "Configuration.h"
+#include "Precompiled.h"
 
 Configuration::Configuration(std::string fileName) {
     std::ifstream file(fileName);

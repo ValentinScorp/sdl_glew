@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../Precompiled.h"
-
 class Configuration;
 
 class Camera {

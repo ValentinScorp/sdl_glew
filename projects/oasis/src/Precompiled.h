@@ -1,3 +1,5 @@
+#pragma once
+
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
@@ -11,13 +13,17 @@
 #include <stdio.h>
 #include <vector>
 #include <string>
+#include <algorithm>
+#include <iterator>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 
+#include "MessageManager.h"
+#include "Configuration.h"
 #include "graphics/Camera.h"
 #include "graphics/Mesh.h"
 #include "graphics/RenderObject.h"
 #include "graphics/Renderer.h"
-#include "Configuration.h"
+
 

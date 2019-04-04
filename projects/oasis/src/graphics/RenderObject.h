@@ -1,15 +1,15 @@
 #pragma once
 
-#include "../Precompiled.h"
-
 class Renderer;
 class Mesh;
+class IMessage;
 
-class RenderObject
-{
+class RenderObject : public IMessageRecipient {
 public:
     RenderObject();
     virtual ~RenderObject();
+    
+    virtual void onMessage(IMessage *message);
     
     void init(Renderer *renderer, Configuration *cfg, std::string name);
     void update(float time);

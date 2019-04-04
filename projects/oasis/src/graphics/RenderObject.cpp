@@ -1,10 +1,16 @@
-#include "RenderObject.h"
+#include "../Precompiled.h"
 
 RenderObject::RenderObject() {
 }
 
 RenderObject::~RenderObject() {
     delete mesh;
+}
+
+void RenderObject::onMessage(IMessage *message) {
+    if (message->getKeyPressed() == "e") {
+        std::cout << "object got keyb message \"e\" \n";
+    }
 }
 
 void RenderObject::init(Renderer *renderer, Configuration *cfg, std::string objectName) {

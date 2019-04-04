@@ -1,4 +1,4 @@
-#include "Renderer.h"
+#include "../Precompiled.h"
 
 Renderer::Renderer()
 {

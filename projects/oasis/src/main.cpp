@@ -1,9 +1,17 @@
- #include "Precompiled.h"
+#include "Precompiled.h"
 
-static SDL_Window *window = NULL;
-static SDL_GLContext gl_context;
-
-GLfloat rotationAngle = 0;
+class KeyboardMessage : public IMessage {
+public:
+    KeyboardMessage() {}
+    KeyboardMessage(std::string bp) : buttonPressed(bp) {}
+    ~KeyboardMessage() {}
+    
+    std::string getKeyPressed() {
+        return buttonPressed;
+    }
+private:
+    std::string buttonPressed;
+};
 
 int main(int argc, char **argv)
 {
@@ -39,7 +47,8 @@ int main(int argc, char **argv)
     
     float w = config.getParameter("Window", "width").toFloat();
     float h = config.getParameter("Window", "height").toFloat();
-    window = SDL_CreateWindow("Window title", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, SDL_WINDOW_OPENGL);
+    SDL_Window *window = SDL_CreateWindow("Window title", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, SDL_WINDOW_OPENGL);
+    
     if (window == NULL) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to create SDL window -> %s", SDL_GetError());
         SDL_Quit();
@@ -47,7 +56,7 @@ int main(int argc, char **argv)
         return -1;
     }
     
-    gl_context = SDL_GL_CreateContext(window);
+    SDL_GLContext gl_context = SDL_GL_CreateContext(window);
     if (gl_context == NULL) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to create GL context -> %s", SDL_GetError());
         SDL_DestroyWindow(window);
@@ -71,13 +80,13 @@ int main(int argc, char **argv)
     }
     SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "Using GLEW version -> %s\n", glewGetString(GLEW_VERSION));
   
+    
+    
     Renderer renderer;
     renderer.init(&config);
-    
-    //Mesh mesh();
-    //mesh.loadSmaMesh("model/Cube.002.sma");
-    
+     
     RenderObject objectRoman;
+        
     objectRoman.init(&renderer, &config, "Roman"); 
     objectRoman.setOrientation(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     
@@ -88,11 +97,11 @@ int main(int argc, char **argv)
     Uint32 deltaTime = currentTime - lastTime;
     
     glm::mat4 objectPositionMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-        
+    
     GLenum err1;
     while ((err1 = glGetError()) != GL_NO_ERROR) {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "OpenGL init error -> %d\n", err1);
-    }
+        std::cerr << "OpenGL init error -> " << err1 << std::endl;
+    } 
     
     bool runMainLoop = true;
     while (runMainLoop) {
@@ -108,7 +117,7 @@ int main(int argc, char **argv)
                         }
                     }
                     if (event.key.keysym.sym == SDLK_e) {
-                        
+                        SMessageManager::getInstance().invokeMessage(new KeyboardMessage("e"));
                     }
                     if (event.key.keysym.sym == SDLK_w) {
                     }
@@ -130,12 +139,13 @@ int main(int argc, char **argv)
         glClearColor(0.0f, 0.8f, 0.8f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
+        GLfloat rotationAngle = 0;
         objectRoman.update(rotationAngle);
         objectRoman.render();
     
         SDL_GL_SwapWindow(window);
 
-        SDL_Delay(2);
+       // SDL_Delay(2);
         
         GLenum err2;
         while ((err2 = glGetError()) != GL_NO_ERROR) {

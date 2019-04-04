@@ -1,4 +1,4 @@
-#include "Mesh.h"
+#include "../Precompiled.h"
 
 glm::mat4 Mesh::Bone::GetLocalToWorldMatrix() {
 	glm::mat4 FinalMat = glm::mat4(1.0f);

@@ -62,7 +62,7 @@ AS       := C:/MinGW/bin/as.exe
 ## User defined environment variables
 ##
 CodeLiteDir:=C:\Program Files\CodeLite
-Objects0=$(IntermediateDirectory)/up_src_graphics_Camera.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_Mesh.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_main.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_Configuration.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_RenderObject.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_Renderer.cpp$(ObjectSuffix) 
+Objects0=$(IntermediateDirectory)/up_src_graphics_Mesh.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_Renderer.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_RenderObject.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_MessageManager.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_Configuration.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_main.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_Camera.cpp$(ObjectSuffix) 
 
 
 
@@ -100,14 +100,6 @@ PreBuild:
 ##
 ## Objects
 ##
-$(IntermediateDirectory)/up_src_graphics_Camera.cpp$(ObjectSuffix): ../src/graphics/Camera.cpp $(IntermediateDirectory)/up_src_graphics_Camera.cpp$(DependSuffix)
-	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/graphics/Camera.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_graphics_Camera.cpp$(ObjectSuffix) $(IncludePath)
-$(IntermediateDirectory)/up_src_graphics_Camera.cpp$(DependSuffix): ../src/graphics/Camera.cpp
-	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/up_src_graphics_Camera.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/up_src_graphics_Camera.cpp$(DependSuffix) -MM ../src/graphics/Camera.cpp
-
-$(IntermediateDirectory)/up_src_graphics_Camera.cpp$(PreprocessSuffix): ../src/graphics/Camera.cpp
-	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_graphics_Camera.cpp$(PreprocessSuffix) ../src/graphics/Camera.cpp
-
 $(IntermediateDirectory)/up_src_graphics_Mesh.cpp$(ObjectSuffix): ../src/graphics/Mesh.cpp $(IntermediateDirectory)/up_src_graphics_Mesh.cpp$(DependSuffix)
 	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/graphics/Mesh.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_graphics_Mesh.cpp$(ObjectSuffix) $(IncludePath)
 $(IntermediateDirectory)/up_src_graphics_Mesh.cpp$(DependSuffix): ../src/graphics/Mesh.cpp
@@ -116,21 +108,13 @@ $(IntermediateDirectory)/up_src_graphics_Mesh.cpp$(DependSuffix): ../src/graphic
 $(IntermediateDirectory)/up_src_graphics_Mesh.cpp$(PreprocessSuffix): ../src/graphics/Mesh.cpp
 	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_graphics_Mesh.cpp$(PreprocessSuffix) ../src/graphics/Mesh.cpp
 
-$(IntermediateDirectory)/up_src_main.cpp$(ObjectSuffix): ../src/main.cpp $(IntermediateDirectory)/up_src_main.cpp$(DependSuffix)
-	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/main.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_main.cpp$(ObjectSuffix) $(IncludePath)
-$(IntermediateDirectory)/up_src_main.cpp$(DependSuffix): ../src/main.cpp
-	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/up_src_main.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/up_src_main.cpp$(DependSuffix) -MM ../src/main.cpp
+$(IntermediateDirectory)/up_src_graphics_Renderer.cpp$(ObjectSuffix): ../src/graphics/Renderer.cpp $(IntermediateDirectory)/up_src_graphics_Renderer.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/graphics/Renderer.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_graphics_Renderer.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/up_src_graphics_Renderer.cpp$(DependSuffix): ../src/graphics/Renderer.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/up_src_graphics_Renderer.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/up_src_graphics_Renderer.cpp$(DependSuffix) -MM ../src/graphics/Renderer.cpp
 
-$(IntermediateDirectory)/up_src_main.cpp$(PreprocessSuffix): ../src/main.cpp
-	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_main.cpp$(PreprocessSuffix) ../src/main.cpp
-
-$(IntermediateDirectory)/up_src_Configuration.cpp$(ObjectSuffix): ../src/Configuration.cpp $(IntermediateDirectory)/up_src_Configuration.cpp$(DependSuffix)
-	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/Configuration.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_Configuration.cpp$(ObjectSuffix) $(IncludePath)
-$(IntermediateDirectory)/up_src_Configuration.cpp$(DependSuffix): ../src/Configuration.cpp
-	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/up_src_Configuration.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/up_src_Configuration.cpp$(DependSuffix) -MM ../src/Configuration.cpp
-
-$(IntermediateDirectory)/up_src_Configuration.cpp$(PreprocessSuffix): ../src/Configuration.cpp
-	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_Configuration.cpp$(PreprocessSuffix) ../src/Configuration.cpp
+$(IntermediateDirectory)/up_src_graphics_Renderer.cpp$(PreprocessSuffix): ../src/graphics/Renderer.cpp
+	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_graphics_Renderer.cpp$(PreprocessSuffix) ../src/graphics/Renderer.cpp
 
 $(IntermediateDirectory)/up_src_graphics_RenderObject.cpp$(ObjectSuffix): ../src/graphics/RenderObject.cpp $(IntermediateDirectory)/up_src_graphics_RenderObject.cpp$(DependSuffix)
 	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/graphics/RenderObject.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_graphics_RenderObject.cpp$(ObjectSuffix) $(IncludePath)
@@ -140,13 +124,37 @@ $(IntermediateDirectory)/up_src_graphics_RenderObject.cpp$(DependSuffix): ../src
 $(IntermediateDirectory)/up_src_graphics_RenderObject.cpp$(PreprocessSuffix): ../src/graphics/RenderObject.cpp
 	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_graphics_RenderObject.cpp$(PreprocessSuffix) ../src/graphics/RenderObject.cpp
 
-$(IntermediateDirectory)/up_src_graphics_Renderer.cpp$(ObjectSuffix): ../src/graphics/Renderer.cpp $(IntermediateDirectory)/up_src_graphics_Renderer.cpp$(DependSuffix)
-	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/graphics/Renderer.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_graphics_Renderer.cpp$(ObjectSuffix) $(IncludePath)
-$(IntermediateDirectory)/up_src_graphics_Renderer.cpp$(DependSuffix): ../src/graphics/Renderer.cpp
-	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/up_src_graphics_Renderer.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/up_src_graphics_Renderer.cpp$(DependSuffix) -MM ../src/graphics/Renderer.cpp
+$(IntermediateDirectory)/up_src_MessageManager.cpp$(ObjectSuffix): ../src/MessageManager.cpp $(IntermediateDirectory)/up_src_MessageManager.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/MessageManager.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_MessageManager.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/up_src_MessageManager.cpp$(DependSuffix): ../src/MessageManager.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/up_src_MessageManager.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/up_src_MessageManager.cpp$(DependSuffix) -MM ../src/MessageManager.cpp
 
-$(IntermediateDirectory)/up_src_graphics_Renderer.cpp$(PreprocessSuffix): ../src/graphics/Renderer.cpp
-	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_graphics_Renderer.cpp$(PreprocessSuffix) ../src/graphics/Renderer.cpp
+$(IntermediateDirectory)/up_src_MessageManager.cpp$(PreprocessSuffix): ../src/MessageManager.cpp
+	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_MessageManager.cpp$(PreprocessSuffix) ../src/MessageManager.cpp
+
+$(IntermediateDirectory)/up_src_Configuration.cpp$(ObjectSuffix): ../src/Configuration.cpp $(IntermediateDirectory)/up_src_Configuration.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/Configuration.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_Configuration.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/up_src_Configuration.cpp$(DependSuffix): ../src/Configuration.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/up_src_Configuration.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/up_src_Configuration.cpp$(DependSuffix) -MM ../src/Configuration.cpp
+
+$(IntermediateDirectory)/up_src_Configuration.cpp$(PreprocessSuffix): ../src/Configuration.cpp
+	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_Configuration.cpp$(PreprocessSuffix) ../src/Configuration.cpp
+
+$(IntermediateDirectory)/up_src_main.cpp$(ObjectSuffix): ../src/main.cpp $(IntermediateDirectory)/up_src_main.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/main.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_main.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/up_src_main.cpp$(DependSuffix): ../src/main.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/up_src_main.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/up_src_main.cpp$(DependSuffix) -MM ../src/main.cpp
+
+$(IntermediateDirectory)/up_src_main.cpp$(PreprocessSuffix): ../src/main.cpp
+	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_main.cpp$(PreprocessSuffix) ../src/main.cpp
+
+$(IntermediateDirectory)/up_src_graphics_Camera.cpp$(ObjectSuffix): ../src/graphics/Camera.cpp $(IntermediateDirectory)/up_src_graphics_Camera.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/graphics/Camera.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_graphics_Camera.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/up_src_graphics_Camera.cpp$(DependSuffix): ../src/graphics/Camera.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/up_src_graphics_Camera.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/up_src_graphics_Camera.cpp$(DependSuffix) -MM ../src/graphics/Camera.cpp
+
+$(IntermediateDirectory)/up_src_graphics_Camera.cpp$(PreprocessSuffix): ../src/graphics/Camera.cpp
+	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_graphics_Camera.cpp$(PreprocessSuffix) ../src/graphics/Camera.cpp
 
 
 -include $(IntermediateDirectory)/*$(DependSuffix)
