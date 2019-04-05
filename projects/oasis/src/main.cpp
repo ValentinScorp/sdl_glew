@@ -1,16 +1,17 @@
 #include "Precompiled.h"
 
-class KeyboardMessage : public IMessage {
+class System : public IMessageRecipient  {
+bool quit = false;
 public:
-    KeyboardMessage() {}
-    KeyboardMessage(std::string bp) : buttonPressed(bp) {}
-    ~KeyboardMessage() {}
+    System() {}
+    ~System() {}
     
-    std::string getKeyPressed() {
-        return buttonPressed;
+    void onMessage(IMessage *message) {
+        quit = message->isQuit();
     }
-private:
-    std::string buttonPressed;
+    bool isQuit() {
+        return quit;
+    }
 };
 
 int main(int argc, char **argv)
@@ -79,15 +80,20 @@ int main(int argc, char **argv)
         return -1;
     }
     SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "Using GLEW version -> %s\n", glewGetString(GLEW_VERSION));
-  
-    
-    
-    Renderer renderer;
-    renderer.init(&config);
      
+    System system;
+    
+    auto renderer = std::make_shared<Renderer>();
+    
+    renderer->init(&config);
+    
+    Terrain terrain;
+    
+    terrain.init(renderer, &config);
+    
     RenderObject objectRoman;
         
-    objectRoman.init(&renderer, &config, "Roman"); 
+    objectRoman.init(renderer, &config, "Roman"); 
     objectRoman.setOrientation(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     
     objectRoman.mesh->BeginAnimation("Walk");
@@ -105,30 +111,10 @@ int main(int argc, char **argv)
     
     bool runMainLoop = true;
     while (runMainLoop) {
-        SDL_Event event;
-        while (SDL_PollEvent(&event)) {
-            switch(event.type) {
-                case SDL_QUIT: 
-                    runMainLoop = false;
-                    break;
-                case SDL_KEYDOWN:
-                    if (event.key.keysym.sym == SDLK_q) {
-                        if (event.key.keysym.mod & KMOD_SHIFT) {
-                        }
-                    }
-                    if (event.key.keysym.sym == SDLK_e) {
-                        SMessageManager::getInstance().invokeMessage(new KeyboardMessage("e"));
-                    }
-                    if (event.key.keysym.sym == SDLK_w) {
-                    }
-                    if (event.key.keysym.sym == SDLK_s) {
-                    }
-                    break;
-                default:
-                    break;
-            }
+        sendEvents();
+        if (system.isQuit() == true) {
+            runMainLoop = false;
         }
-        
         currentTime = SDL_GetTicks(); 
         deltaTime = currentTime - lastTime;       
         lastTime = currentTime;        
@@ -138,6 +124,9 @@ int main(int argc, char **argv)
 
         glClearColor(0.0f, 0.8f, 0.8f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        
+        terrain.update();
+        terrain.render();
     
         GLfloat rotationAngle = 0;
         objectRoman.update(rotationAngle);
@@ -151,6 +140,14 @@ int main(int argc, char **argv)
         while ((err2 = glGetError()) != GL_NO_ERROR) {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "OpenGL cycle error -> %d\n", err2);
         }
+    }
+    
+    objectRoman.destroy();
+    terrain.destroy();
+    
+    GLenum errDelete;
+    while ((errDelete = glGetError()) != GL_NO_ERROR) {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "OpenGL delete error -> %d\n", errDelete);
     }
         
     SDL_DestroyWindow(window); 

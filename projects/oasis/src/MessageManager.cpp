@@ -29,3 +29,30 @@ IMessageRecipient::IMessageRecipient() {
 IMessageRecipient::~IMessageRecipient() {
     SMessageManager::getInstance().unregisterRecipient(this);
 }
+
+void sendEvents() {
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+        switch(event.type) {
+            case SDL_QUIT: 
+                SMessageManager::getInstance().invokeMessage(new SystemMessage(true));
+                //runMainLoop = false;
+                break;
+            case SDL_KEYDOWN:
+                if (event.key.keysym.sym == SDLK_q) {
+                    if (event.key.keysym.mod & KMOD_SHIFT) {
+                    }
+                }
+                if (event.key.keysym.sym == SDLK_e) {
+                    SMessageManager::getInstance().invokeMessage(new KeyboardMessage("e"));
+                }
+                if (event.key.keysym.sym == SDLK_w) {
+                }
+                if (event.key.keysym.sym == SDLK_s) {
+                }
+                break;
+            default:
+                break;
+        }
+    }
+}

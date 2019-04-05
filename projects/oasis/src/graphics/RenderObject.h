@@ -11,9 +11,10 @@ public:
     
     virtual void onMessage(IMessage *message);
     
-    void init(Renderer *renderer, Configuration *cfg, std::string name);
+    void init(std::shared_ptr<Renderer> renderer, Configuration *cfg, std::string name);
     void update(float time);
     void render();
+    void destroy();
 
     void setOrientation(glm::fvec3 p, glm::fvec3 r);
     
@@ -28,5 +29,7 @@ public:
     GLuint glVao = 0;
     
     glm::fmat4 orientationMatrix;
+    
+    std::shared_ptr<Renderer> mRenderer = nullptr;
 };
 

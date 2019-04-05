@@ -18,12 +18,14 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <memory>
 
 #include "MessageManager.h"
 #include "Configuration.h"
+
 #include "graphics/Camera.h"
 #include "graphics/Mesh.h"
 #include "graphics/RenderObject.h"
 #include "graphics/Renderer.h"
-
+#include "Terrain.h"
 

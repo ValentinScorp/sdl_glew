@@ -13,7 +13,8 @@ void RenderObject::onMessage(IMessage *message) {
     }
 }
 
-void RenderObject::init(Renderer *renderer, Configuration *cfg, std::string objectName) {
+void RenderObject::init(std::shared_ptr<Renderer> renderer, Configuration *cfg, std::string objectName) {
+    mRenderer = renderer;
     mesh = new Mesh();
     
     glTexture = renderer->loadTexture("img/" + cfg->getParameter(objectName, "texture").value);
@@ -26,9 +27,17 @@ void RenderObject::init(Renderer *renderer, Configuration *cfg, std::string obje
     glCameraMatricesUbo = renderer->createUbo(glProgram, "cameraMatrices", sizeof(glm::mat4) * 2);
     
     glVbo = renderer->createVbo(mesh->getVertexBufferData(), mesh->getVertexBufferSize());
-    glVao = renderer->createVao(glVbo, 3, 3, 2, sizeof(float));
+    glVao = renderer->createVao(glVbo, 3, 3, 2, 0, sizeof(float));
     
     renderer->updateView(glCameraMatricesUbo);
+}
+
+void RenderObject::destroy() {
+    mRenderer->unloadTexture(glTexture);
+    mRenderer->destroyBuffer(glCameraMatricesUbo);
+    mRenderer->destroyProgram(glProgram);
+    mRenderer->destroyBuffer(glVao);
+    mRenderer->destroyBuffer(glVbo);
 }
 
 void RenderObject::setOrientation(glm::fvec3 p, glm::fvec3 r) {
@@ -50,9 +59,15 @@ void RenderObject::render() {
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
     glEnableVertexAttribArray(2);
+    
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, glTexture);
+    glUniform1i(glGetUniformLocation(glProgram, "colorTexture"), 0);
+    
     glDrawArrays(GL_TRIANGLES, 0, mesh->vertexes.size());
+    
     glBindTexture(GL_TEXTURE_2D, 0);
+    
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(2);

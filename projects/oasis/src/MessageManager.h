@@ -1,13 +1,12 @@
 #pragma once
 
-//#include "Precompiled.h"
-
 class IMessage {
 public:
     IMessage() {}
     virtual ~IMessage() {}
-    virtual std::string getKeyPressed() {}
-    virtual glm::ivec2 getMousePosition() {}
+    virtual std::string getKeyPressed() { return std::string(""); }
+    virtual glm::ivec2 getMousePosition() {return glm::ivec2(0.0); }
+    virtual bool isQuit() { return false; }
 };
 
 class IMessageRecipient {
@@ -52,3 +51,30 @@ private:
     std::vector<IMessageRecipient*> recipients;
 };
 
+class SystemMessage : public IMessage {
+public:
+    SystemMessage() {}
+    SystemMessage(bool q = false) : quit(q) {}
+    ~SystemMessage() {}
+    bool isQuit() {
+        return quit;
+    }
+    
+private:
+    bool quit = false;
+};
+
+class KeyboardMessage : public IMessage {
+public:
+    KeyboardMessage() {}
+    KeyboardMessage(std::string bp) : buttonPressed(bp) {}
+    ~KeyboardMessage() {}
+    
+    std::string getKeyPressed() {
+        return buttonPressed;
+    }
+private:
+    std::string buttonPressed;
+};
+
+void sendEvents();

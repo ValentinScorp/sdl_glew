@@ -85,6 +85,10 @@ GLuint Renderer::loadTexture(std::string fileName) {
     return glTexture;
 }
 
+void Renderer::unloadTexture(GLuint glTexture) {
+    glDeleteTextures(1, &glTexture);
+}
+
 void loadFile(std::string fileName, std::string *fileContent) {
     std::ifstream file(fileName);
     if (file.is_open()) {
@@ -123,11 +127,6 @@ GLuint loadShader(std::string fileName, GLenum shaderType) {
     return glShader;
 }
 
-void unloadShader(GLuint *shaderHandler) {
-    glDeleteShader(*shaderHandler);
-    (*shaderHandler) = 0;
-}
-
 GLuint Renderer::createProgram(GLuint vertexShader, GLuint fragmentShader) {
     GLuint glProgram = glCreateProgram();
     glAttachShader(glProgram, vertexShader);
@@ -147,6 +146,8 @@ GLuint Renderer::createProgram(GLuint vertexShader, GLuint fragmentShader) {
     glDetachShader(glProgram, vertexShader);
     glDetachShader(glProgram, fragmentShader);
     
+    
+    
     return glProgram;
 }
 
@@ -154,12 +155,17 @@ GLuint Renderer::createProgram(std::string vertexShaderFile, std::string fragmen
         
     GLuint vertexShader = loadShader(vertexShaderFile, GL_VERTEX_SHADER);
     GLuint fragmentShader = loadShader(fragmentShaderFile, GL_FRAGMENT_SHADER);
-    GLuint glProgram = createProgram(vertexShader, fragmentShader);
     
-    unloadShader(&vertexShader);
-    unloadShader(&fragmentShader);
+    GLuint glProgram = createProgram(vertexShader, fragmentShader);
+
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
     
     return glProgram;
+}
+
+void Renderer::destroyProgram(GLuint glProgram) {
+    glDeleteProgram(glProgram);
 }
 
 GLuint Renderer::getParamFromProgram(GLuint program, std::string paramName) {
@@ -191,12 +197,16 @@ GLuint Renderer::createVbo(const GLvoid *data, GLsizeiptr size) {
     return glVbo;
 }
 
-GLuint Renderer::createVao(GLuint glVbo, GLsizeiptr attribNum1, GLsizeiptr attribNum2, GLsizeiptr attribNum3, GLsizeiptr componentSize) {
+void Renderer::destroyBuffer(GLuint buffer) {
+    glDeleteBuffers(1, &buffer);
+}
+
+GLuint Renderer::createVao(GLuint glVbo, GLsizeiptr attribNum1, GLsizeiptr attribNum2, GLsizeiptr attribNum3, GLsizeiptr attribNum4, GLsizeiptr componentSize) {
     GLuint glVao = 0;
     glGenVertexArrays(1, &glVao);
     glBindVertexArray(glVao);
     glBindBuffer(GL_ARRAY_BUFFER, glVbo);
-    GLsizeiptr vertexSize = (attribNum1 + attribNum2 + attribNum3) * componentSize;
+    GLsizeiptr vertexSize = (attribNum1 + attribNum2 + attribNum3 + attribNum4) * componentSize;
     if (attribNum1) {
         glVertexAttribPointer(0, attribNum1, GL_FLOAT, GL_FALSE, vertexSize, 0);
     }
@@ -206,10 +216,17 @@ GLuint Renderer::createVao(GLuint glVbo, GLsizeiptr attribNum1, GLsizeiptr attri
     if (attribNum3) {
         glVertexAttribPointer(2, attribNum3, GL_FLOAT, GL_FALSE, vertexSize, (void*)((attribNum1 + attribNum2) * componentSize));
     }
+    if (attribNum4) {
+        glVertexAttribPointer(3, attribNum4, GL_FLOAT, GL_FALSE, vertexSize, (void*)((attribNum1 + attribNum2  + attribNum3) * componentSize));
+    }
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
     
     return glVao;
+}
+
+void Renderer::destroyVertexArrays(GLuint vertexArray) {
+    glDeleteVertexArrays(1, &vertexArray);
 }
 
 void Renderer::updateView(GLuint glUboMatricesInShader) {

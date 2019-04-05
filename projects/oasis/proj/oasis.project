@@ -8,6 +8,8 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
+    <File Name="../src/Terrain.cpp"/>
+    <File Name="../src/Terrain.h"/>
     <File Name="../src/MessageManager.cpp"/>
     <File Name="../src/MessageManager.h"/>
     <VirtualDirectory Name="graphics">

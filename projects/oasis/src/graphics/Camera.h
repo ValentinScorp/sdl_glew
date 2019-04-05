@@ -2,6 +2,21 @@
 
 class Configuration;
 
+class RayVector {
+public:
+	RayVector() {
+		begin = {0.0f, 0.0f, 0.0f};
+		end = { 0.0f, 0.0f, 0.0f };
+	}
+	RayVector(glm::fvec3 b, glm::fvec3 e) {
+		begin = { b.x, b.y, b.z };
+		end = { e.x, e.y, e.z };
+	}
+	~RayVector() {}
+	glm::fvec3 begin;
+	glm::fvec3 end;
+};
+
 class Camera {
 public:
     Camera();

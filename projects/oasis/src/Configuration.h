@@ -10,7 +10,16 @@ class Configuration
         }
     public:
         std::string value;
-            
+         
+        Uint16 toInt() {
+            Uint16 var = 0;
+            try {
+                var = std::stoi(value);
+            } catch (std::exception &e) {
+                errorDescr();
+            }
+            return var;
+        }
         float toFloat() {
             float var = 0;
             try {
