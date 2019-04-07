@@ -14,6 +14,20 @@ public:
     }
 };
 
+class Time {
+    private:
+    Uint32 begin = 0;
+public:
+    Time() {
+        begin = SDL_GetTicks();
+    }
+    ~Time() {}
+    Uint32 getElapsed() {
+        return SDL_GetTicks() - begin;
+    }
+};
+
+
 int main(int argc, char **argv)
 {
     SDL_LogSetAllPriority(SDL_LOG_PRIORITY_ERROR);
@@ -97,10 +111,6 @@ int main(int argc, char **argv)
     objectRoman.setOrientation(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     
     objectRoman.mesh->BeginAnimation("Walk");
-
-    Uint32 currentTime = SDL_GetTicks();
-    Uint32 lastTime = currentTime;
-    Uint32 deltaTime = currentTime - lastTime;
     
     glm::mat4 objectPositionMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
     
@@ -115,22 +125,25 @@ int main(int argc, char **argv)
         if (system.isQuit() == true) {
             runMainLoop = false;
         }
-        currentTime = SDL_GetTicks(); 
-        deltaTime = currentTime - lastTime;       
-        lastTime = currentTime;        
-        //SDL_Log("%d - %d = %d\n", currentTime, lastTime, deltaTime);        
         
         SDL_GL_MakeCurrent(window, gl_context);
 
         glClearColor(0.0f, 0.8f, 0.8f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
+        Time renderTime;
         terrain.update();
-        terrain.render();
-    
+        terrain.render();    
+        std::cout << "terrain render time: " << renderTime.getElapsed() << std::endl;
+        
         GLfloat rotationAngle = 0;
+        Time romanUpdate;
         objectRoman.update(rotationAngle);
+        std::cout << "roman update time: " << romanUpdate.getElapsed() << std::endl;
+        
+        Time romanRender;
         objectRoman.render();
+        std::cout << "roman render time: " << romanRender.getElapsed() << std::endl;
     
         SDL_GL_SwapWindow(window);
 
