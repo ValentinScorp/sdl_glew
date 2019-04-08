@@ -5,18 +5,18 @@
 ## Debug
 ProjectName            :=glew
 ConfigurationName      :=Debug
-WorkspacePath          :=C:/Users/Valentin/Projects/sdl_glew/projects
-ProjectPath            :=C:/Users/Valentin/Projects/sdl_glew/projects/glew/proj
+WorkspacePath          :=C:/Users/valen/Documents/sdl_glew/projects
+ProjectPath            :=C:/Users/valen/Documents/sdl_glew/projects/glew/proj
 IntermediateDirectory  :=./../debug
 OutDir                 := $(IntermediateDirectory)
 CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
-User                   :=Valentin
-Date                   :=07/04/2019
+User                   :=valen
+Date                   :=08/04/2019
 CodeLitePath           :="C:/Program Files/CodeLite"
-LinkerName             :=C:/msys32/mingw32/bin/i686-w64-mingw32-g++.exe
-SharedObjectLinkerName :=C:/msys32/mingw32/bin/i686-w64-mingw32-g++.exe -shared -fPIC
+LinkerName             :=C:/MinGW/bin/g++.exe
+SharedObjectLinkerName :=C:/MinGW/bin/g++.exe -shared -fPIC
 ObjectSuffix           :=.o
 DependSuffix           :=.o.d
 PreprocessSuffix       :=.i
@@ -36,7 +36,7 @@ ObjectsFileList        :="glew.txt"
 PCHCompileFlags        :=
 MakeDirCommand         :=makedir
 RcCmpOptions           := 
-RcCompilerName         :=windres
+RcCompilerName         :=C:/MinGW/bin/windres.exe
 LinkOptions            :=  
 IncludePath            :=  $(IncludeSwitch). $(IncludeSwitch)./../src 
 IncludePCH             := 
@@ -49,20 +49,20 @@ LibPath                := $(LibraryPathSwitch).
 ## Common variables
 ## AR, CXX, CC, AS, CXXFLAGS and CFLAGS can be overriden using an environment variables
 ##
-AR       := C:/msys32/mingw32/bin/i686-w64-mingw32-ar.exe rcu
-CXX      := C:/msys32/mingw32/bin/i686-w64-mingw32-g++.exe
-CC       := C:/msys32/mingw32/bin/i686-w64-mingw32-gcc.exe
+AR       := C:/MinGW/bin/ar.exe rcu
+CXX      := C:/MinGW/bin/g++.exe
+CC       := C:/MinGW/bin/gcc.exe
 CXXFLAGS :=  -g $(Preprocessors)
 CFLAGS   :=  -g $(Preprocessors)
 ASFLAGS  := 
-AS       := C:/msys32/mingw32/bin/i686-w64-mingw32-as.exe
+AS       := C:/MinGW/bin/as.exe
 
 
 ##
 ## User defined environment variables
 ##
 CodeLiteDir:=C:\Program Files\CodeLite
-Objects0=$(IntermediateDirectory)/up_src_glew.c$(ObjectSuffix) $(IntermediateDirectory)/up_src_glewinfo.c$(ObjectSuffix) $(IntermediateDirectory)/up_src_visualinfo.c$(ObjectSuffix) 
+Objects0=$(IntermediateDirectory)/up_src_visualinfo.c$(ObjectSuffix) $(IntermediateDirectory)/up_src_glew.c$(ObjectSuffix) $(IntermediateDirectory)/up_src_glewinfo.c$(ObjectSuffix) 
 
 
 
@@ -79,8 +79,8 @@ $(OutputFile): $(Objects)
 	@echo "" > $(IntermediateDirectory)/.d
 	@echo $(Objects0)  > $(ObjectsFileList)
 	$(AR) $(ArchiveOutputSwitch)$(OutputFile) @$(ObjectsFileList) $(ArLibs)
-	@$(MakeDirCommand) "C:\Users\Valentin\Projects\sdl_glew\projects/.build-debug"
-	@echo rebuilt > "C:\Users\Valentin\Projects\sdl_glew\projects/.build-debug/glew"
+	@$(MakeDirCommand) "C:\Users\valen\Documents\sdl_glew\projects/.build-debug"
+	@echo rebuilt > "C:\Users\valen\Documents\sdl_glew\projects/.build-debug/glew"
 
 MakeIntermediateDirs:
 	@$(MakeDirCommand) "./../debug"
@@ -95,8 +95,16 @@ PreBuild:
 ##
 ## Objects
 ##
+$(IntermediateDirectory)/up_src_visualinfo.c$(ObjectSuffix): ../src/visualinfo.c $(IntermediateDirectory)/up_src_visualinfo.c$(DependSuffix)
+	$(CC) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/glew/src/visualinfo.c" $(CFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_visualinfo.c$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/up_src_visualinfo.c$(DependSuffix): ../src/visualinfo.c
+	@$(CC) $(CFLAGS) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/up_src_visualinfo.c$(ObjectSuffix) -MF$(IntermediateDirectory)/up_src_visualinfo.c$(DependSuffix) -MM ../src/visualinfo.c
+
+$(IntermediateDirectory)/up_src_visualinfo.c$(PreprocessSuffix): ../src/visualinfo.c
+	$(CC) $(CFLAGS) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_visualinfo.c$(PreprocessSuffix) ../src/visualinfo.c
+
 $(IntermediateDirectory)/up_src_glew.c$(ObjectSuffix): ../src/glew.c $(IntermediateDirectory)/up_src_glew.c$(DependSuffix)
-	$(CC) $(SourceSwitch) "C:/Users/Valentin/Projects/sdl_glew/projects/glew/src/glew.c" $(CFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_glew.c$(ObjectSuffix) $(IncludePath)
+	$(CC) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/glew/src/glew.c" $(CFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_glew.c$(ObjectSuffix) $(IncludePath)
 $(IntermediateDirectory)/up_src_glew.c$(DependSuffix): ../src/glew.c
 	@$(CC) $(CFLAGS) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/up_src_glew.c$(ObjectSuffix) -MF$(IntermediateDirectory)/up_src_glew.c$(DependSuffix) -MM ../src/glew.c
 
@@ -104,20 +112,12 @@ $(IntermediateDirectory)/up_src_glew.c$(PreprocessSuffix): ../src/glew.c
 	$(CC) $(CFLAGS) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_glew.c$(PreprocessSuffix) ../src/glew.c
 
 $(IntermediateDirectory)/up_src_glewinfo.c$(ObjectSuffix): ../src/glewinfo.c $(IntermediateDirectory)/up_src_glewinfo.c$(DependSuffix)
-	$(CC) $(SourceSwitch) "C:/Users/Valentin/Projects/sdl_glew/projects/glew/src/glewinfo.c" $(CFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_glewinfo.c$(ObjectSuffix) $(IncludePath)
+	$(CC) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/glew/src/glewinfo.c" $(CFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_glewinfo.c$(ObjectSuffix) $(IncludePath)
 $(IntermediateDirectory)/up_src_glewinfo.c$(DependSuffix): ../src/glewinfo.c
 	@$(CC) $(CFLAGS) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/up_src_glewinfo.c$(ObjectSuffix) -MF$(IntermediateDirectory)/up_src_glewinfo.c$(DependSuffix) -MM ../src/glewinfo.c
 
 $(IntermediateDirectory)/up_src_glewinfo.c$(PreprocessSuffix): ../src/glewinfo.c
 	$(CC) $(CFLAGS) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_glewinfo.c$(PreprocessSuffix) ../src/glewinfo.c
-
-$(IntermediateDirectory)/up_src_visualinfo.c$(ObjectSuffix): ../src/visualinfo.c $(IntermediateDirectory)/up_src_visualinfo.c$(DependSuffix)
-	$(CC) $(SourceSwitch) "C:/Users/Valentin/Projects/sdl_glew/projects/glew/src/visualinfo.c" $(CFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_visualinfo.c$(ObjectSuffix) $(IncludePath)
-$(IntermediateDirectory)/up_src_visualinfo.c$(DependSuffix): ../src/visualinfo.c
-	@$(CC) $(CFLAGS) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/up_src_visualinfo.c$(ObjectSuffix) -MF$(IntermediateDirectory)/up_src_visualinfo.c$(DependSuffix) -MM ../src/visualinfo.c
-
-$(IntermediateDirectory)/up_src_visualinfo.c$(PreprocessSuffix): ../src/visualinfo.c
-	$(CC) $(CFLAGS) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_visualinfo.c$(PreprocessSuffix) ../src/visualinfo.c
 
 
 -include $(IntermediateDirectory)/*$(DependSuffix)
