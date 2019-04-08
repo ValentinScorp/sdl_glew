@@ -13,6 +13,8 @@
     <File Name="../src/MessageManager.cpp"/>
     <File Name="../src/MessageManager.h"/>
     <VirtualDirectory Name="graphics">
+      <File Name="../src/graphics/Console.cpp"/>
+      <File Name="../src/graphics/Console.h"/>
       <File Name="../src/graphics/Camera.h"/>
       <File Name="../src/graphics/Camera.cpp"/>
       <File Name="../src/graphics/RenderObject.cpp"/>
@@ -56,6 +58,7 @@
         <Library Value="SDL2main"/>
         <Library Value="SDL2"/>
         <Library Value="SDL2_image"/>
+        <Library Value="freetype"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./../debug" Command="$(ProjectPath)/$(IntermediateDirectory)/$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(ProjectPath)/.." PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>

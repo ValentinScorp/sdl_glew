@@ -49,7 +49,7 @@ int main(int argc, char **argv)
         getch();
         return -1;
     }
-    
+        
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
@@ -98,21 +98,18 @@ int main(int argc, char **argv)
     System system;
     
     auto renderer = std::make_shared<Renderer>();
-    
     renderer->init(&config);
-    
+
+    Console::getInstance().init(renderer, &config);
+
     Terrain terrain;
-    
     terrain.init(renderer, &config);
     
     RenderObject objectRoman;
-        
     objectRoman.init(renderer, &config, "Roman"); 
     objectRoman.setOrientation(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     
     objectRoman.mesh->BeginAnimation("Walk");
-    
-    glm::mat4 objectPositionMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
     
     GLenum err1;
     while ((err1 = glGetError()) != GL_NO_ERROR) {
@@ -134,17 +131,19 @@ int main(int argc, char **argv)
         Time renderTime;
         terrain.update();
         terrain.render();    
-        std::cout << "terrain render time: " << renderTime.getElapsed() << std::endl;
+        //std::cout << "terrain render time: " << renderTime.getElapsed() << std::endl;
         
         GLfloat rotationAngle = 0;
         Time romanUpdate;
         objectRoman.update(rotationAngle);
-        std::cout << "roman update time: " << romanUpdate.getElapsed() << std::endl;
+        //std::cout << "roman update time: " << romanUpdate.getElapsed() << std::endl;
         
         Time romanRender;
         objectRoman.render();
-        std::cout << "roman render time: " << romanRender.getElapsed() << std::endl;
-    
+        //std::cout << "roman render time: " << romanRender.getElapsed() << std::endl;
+        
+        Console::getInstance().render();
+        
         SDL_GL_SwapWindow(window);
 
        // SDL_Delay(2);
@@ -157,7 +156,8 @@ int main(int argc, char **argv)
     
     objectRoman.destroy();
     terrain.destroy();
-    
+    Console::getInstance().destroy();
+        
     GLenum errDelete;
     while ((errDelete = glGetError()) != GL_NO_ERROR) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "OpenGL delete error -> %d\n", errDelete);
