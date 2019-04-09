@@ -25,6 +25,9 @@ public:
     void render();
     void destroy();
     
+    void attachFps(std::shared_ptr<Uint16> framesPerSecond);
+    void renderAt(Uint16 x, Uint16 y, float scale, std::string text);
+    
 private:
     std::shared_ptr<Renderer> mRenderer = nullptr;
     GLuint glFontVbo = 0;
@@ -32,5 +35,7 @@ private:
     GLuint glFontProgram = 0;
     GLuint glFontProjectionMatrix = 0;
     std::map<GLchar, Character> characters;
+    
+    std::shared_ptr<Uint16> fps;
 };
 

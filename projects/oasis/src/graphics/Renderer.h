@@ -11,6 +11,7 @@ public:
     
     void init(Configuration *config);
     
+    GLuint createTexture(GLsizei width, GLsizei height, GLenum internalFormat, GLenum format, GLvoid *data);
     GLuint loadTexture(std::string fileName);
     void unloadTexture(GLuint texture);
     

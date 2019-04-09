@@ -47,8 +47,23 @@ SDL_Surface* flipSdlSurfaceVertical(SDL_Surface* sfc) {
      return result;
 }
 
-GLuint Renderer::loadTexture(std::string fileName) {
+GLuint Renderer::createTexture(GLsizei width, GLsizei height, GLenum internalFormat, GLenum format, GLvoid *data) {
     GLuint glTexture = 0;
+    glGenTextures(1, &glTexture);
+    glBindTexture(GL_TEXTURE_2D, glTexture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+      
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, (GLvoid*)data);
+    
+    glBindTexture(GL_TEXTURE_2D, 0);
+    
+    return glTexture;
+}
+
+GLuint Renderer::loadTexture(std::string fileName) {
     SDL_Surface *surface = IMG_Load(fileName.c_str());
     if (surface == NULL) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Unable to load image %s! SDL error -> %s\n", fileName.c_str(), SDL_GetError());
@@ -60,28 +75,10 @@ GLuint Renderer::loadTexture(std::string fileName) {
     if (surface->format->BytesPerPixel == 4) {
         mode = GL_RGBA;
     }
-    
-    //SDL_Surface* flippedSurface = flipSdlSurfaceVertical(surface);
         
-    glGenTextures(1, &glTexture);
-    glBindTexture(GL_TEXTURE_2D, glTexture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-    
-    // todo -> optimize this
-   // if (flipImgVertical == true) {
-   //     glTexImage2D(GL_TEXTURE_2D, 0, mode, flippedSurface->w, flippedSurface->h, 0, mode, GL_UNSIGNED_BYTE, (GLvoid*)flippedSurface->pixels);
-   // } else {
-        glTexImage2D(GL_TEXTURE_2D, 0, mode, surface->w, surface->h, 0, mode, GL_UNSIGNED_BYTE, (GLvoid*)surface->pixels);
-   // }
-    
-    glBindTexture(GL_TEXTURE_2D, 0);
-        
+    GLuint glTexture = createTexture(surface->w, surface->h, mode, mode, (GLvoid*)surface->pixels);
     SDL_FreeSurface(surface);
- //   SDL_FreeSurface(flippedSurface);
-    
+     
     return glTexture;
 }
 
