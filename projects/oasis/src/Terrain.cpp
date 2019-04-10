@@ -206,6 +206,18 @@ bool Terrain::Tile::intersectRayTriangle(RayVector ray, Triangle triangle, glm::
 
 	return 1;
 }
+/*
+    tile order:
+    3 -- 2
+    |    |
+    4 -- 1
+  
+    patch order:
+    16  15  14  13
+    12  11  10  9
+    8   7   6   5
+    4   3   2   1
+*/
 
 Terrain::Patch::Patch(int x, int y, int tilesDim, float tileSize)
 {
@@ -213,16 +225,6 @@ Terrain::Patch::Patch(int x, int y, int tilesDim, float tileSize)
 	float yPos = y * tileSize * tilesDim;
 
 	float k = 1.0f / tilesDim;
-
-	int alphaRot[] = {	3, 3,	3, 0,
-						2, 0,	0, 0, 
-						2, 0,	0, 0, 
-						2, 1,	1, 1 };
-
-	size_t alphaTex[] = {1, 0, 0, 1,
-						0, 3, 2, 0,
-						0, 2, 2, 0, 
-						1, 0, 0, 1};
 
 	for (int i = 0; i < tilesDim; i++) {
 		for (int j = 0; j < tilesDim; j++) {
@@ -245,17 +247,11 @@ Terrain::Patch::Patch(int x, int y, int tilesDim, float tileSize)
 
 			tp4.tex0.x = (j * k + k);
 			tp4.tex0.y = i * k;
+            
+            glm::fvec4 terrainIndexes(0, 1, 2, 2);
+            tp1.texIds = tp2.texIds = tp2.texIds = tp2.texIds = terrainIndexes;
 
 			Tile t(tp1, tp2, tp3, tp4);
-
-			// убрать потом
-			t.SetTexFront(1);
-			t.SetTexBack(0);
-			t.SetTexAlpha(alphaTex[j + i * tilesDim]);
-			t.SetAlphaRotaion(alphaRot[j + i * tilesDim]);
-			
-
-			// -------------
 
 			tiles.push_back(t);
 		}
@@ -269,16 +265,6 @@ Terrain::~Terrain() {
 }
 
 void Terrain::createCanvasMesh() {
-    /*float td = 4;
-    Vertex va(0.0f, 0.0f, 0.0f,  0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-    Vertex vb(0, td, 0,  0, 0, 1, 0, 1, 0, 1);
-    Vertex vc(td, td, 0,  0, 0, 1, 1, 1, 1, 1);
-    Vertex vd(td, 0, 0,  0, 0, 1, 1, 0, 1, 0);
-    
-    vertexes.push_back(va); vertexes.push_back(vc); vertexes.push_back(vb);
-    vertexes.push_back(va); vertexes.push_back(vd); vertexes.push_back(vc);
-    
-    	*/
     int width = 16;
     int height = 16;
     float tile = 4;
@@ -310,7 +296,7 @@ void Terrain::init(std::shared_ptr<Renderer> renderer, Configuration *cfg) {
     glGrassTex = renderer->loadTexture("img/terrainGrass.png");
     glRockTex = renderer->loadTexture("img/terrainRock.png");
     glAlphaSide = renderer->loadTexture("img/alphaSide.png");
-    glAlphaCorner = renderer->loadTexture("img/alphaCorner.png");
+    glAlphaCorner = renderer->loadTexture("img/alphaCornerNew.png");
     glAlphaCornerNew = renderer->loadTexture("img/alphaCornerNew.png");
     glAlphaFull = renderer->loadTexture("img/alphaFull.png");
     glAlphaDiag = renderer->loadTexture("img/alphaDiag.png");
@@ -324,7 +310,7 @@ void Terrain::init(std::shared_ptr<Renderer> renderer, Configuration *cfg) {
     glCameraMatricesUbo = renderer->createUbo(glProgram, "cameraMatrices", sizeof(glm::mat4) * 2);
 
     glVbo = renderer->createVbo(vertexes.data(), vertexes.size() * sizeof(Vertex));
-    glVao = renderer->createVao(glVbo, 3, 3, 2, 2, sizeof(float));
+    glVao = renderer->createVao(glVbo, 3, 3, 2, 2, 4, sizeof(float));
     
     renderer->updateView(glCameraMatricesUbo);
     
@@ -353,6 +339,7 @@ void Terrain::update() {
 
 void Terrain::render() {
     glUseProgram(glProgram);
+    mRenderer->updateView(glCameraMatricesUbo);
     glUniformMatrix4fv(glModelMatrixUniform, 1, GL_FALSE, glm::value_ptr(orientationMatrix));
     glBindBuffer(GL_ARRAY_BUFFER, glVbo);
     glBufferSubData(GL_ARRAY_BUFFER, 0, vertexes.size() * sizeof(Vertex), vertexes.data());
@@ -362,6 +349,7 @@ void Terrain::render() {
     glEnableVertexAttribArray(1);
     glEnableVertexAttribArray(2);
     glEnableVertexAttribArray(3);
+    glEnableVertexAttribArray(4);
     
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, glGrassTex);
@@ -411,6 +399,7 @@ void Terrain::render() {
     glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(2);
     glDisableVertexAttribArray(3);
+    glDisableVertexAttribArray(4);
     glBindVertexArray(0);
     glUseProgram(0);
 }

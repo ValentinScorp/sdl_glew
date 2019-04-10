@@ -27,7 +27,7 @@ void RenderObject::init(std::shared_ptr<Renderer> renderer, Configuration *cfg, 
     glCameraMatricesUbo = renderer->createUbo(glProgram, "cameraMatrices", sizeof(glm::mat4) * 2);
     
     glVbo = renderer->createVbo(mesh->getVertexBufferData(), mesh->getVertexBufferSize());
-    glVao = renderer->createVao(glVbo, 3, 3, 2, 0, sizeof(float));
+    glVao = renderer->createVao(glVbo, 3, 3, 2, 0, 0, sizeof(float));
     
     renderer->updateView(glCameraMatricesUbo);
 }
@@ -51,6 +51,7 @@ void RenderObject::update(float time) {
 
 void RenderObject::render() {
     glUseProgram(glProgram);
+    mRenderer->updateView(glCameraMatricesUbo);
     glUniformMatrix4fv(glModelMatrixUniform, 1, GL_FALSE, glm::value_ptr(orientationMatrix));
     glBindBuffer(GL_ARRAY_BUFFER, glVbo);
     glBufferSubData(GL_ARRAY_BUFFER, 0, mesh->getVertexBufferSize(), mesh->getVertexBufferAnimData());

@@ -23,6 +23,8 @@
 #include <sstream>
 #include <memory>
 #include <map>
+#include <locale> 
+#include <codecvt>
 
 #include "MessageManager.h"
 #include "Configuration.h"

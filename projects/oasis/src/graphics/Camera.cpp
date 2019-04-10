@@ -1,10 +1,25 @@
 #include "../Precompiled.h"
 
-Camera::Camera()
-{
+Camera::Camera(std::shared_ptr<Renderer> renderer) {
+    mRenderer = renderer;
 }
 
 Camera::~Camera() {
+}
+
+void Camera::onMessage(IMessage *message) {
+    if (message->getKeyPressed() == "arrow_left") {
+        moveLeft();
+    }
+    if (message->getKeyPressed() == "arrow_right") {
+        moveRight();
+    }
+    if (message->getKeyPressed() == "arrow_up") {
+        moveForward();
+    }
+    if (message->getKeyPressed() == "arrow_down") {
+        moveBackward();
+    }
 }
 
 glm::mat4 Camera::getViewMatrix() {
@@ -15,14 +30,24 @@ glm::mat4 Camera::getCamMatrix() {
     return glm::lookAt(position, lookTarget, upVector);
 }
 
-void Camera::moveUp() {
+void Camera::moveForward() {
     position.y += moveSpeed;
     lookTarget.y += moveSpeed;
 }
 
-void Camera::moveDown() {
+void Camera::moveBackward() {
     position.y -= moveSpeed;
     lookTarget.y -= moveSpeed;
+}
+
+void Camera::moveLeft() {
+    position.x -= moveSpeed;
+    lookTarget.x -= moveSpeed;
+}
+
+void Camera::moveRight() {
+    position.x += moveSpeed;
+    lookTarget.x += moveSpeed;
 }
 
 void Camera::init(Configuration* cfg) {

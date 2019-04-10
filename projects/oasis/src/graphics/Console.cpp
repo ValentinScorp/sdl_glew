@@ -1,7 +1,37 @@
 #include "../Precompiled.h"
 
+void convertUtf8ToUtf16(std::string &src, std::u16string &dst) {
+    std::wstring_convert<std::codecvt_utf8_utf16<char16_t>,char16_t> convert; 
+    dst = convert.from_bytes(src);
+}
+
+void convertUtf16ToUtf8(std::u16string src, std::string &dst) {
+    std::wstring_convert<std::codecvt_utf8_utf16<char16_t>,char16_t> convert; 
+    dst = convert.to_bytes(src);
+}
+
+void coutUtf16(std::u16string txt) {
+    std::cout << std::hex;
+    for (char16_t c: txt) {
+        std::cout  << "[" << std::uint_least16_t(c) << "] ";
+    }
+    std::cout << std::endl;
+    std::cout << std::dec;
+}
+
+void coutUtf8(std::string &txt) {
+    std::cout << std::hex;
+    for (char c: txt) {
+        std::cout  << "[" << int(static_cast<unsigned char>(c)) << "] ";
+    }
+    std::cout << std::endl;
+    std::cout << std::dec;
+}
+
 void Console::init(std::shared_ptr<Renderer> renderer, Configuration *cfg) {
     mRenderer = renderer;
+    screenWidth = cfg->getParameter("Window", "width").toFloat();
+    screenHeight = cfg->getParameter("Window", "height").toFloat();
     
     glFontProgram = renderer->createProgram("data/" + cfg->getParameter("Console", "fontVertexShader").value, 
                                         "data/" + cfg->getParameter("Console", "fontFragmentShader").value);
@@ -24,22 +54,15 @@ void Console::init(std::shared_ptr<Renderer> renderer, Configuration *cfg) {
     }
     FT_Set_Pixel_Sizes(face, 0, 32);
 
-    
-    for (int n = 0; n < face->num_charmaps; n++) {
-        FT_CharMap charmap = face->charmaps[n];
-        std::cout << "Charmap " << n << ": Platform id: " << charmap->platform_id << ". Encoding id: " << charmap->encoding_id << std::endl;
-    }
-    std::cout << face->charmap << std::endl;
-    std::cout << face->charmap->platform_id << std::endl;
-    std::cout << face->charmap->encoding_id << std::endl;
-    
-    std::cout  << "Yeru " << (FT_ULong)'ы' << std::endl;
-    std::cout << FT_Get_Char_Index(face, (FT_ULong)0x044B) << std::endl;
-    
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    for (GLubyte c = 0; c < 128; c++) {
-        if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {
-            std::cerr << "FreeType Library unable to laod Glyph " << c << std::endl;
+    
+    FT_UInt glyphIndex = 0;
+    FT_ULong charcode = FT_Get_First_Char(face, &glyphIndex);
+    while (glyphIndex) {
+        FT_Error error;
+        if (error = FT_Load_Char(face, charcode, FT_LOAD_RENDER)) {
+            std::cerr << "FreeType Library unable to laod Glyph " << charcode << std::endl;
+            std::cerr << "FreeType Library error code " << error << std::endl;
             continue;
         }
         GLuint glTexture = mRenderer->createTexture(face->glyph->bitmap.width, face->glyph->bitmap.rows, GL_RED, GL_RED, (GLvoid*)face->glyph->bitmap.buffer);
@@ -50,14 +73,16 @@ void Console::init(std::shared_ptr<Renderer> renderer, Configuration *cfg) {
             glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
             face->glyph->advance.x
         };
-        characters.insert(std::pair<GLchar, Character>(c, character));
+        characters.insert(std::pair<FT_ULong, Character>(charcode, character));
+        
+        charcode = FT_Get_Next_Char(face, charcode, &glyphIndex);
     }
     
     FT_Done_Face(face);
     FT_Done_FreeType(ft);
     
     glFontVbo = mRenderer->createVbo(0, sizeof(GLfloat) * 6 * 4);
-    glFontVao = mRenderer->createVao(glFontVbo, 2, 2, 0, 0, sizeof(float));
+    glFontVao = mRenderer->createVao(glFontVbo, 2, 2, 0, 0, 0, sizeof(float));
 }
 
 void Console::destroy() {
@@ -71,21 +96,26 @@ void Console::loadFont(std::string path) {
     
 }
 
-void Console::render() {
-    //renderAt(100, 300, 1, std::string("Фыі"));
-    renderAt(100, 300, 1, std::string("Text"));
+void Console::renderFrameParameters() {
+    std::string strFt = "Frame time: " + std::to_string((Uint16)(*frameTime)) + " ms";
+    std::u16string u16Ft;
+    convertUtf8ToUtf16(strFt, u16Ft);
+    renderAt(screenWidth - 120, screenHeight - 20, 0.5, u16Ft);
 }
 
-void Console::renderAt(Uint16 x, Uint16 y, float scale, std::string text) {
+void Console::render() {
+    renderFrameParameters();
+}
+
+void Console::renderAt(Uint16 x, Uint16 y, float scale, std::u16string text) {
     glUseProgram(glFontProgram);
     glUniform3f(glGetUniformLocation(glFontProgram, "textColor"), 1.0f, 1.0f, 1.0f);
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(glFontVao);
     
-    std::string::const_iterator c;
+    std::u16string::const_iterator c;
     for (c = text.begin(); c != text.end(); c++) {
         Character ch = characters[*c];
-        //Character ch = characters[65];
         
         GLfloat xpos = x + ch.bearing.x * scale;
         GLfloat ypos = y - (ch.size.y - ch.bearing.y) * scale;
@@ -125,6 +155,6 @@ void Console::renderAt(Uint16 x, Uint16 y, float scale, std::string text) {
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Console::attachFps(std::shared_ptr<Uint16> framesPerSecond) {
-    fps = framesPerSecond;
+void Console::attachFrameTime(std::shared_ptr<float> ft) {
+    frameTime = ft;
 }

@@ -50,6 +50,18 @@ void sendEvents() {
                 }
                 if (event.key.keysym.sym == SDLK_s) {
                 }
+                if (event.key.keysym.sym == SDLK_LEFT) {
+                    SMessageManager::getInstance().invokeMessage(new KeyboardMessage("arrow_left"));
+                }
+                if (event.key.keysym.sym == SDLK_RIGHT) {
+                    SMessageManager::getInstance().invokeMessage(new KeyboardMessage("arrow_right"));
+                }
+                if (event.key.keysym.sym == SDLK_UP) {
+                    SMessageManager::getInstance().invokeMessage(new KeyboardMessage("arrow_up"));
+                }
+                if (event.key.keysym.sym == SDLK_DOWN) {
+                    SMessageManager::getInstance().invokeMessage(new KeyboardMessage("arrow_down"));
+                }
                 break;
             default:
                 break;

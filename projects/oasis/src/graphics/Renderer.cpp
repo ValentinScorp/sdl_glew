@@ -10,7 +10,7 @@ Renderer::~Renderer() {
 }
 
 void Renderer::init(Configuration *config) {
-    camera = new Camera();
+    camera = new Camera(shared_from_this());
     camera->init(config);
     
     int imgFlags = IMG_INIT_PNG;
@@ -32,19 +32,21 @@ void Renderer::init(Configuration *config) {
 }
 
 SDL_Surface* flipSdlSurfaceVertical(SDL_Surface* sfc) {
-     SDL_Surface* result = SDL_CreateRGBSurface(sfc->flags, sfc->w, sfc->h,
-         sfc->format->BytesPerPixel * 8, sfc->format->Rmask, sfc->format->Gmask,
-         sfc->format->Bmask, sfc->format->Amask);
-     const auto pitch = sfc->pitch;
-     const auto pxlength = pitch*sfc->h;
-     auto pixels = static_cast<Uint8*>(sfc->pixels) + pxlength;
-     auto rpixels = static_cast<Uint8*>(result->pixels) ;
-     for(auto line = 0; line < sfc->h; ++line) {
-         memcpy(rpixels,pixels,pitch);
-         pixels -= pitch;
-         rpixels += pitch;
-     }
-     return result;
+    SDL_Surface* result = SDL_CreateRGBSurface(sfc->flags, sfc->w, sfc->h,
+        sfc->format->BytesPerPixel * 8, sfc->format->Rmask, sfc->format->Gmask,
+        sfc->format->Bmask, sfc->format->Amask);
+    const auto pitch = sfc->pitch;
+    const auto pxlength = pitch * sfc->h;
+    auto pixels = static_cast<Uint8*>(sfc->pixels) + pxlength;
+    auto rpixels = static_cast<Uint8*>(result->pixels) ;
+    for(auto line = 0; line < sfc->h; ++line) {
+        memcpy(rpixels, pixels, pitch);
+        pixels -= pitch;
+        rpixels += pitch;
+    }
+    SDL_FreeSurface(sfc);
+    sfc = result;
+    return result;
 }
 
 GLuint Renderer::createTexture(GLsizei width, GLsizei height, GLenum internalFormat, GLenum format, GLvoid *data) {
@@ -77,6 +79,7 @@ GLuint Renderer::loadTexture(std::string fileName) {
     }
         
     GLuint glTexture = createTexture(surface->w, surface->h, mode, mode, (GLvoid*)surface->pixels);
+    
     SDL_FreeSurface(surface);
      
     return glTexture;
@@ -143,8 +146,6 @@ GLuint Renderer::createProgram(GLuint vertexShader, GLuint fragmentShader) {
     glDetachShader(glProgram, vertexShader);
     glDetachShader(glProgram, fragmentShader);
     
-    
-    
     return glProgram;
 }
 
@@ -198,12 +199,12 @@ void Renderer::destroyBuffer(GLuint buffer) {
     glDeleteBuffers(1, &buffer);
 }
 
-GLuint Renderer::createVao(GLuint glVbo, GLsizeiptr attribNum1, GLsizeiptr attribNum2, GLsizeiptr attribNum3, GLsizeiptr attribNum4, GLsizeiptr componentSize) {
+GLuint Renderer::createVao(GLuint glVbo, GLsizeiptr attribNum1, GLsizeiptr attribNum2, GLsizeiptr attribNum3, GLsizeiptr attribNum4, GLsizeiptr attribNum5, GLsizeiptr componentSize) {
     GLuint glVao = 0;
     glGenVertexArrays(1, &glVao);
     glBindVertexArray(glVao);
     glBindBuffer(GL_ARRAY_BUFFER, glVbo);
-    GLsizeiptr vertexSize = (attribNum1 + attribNum2 + attribNum3 + attribNum4) * componentSize;
+    GLsizeiptr vertexSize = (attribNum1 + attribNum2 + attribNum3 + attribNum4 + attribNum5) * componentSize;
     if (attribNum1) {
         glVertexAttribPointer(0, attribNum1, GL_FLOAT, GL_FALSE, vertexSize, 0);
     }
@@ -215,6 +216,9 @@ GLuint Renderer::createVao(GLuint glVbo, GLsizeiptr attribNum1, GLsizeiptr attri
     }
     if (attribNum4) {
         glVertexAttribPointer(3, attribNum4, GL_FLOAT, GL_FALSE, vertexSize, (void*)((attribNum1 + attribNum2  + attribNum3) * componentSize));
+    }
+    if (attribNum5) {
+        glVertexAttribPointer(4, attribNum5, GL_FLOAT, GL_FALSE, vertexSize, (void*)((attribNum1 + attribNum2  + attribNum3  + attribNum4) * componentSize));
     }
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);

@@ -25,6 +25,9 @@ public:
     Uint32 getElapsed() {
         return SDL_GetTicks() - begin;
     }
+    void restart() {
+        begin = SDL_GetTicks();
+    }
 };
 
 
@@ -116,8 +119,16 @@ int main(int argc, char **argv)
         std::cerr << "OpenGL init error -> " << err1 << std::endl;
     } 
     
+    auto frameTime = std::make_shared<float>();
+    Console::getInstance().attachFrameTime(frameTime);
+    Time frame;
+    
     bool runMainLoop = true;
     while (runMainLoop) {
+        Uint32 elapsedTime = frame.getElapsed();
+        frame.restart();
+        (*frameTime) = (elapsedTime);
+        
         sendEvents();
         if (system.isQuit() == true) {
             runMainLoop = false;
