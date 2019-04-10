@@ -48,8 +48,7 @@ int main(int argc, char **argv)
  
     if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_EVENTS) != 0) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to initialize SDL -> %s", SDL_GetError());
-        SDL_Quit();
-        getch();
+        SDL_Quit();    
         return -1;
     }
         
@@ -69,8 +68,7 @@ int main(int argc, char **argv)
     
     if (window == NULL) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to create SDL window -> %s", SDL_GetError());
-        SDL_Quit();
-        getch();
+        SDL_Quit();       
         return -1;
     }
     
@@ -79,7 +77,6 @@ int main(int argc, char **argv)
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to create GL context -> %s", SDL_GetError());
         SDL_DestroyWindow(window);
         SDL_Quit();
-        getch();
         return -1;
     }
     SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "OpenGL version -> %s", glGetString(GL_VERSION));
@@ -93,7 +90,6 @@ int main(int argc, char **argv)
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to init GLEW -> %s", glewGetErrorString(err));
         SDL_DestroyWindow(window);
         SDL_Quit();
-        getch();
         return -1;
     }
     SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "Using GLEW version -> %s\n", glewGetString(GLEW_VERSION));
@@ -179,6 +175,5 @@ int main(int argc, char **argv)
     
     SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "To quit application press any key ...\n");
     
-    getch();
     return 0;
 }

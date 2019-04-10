@@ -48,17 +48,17 @@
         <IncludePath Value="."/>
         <IncludePath Value="./../include"/>
         <IncludePath Value="./../../glew/src"/>
+        <IncludePath Value="/usr/include/freetype2"/>
       </Compiler>
       <Linker Options="" Required="yes">
         <LibraryPath Value="./../lib"/>
         <LibraryPath Value="./../../glew/debug"/>
-        <Library Value="mingw32"/>
         <Library Value="glew"/>
-        <Library Value="opengl32"/>
         <Library Value="SDL2main"/>
         <Library Value="SDL2"/>
         <Library Value="SDL2_image"/>
         <Library Value="freetype"/>
+        <Library Value="GL"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./../debug" Command="$(ProjectPath)/$(IntermediateDirectory)/$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(ProjectPath)/.." PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
