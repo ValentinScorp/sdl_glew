@@ -2,17 +2,23 @@
 <CodeLite_Project Name="oasis" Version="10.0.0" InternalType="Console">
   <Plugins>
     <Plugin Name="qmake">
-      <![CDATA[00010001N0005Debug000000000000]]>
+      <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
     </Plugin>
   </Plugins>
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
+    <VirtualDirectory Name="gui">
+      <File Name="../src/gui/GuiPanel.h"/>
+      <File Name="../src/gui/GuiPanel.cpp"/>
+    </VirtualDirectory>
     <File Name="../src/Terrain.cpp"/>
     <File Name="../src/Terrain.h"/>
     <File Name="../src/MessageManager.cpp"/>
     <File Name="../src/MessageManager.h"/>
     <VirtualDirectory Name="graphics">
+      <File Name="../src/graphics/TerrainBrush.cpp"/>
+      <File Name="../src/graphics/TerrainBrush.h"/>
       <File Name="../src/graphics/Console.cpp"/>
       <File Name="../src/graphics/Console.h"/>
       <File Name="../src/graphics/Camera.h"/>
@@ -53,12 +59,13 @@
       <Linker Options="" Required="yes">
         <LibraryPath Value="./../lib"/>
         <LibraryPath Value="./../../glew/debug"/>
+        <Library Value="mingw32"/>
         <Library Value="glew"/>
+        <Library Value="opengl32"/>
         <Library Value="SDL2main"/>
         <Library Value="SDL2"/>
         <Library Value="SDL2_image"/>
         <Library Value="freetype"/>
-        <Library Value="GL"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./../debug" Command="$(ProjectPath)/$(IntermediateDirectory)/$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(ProjectPath)/.." PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>

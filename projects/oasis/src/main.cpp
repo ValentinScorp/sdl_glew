@@ -100,6 +100,11 @@ int main(int argc, char **argv)
     renderer->init(&config);
 
     Console::getInstance().init(renderer, &config);
+    
+    GuiPanel guiPanel;
+    TerrainBrush terrainBrush;
+    
+    terrainBrush.init(renderer);
 
     Terrain terrain;
     terrain.init(renderer, &config);
@@ -108,7 +113,7 @@ int main(int argc, char **argv)
     objectRoman.init(renderer, &config, "Roman"); 
     objectRoman.setOrientation(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     
-    objectRoman.mesh->BeginAnimation("Walk");
+    objectRoman.mesh->beginAnimation("Walk");
     
     GLenum err1;
     while ((err1 = glGetError()) != GL_NO_ERROR) {
@@ -137,17 +142,16 @@ int main(int argc, char **argv)
         
         Time renderTime;
         terrain.update();
-        terrain.render();    
-        //std::cout << "terrain render time: " << renderTime.getElapsed() << std::endl;
+        terrain.render();
         
+        terrainBrush.render();
+                
         GLfloat rotationAngle = 0;
         Time romanUpdate;
         objectRoman.update(rotationAngle);
-        //std::cout << "roman update time: " << romanUpdate.getElapsed() << std::endl;
         
         Time romanRender;
         objectRoman.render();
-        //std::cout << "roman render time: " << romanRender.getElapsed() << std::endl;
         
         Console::getInstance().render();
         

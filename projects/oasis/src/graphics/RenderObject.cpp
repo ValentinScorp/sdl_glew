@@ -9,7 +9,12 @@ RenderObject::~RenderObject() {
 
 void RenderObject::onMessage(IMessage *message) {
     if (message->getKeyPressed() == "e") {
-        std::cout << "object got keyb message \"e\" \n";
+    }
+    if (message->getKeyPressed() == "a") {
+        mesh->beginAnimation("Walk");
+    }
+    if (message->getKeyPressed() == "s") {
+        mesh->stopAnimation();
     }
 }
 

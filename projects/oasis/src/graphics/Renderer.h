@@ -2,6 +2,7 @@
 
 class Camera;
 class Configuration;
+class Terrain;
 
 class Renderer : public std::enable_shared_from_this<Renderer>
 {
@@ -27,8 +28,11 @@ public:
     void destroyVertexArrays(GLuint vertexArray);
     
     void updateView(GLuint glUboMatricesInShader);
+    
+    Camera *camera = nullptr;
+    Terrain *terrain = nullptr;
 private:
     GLuint createProgram(GLuint vertexShader, GLuint fragmentShader);
-    Camera *camera = nullptr;
+    
 };
 

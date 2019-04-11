@@ -79,8 +79,7 @@ Terrain::Tile::~Tile()
 {
 }
 
-bool Terrain::Tile::Intersection(RayVector ray, glm::fvec3 & intersectionVertex)
-{
+bool Terrain::Tile::intersection(RayVector ray, glm::fvec3 & intersectionVertex) {
 	return intersectRayTriangle(ray, triangle1, intersectionVertex) | intersectRayTriangle(ray, triangle2, intersectionVertex);
 }
 
@@ -155,7 +154,7 @@ bool Terrain::Tile::intersectRayTriangle(RayVector ray, Triangle triangle, glm::
 	glm::fvec3 v = triangle.C.pos - triangle.A.pos;
 
 	// находим нормаль к треугольнику
-	glm::fvec3 n = glm::normalize(glm::cross(u, v));
+	glm::fvec3 n = glm::cross(u, v);
 
 	if (n.x == 0 && n.y == 0 && n.z == 0) {
 		return 0;                       // неверные параметры треугольника (либо точки на одной прямой, либо все в одной точке)
@@ -168,13 +167,10 @@ bool Terrain::Tile::intersectRayTriangle(RayVector ray, Triangle triangle, glm::
 
     float a = glm::dot(n, w0);
     float b = glm::dot(n, dir);
-	//float a = -D3DXVec3Dot(&n, &w0);
-	//float b = D3DXVec3Dot(&n, &dir);
 
 	if (fabs(b) < 0.0001) {       // луч паралельный плоскости треугольника
 		if (a == 0) { return 0; }   // луч лежит на плоскости треугольника
 		else { return 0; }   // луч не на плоскости треугольника
-
 	}
 	// найдем точку пересечения луча с треугольником
 	float r = a / b;
@@ -185,6 +181,9 @@ bool Terrain::Tile::intersectRayTriangle(RayVector ray, Triangle triangle, glm::
 
 	intersectionVertex = ray.begin + dir * r;           // точка пересечения луча и плоскости
 														// лежит ли точка в треугольнике
+    
+    //std::cout << intersectionVertex.x << " x " << intersectionVertex.y << " x " << intersectionVertex.z << std::endl;
+    
 	float    uu, uv, vv, wu, wv, D;
 	uu = glm::dot(u, u);
 	uv = glm::dot(u, v);
@@ -248,9 +247,6 @@ Terrain::Patch::Patch(int x, int y, int tilesDim, float tileSize)
 			tp4.tex0.x = (j * k + k);
 			tp4.tex0.y = i * k;
             
-            glm::fvec4 terrainIndexes(0, 1, 2, 2);
-            tp1.texIds = tp2.texIds = tp2.texIds = tp2.texIds = terrainIndexes;
-
 			Tile t(tp1, tp2, tp3, tp4);
 
 			tiles.push_back(t);
@@ -287,6 +283,7 @@ void Terrain::createCanvasMesh() {
 
 void Terrain::init(std::shared_ptr<Renderer> renderer, Configuration *cfg) {
     mRenderer = renderer;
+    renderer->terrain = this;
     xPatchesNum = cfg->getParameter("Terrain", "xPatchesNum").toInt();
     yPatchesNum = cfg->getParameter("Terrain", "yPatchesNum").toInt();
     patchDimension = cfg->getParameter("Terrain", "patchDimension").toInt();
@@ -310,7 +307,7 @@ void Terrain::init(std::shared_ptr<Renderer> renderer, Configuration *cfg) {
     glCameraMatricesUbo = renderer->createUbo(glProgram, "cameraMatrices", sizeof(glm::mat4) * 2);
 
     glVbo = renderer->createVbo(vertexes.data(), vertexes.size() * sizeof(Vertex));
-    glVao = renderer->createVao(glVbo, 3, 3, 2, 2, 4, sizeof(float));
+    glVao = renderer->createVao(glVbo, 3, 3, 2, 2, 0, sizeof(float));
     
     renderer->updateView(glCameraMatricesUbo);
     
@@ -349,7 +346,6 @@ void Terrain::render() {
     glEnableVertexAttribArray(1);
     glEnableVertexAttribArray(2);
     glEnableVertexAttribArray(3);
-    glEnableVertexAttribArray(4);
     
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, glGrassTex);
@@ -399,7 +395,19 @@ void Terrain::render() {
     glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(2);
     glDisableVertexAttribArray(3);
-    glDisableVertexAttribArray(4);
+    
     glBindVertexArray(0);
     glUseProgram(0);
+}
+
+glm::fvec3 Terrain::getTerrainIntersection(RayVector rv) {
+	glm::fvec3 intersection = { 0.0f, 0.0f, 0.0f };
+
+	for (auto t : tiles) {
+		if (t.intersection(rv, intersection)) {
+			return intersection;
+		}
+	}
+
+	return glm::fvec3(0.0f, 0.0f, 0.0f);
 }

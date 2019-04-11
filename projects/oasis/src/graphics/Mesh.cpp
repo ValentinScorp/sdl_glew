@@ -406,7 +406,7 @@ void Mesh::UpdateAnimation(float dt, std::vector<Vertex> &smaVerts) {
 	}
 }
 
-void Mesh::BeginAnimation(std::string aname) {
+void Mesh::beginAnimation(std::string aname) {
 	for (auto a : animations) {
 		if (a->GetName() == aname) {
 			currentAnimation = a;
@@ -414,7 +414,7 @@ void Mesh::BeginAnimation(std::string aname) {
 	}
 }
 
-void Mesh::StopAnimation() {
+void Mesh::stopAnimation() {
 	for (int i = 0; i < vertexes.size(); i++) {
 		animVertexes[i] = vertexes[i];
 	}

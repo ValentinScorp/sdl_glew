@@ -9,16 +9,15 @@ class Terrain
     public:
         Vertex() {}
         Vertex(Vertex const& v) {
-            pos = v.pos; nor = v.nor; tex0 = v.tex0; tex1 = v.tex1; texIds = v.texIds;
+            pos = v.pos; nor = v.nor; tex0 = v.tex0; tex1 = v.tex1;
         }
-        Vertex(glm::vec3 p, glm::vec3 n, glm::vec2 t0, glm::vec2 t1, glm::fvec4 tIs) {
-            pos = p; nor = n; tex0 = t0; tex1 = t1; texIds = tIs;
+        Vertex(glm::vec3 p, glm::vec3 n, glm::vec2 t0, glm::vec2 t1) {
+            pos = p; nor = n; tex0 = t0; tex1 = t1;
         }
-        Vertex(float x, float y, float z, float nx, float ny, float nz, float s0, float t0, float s1, float t1, float ti0, float ti1, float ti2, float ti3) {
+        Vertex(float x, float y, float z, float nx, float ny, float nz, float s0, float t0, float s1, float t1) {
             pos[0] = x; pos[1] = y; pos[2] = z;
             nor[0] = nx; nor[1] = ny; nor[2] = nz;
             tex0[0] = s0; tex0[1] = t0; tex1[0] = s1; tex1[1] = t1;
-            texIds[0] = ti0; texIds[1] = ti1; texIds[2] = ti2; texIds[3] = ti3;
         }
         ~Vertex() {}
         Vertex& operator=(Vertex const& other) {
@@ -27,19 +26,17 @@ class Terrain
                 nor = other.nor;
                 tex0 = other.tex0;
                 tex1 = other.tex1;
-                texIds = other.texIds;
             }
             return *this;
         }
         void print() {
-            //SDL_Log("%f %f %f   %f %f %f   %f %f  %f %f\n", pos.x, pos.y, pos.z, nor.x, nor.y, nor.z, tex0.s, tex0.t, tex1.s, tex1.t);
+            SDL_Log("%f %f %f   %f %f %f   %f %f  %f %f\n", pos.x, pos.y, pos.z, nor.x, nor.y, nor.z, tex0.s, tex0.t, tex1.s, tex1.t);
         }
         
         glm::fvec3 pos;
         glm::fvec3 nor;
         glm::fvec2 tex0;
         glm::fvec2 tex1;
-        glm::fvec4 texIds;
     };
     
     class Tile {
@@ -65,7 +62,7 @@ class Terrain
         Tile(Vertex point1, Vertex point2, Vertex point3, Vertex point4);
         ~Tile();
 
-        bool Intersection(RayVector ray, glm::fvec3 &intersectionVertex);
+        bool intersection(RayVector ray, glm::fvec3 &intersectionVertex);
 
         std::vector <Vertex> & GetPoints();
         void ClearPoints();
@@ -130,6 +127,8 @@ public:
     void destroy();
     void update();
     void render();
+    
+    glm::fvec3 getTerrainIntersection(RayVector rv);
     
     void createCanvasMesh();
 };

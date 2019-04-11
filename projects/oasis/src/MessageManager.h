@@ -5,7 +5,7 @@ public:
     IMessage() {}
     virtual ~IMessage() {}
     virtual std::string getKeyPressed() { return std::string(""); }
-    virtual glm::ivec2 getMousePosition() {return glm::ivec2(0.0); }
+    virtual glm::fvec2 getMousePosition() {return glm::fvec2(0.0); }
     virtual bool isQuit() { return false; }
 };
 
@@ -75,6 +75,23 @@ public:
     }
 private:
     std::string buttonPressed;
+};
+
+class MouseMessage : public IMessage {
+public:
+    MouseMessage() {}
+    MouseMessage(std::string bp, Sint32 x, Sint32 y) : buttonPressed(bp), pos(x, y) {}
+    ~MouseMessage() {}
+    
+    std::string getKeyPressed() {
+        return buttonPressed;
+    }
+    glm::fvec2 getMousePosition() {
+        return glm::fvec2(pos.first, pos.second);
+    }
+private:
+    std::string buttonPressed;
+    std::pair<Sint32, Sint32> pos = {0, 0};
 };
 
 void sendEvents();

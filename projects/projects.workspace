@@ -3,15 +3,20 @@
   <Project Name="oasis" Path="oasis/proj/oasis.project" Active="Yes"/>
   <Project Name="glew" Path="glew/proj/glew.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="yes">
+    <WorkspaceConfiguration Name="Debug" Selected="no">
       <Environment/>
       <Project Name="oasis" ConfigName="Debug"/>
       <Project Name="glew" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="yes">
+    <WorkspaceConfiguration Name="Release" Selected="no">
       <Environment/>
       <Project Name="oasis" ConfigName="Release"/>
       <Project Name="glew" ConfigName="Release"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="DebugWin32" Selected="yes">
+      <Environment/>
+      <Project Name="glew" ConfigName="Debug"/>
+      <Project Name="oasis" ConfigName="Debug"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

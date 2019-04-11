@@ -3,10 +3,6 @@
 in vec3 normal;
 in vec2 uvTerrain;
 in vec2 uvAlpha;
-flat in int terrainId0;
-flat in int terrainId1;
-flat in int terrainId2;
-flat in int terrainId3;
 
 out vec4 color; 
 
@@ -34,36 +30,10 @@ void main()
 	vec4 texel6 = texture(textureAlphaCorner, flipHorizUvAlpha);
 	
 	vec4 color0, color1, color2, color3;
-	
-	if (terrainId0 == 0)
-		color0 = mix(grass, grass, texel3.r);
-	if (terrainId0 == 1)
-		color0 = mix(sand, grass, texel3.r);
-	if (terrainId0 == 2)
-		color0 = mix(rock, grass, texel3.r);
-	
-	if (terrainId1 == 0)
-		color1 = mix(grass, color0, texel4.r);
-	if (terrainId1 == 1)
-		color1 = mix(sand, color0, texel4.r);
-	if (terrainId1 == 2)
-		color1 = mix(rock, color0, texel4.r);
-	
-	if (terrainId2 == 0)	
-		color2 = mix(grass, color1, texel5.r);
-	if (terrainId2 == 1)	
-		color2 = mix(sand, color1, texel5.r);
-	if (terrainId2 == 2)	
-		color2 = mix(rock, color1, texel5.r);
-	
-	if (terrainId3 == 0)	
-		color  = mix(grass, color2, texel6.r);
-	if (terrainId3 == 0)	
-		color  = mix(sand, color2, texel6.r);
-	if (terrainId3 == 0)	
-		color  = mix(rock, color2, texel6.r);
-	
-	
-	
+
+	color0 = mix(sand, grass, texel3.r);
+	color1 = mix(rock, color0, texel4.r);
+	color2 = mix(sand, color1, texel5.r);
+	color  = mix(grass, color2, texel6.r);
 	
 }

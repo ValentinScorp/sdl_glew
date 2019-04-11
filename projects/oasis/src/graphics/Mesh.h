@@ -138,8 +138,8 @@ public:
 	virtual void addVertex(glm::fvec3 pos, glm::fvec3 nor, glm::fvec2 uv);
 	virtual void addVertex(Vertex ver);
 	void UpdateAnimation(float dt, std::vector<Vertex> &smaVerts);
-	void BeginAnimation(std::string aname);
-	void StopAnimation();
+	void beginAnimation(std::string aname);
+	void stopAnimation();
 
 	size_t GetVertexesNum();
 	size_t GetVertexSize();

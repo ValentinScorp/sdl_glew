@@ -34,9 +34,21 @@ void sendEvents() {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         switch(event.type) {
-            case SDL_QUIT: 
+            case SDL_QUIT:
                 SMessageManager::getInstance().invokeMessage(new SystemMessage(true));
-                //runMainLoop = false;
+                break;
+            case SDL_MOUSEMOTION:
+                SMessageManager::getInstance().invokeMessage(new MouseMessage("motion", event.motion.x, event.motion.y));
+                break;
+            case SDL_MOUSEBUTTONDOWN:
+                if (event.button.button == SDL_BUTTON_LEFT) {
+                    SMessageManager::getInstance().invokeMessage(new MouseMessage("left_button_pressed", event.button.x, event.button.y));
+                }
+                break;
+            case SDL_MOUSEBUTTONUP:
+                if (event.button.button == SDL_BUTTON_LEFT) {
+                    SMessageManager::getInstance().invokeMessage(new MouseMessage("left_button_released", event.button.x, event.button.y));
+                }
                 break;
             case SDL_KEYDOWN:
                 if (event.key.keysym.sym == SDLK_q) {
@@ -46,9 +58,14 @@ void sendEvents() {
                 if (event.key.keysym.sym == SDLK_e) {
                     SMessageManager::getInstance().invokeMessage(new KeyboardMessage("e"));
                 }
-                if (event.key.keysym.sym == SDLK_w) {
+                if (event.key.keysym.sym == SDLK_a) {
+                    SMessageManager::getInstance().invokeMessage(new KeyboardMessage("a"));
                 }
                 if (event.key.keysym.sym == SDLK_s) {
+                    SMessageManager::getInstance().invokeMessage(new KeyboardMessage("s"));
+                }
+                if (event.key.keysym.sym == SDLK_w) {
+                    SMessageManager::getInstance().invokeMessage(new KeyboardMessage("w"));
                 }
                 if (event.key.keysym.sym == SDLK_LEFT) {
                     SMessageManager::getInstance().invokeMessage(new KeyboardMessage("arrow_left"));

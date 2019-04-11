@@ -28,18 +28,25 @@ public:
     
     glm::mat4 getViewMatrix();
     glm::mat4 getCamMatrix();
+    glm::mat4 makeOrientationMatrix();
+    RayVector getVectorRay(int x, int y);
+    void getPlanePoints(float dist, glm::fvec3 *pts);
     
     void moveForward();
     void moveBackward();
     void moveLeft();
     void moveRight();
 
-    glm::vec3 position = {0.0f, 0.0f, 0.0f};;
-    glm::vec3 upVector = {0.0f, 0.0f, 0.0f};;
-    glm::vec3 lookTarget = {0.0f, 0.0f, 0.0f};;
+    float screenWidth = 0;
+    float screenHeight = 0;
+    glm::vec3 position = {0.0f, 0.0f, 0.0f};
+    glm::vec3 upVector = {0.0f, 0.0f, 0.0f};
+    glm::vec3 lookTarget = {0.0f, 0.0f, 0.0f};
     
     float aspectRatio = 0.0f;
     float moveSpeed = 1.0f;
+    float nearPlane = 0.1f;
+    float farPlane = 500.0f;
     
     std::shared_ptr<Renderer> mRenderer;
 };

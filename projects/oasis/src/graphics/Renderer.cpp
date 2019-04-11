@@ -28,7 +28,7 @@ void Renderer::init(Configuration *config) {
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE);
     glDepthFunc(GL_LESS);
-    glDepthRange(0.1f, 100.0f);
+    glDepthRange(camera->nearPlane, camera->farPlane);
 }
 
 SDL_Surface* flipSdlSurfaceVertical(SDL_Surface* sfc) {
