@@ -9,31 +9,30 @@ out vec4 color;
 uniform sampler2D texture0;
 uniform sampler2D texture1;
 uniform sampler2D texture2;
-uniform sampler2D textureAlphaSide;
-uniform sampler2D textureAlphaCorner;
-uniform sampler2D textureAlphaFull;
-uniform sampler2D textureAlphaDiag;
+uniform sampler2D texture3;
+uniform sampler2D texture4;
+uniform sampler2D textureAlpha;
 
 void main()
 {	
-	vec4 grass = texture(texture0, uvTerrain);
-	vec4 sand = texture(texture1, uvTerrain);
-	vec4 rock = texture(texture2, uvTerrain);
+	vec4 texColor0 = texture(texture0, uvTerrain);
+	vec4 texColor1 = texture(texture1, uvTerrain);
+	vec4 texColor2 = texture(texture2, uvTerrain);
+	vec4 texColor3 = texture(texture3, uvTerrain);
+	vec4 texColor4 = texture(texture4, uvTerrain);
 	
 	vec2 flipVertUvAlpha = vec2(uvAlpha.s,  1.0 - uvAlpha.t);
 	vec2 flipHorizUvAlpha = vec2(1.0 - uvAlpha.s, uvAlpha.t);
 	vec2 flipDiagUvAlpha = vec2(1.0 - uvAlpha.s,  1.0 - uvAlpha.t);
 	
-	vec4 texel3 = texture(textureAlphaCorner, uvAlpha);
-	vec4 texel4 = texture(textureAlphaCorner, flipVertUvAlpha);
-	vec4 texel5 = texture(textureAlphaCorner, flipDiagUvAlpha);
-	vec4 texel6 = texture(textureAlphaCorner, flipHorizUvAlpha);
+	vec4 texAlpha = texture(textureAlpha, uvAlpha);
+	vec4 texAlphaVert = texture(textureAlpha, flipVertUvAlpha);
+	vec4 texAlphaDiag = texture(textureAlpha, flipDiagUvAlpha);
+	vec4 texAlphaHoriz = texture(textureAlpha, flipHorizUvAlpha);
 	
-	vec4 color0, color1, color2, color3;
-
-	color0 = mix(sand, grass, texel3.r);
-	color1 = mix(rock, color0, texel4.r);
-	color2 = mix(sand, color1, texel5.r);
-	color  = mix(grass, color2, texel6.r);
+	vec4 color0 = mix(texColor1, texColor0, texAlpha.r);
+	vec4 color1 = mix(texColor2, color0, texAlphaVert.r);
+	vec4 color2 = mix(texColor3, color1, texAlphaDiag.r);
 	
+	color = mix(texColor4, color2, texAlphaHoriz.r);
 }

@@ -77,26 +77,17 @@ void Camera::getPlanePoints(float dist, glm::fvec3 *pts)
 RayVector Camera::getVectorRay(int x, int y) {
 	glm::fvec3 pts[4];
 	getPlanePoints(farPlane, pts);
-    
-    std::cout << "plane point 0: " << pts[0].x << " x " << pts[0].y << " x " << pts[0].z << " x " << std::endl;
-    std::cout << "plane point 1: " << pts[1].x << " x " << pts[1].y << " x " << pts[1].z << " x " << std::endl;
-    std::cout << "plane point 2: " << pts[2].x << " x " << pts[2].y << " x " << pts[2].z << " x " << std::endl;
-    std::cout << "plane point 3: " << pts[3].x << " x " << pts[3].y << " x " << pts[3].z << " x " << std::endl;
-    
+       
 	float dx = (float)x / screenWidth;
 	float dz = (float)y / screenHeight;
 	glm::fvec3 vdx = pts[3] - pts[0];
 	glm::fvec3 vdz = pts[1] - pts[0];
 	glm::fvec3 end = pts[0] + (vdx * dx) + (vdz * dz);
     
-    std::cout << "cam ray end before: " << end.x << " x " << end.y << " x " << end.z << " x " << std::endl;
-    
 	glm::mat4 orientation = makeOrientationMatrix();
     glm::fvec4 end1 = orientation * glm::fvec4(end, 1.0);
     
     RayVector camRay(position, glm::fvec3(end1.x, end1.y, end1.z));
-    
-    std::cout << "cam ray end after: " << camRay.end.x << " x " << camRay.end.y << " x " << camRay.end.z << " x " << std::endl;
     
 	return camRay;
 }

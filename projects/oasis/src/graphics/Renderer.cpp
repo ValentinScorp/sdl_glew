@@ -226,6 +226,46 @@ GLuint Renderer::createVao(GLuint glVbo, GLsizeiptr attribNum1, GLsizeiptr attri
     return glVao;
 }
 
+void Renderer::sendSubDataToVbo(GLuint glVbo, GLintptr offset, void* data, GLsizeiptr size) {
+    glBindBuffer(GL_ARRAY_BUFFER, glVbo);
+    glBufferSubData(GL_ARRAY_BUFFER, offset, size, data);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void Renderer::sendTexture(Uint16 texNum, GLuint glTexture, GLuint glProgram, std::string textureNameInProgram) {
+    GLenum textureUnit = GL_TEXTURE0;
+    switch(texNum) {
+        case 0: textureUnit = GL_TEXTURE0; break;
+        case 1: textureUnit = GL_TEXTURE1; break;
+        case 2: textureUnit = GL_TEXTURE2; break;
+        case 3: textureUnit = GL_TEXTURE3; break;
+        case 4: textureUnit = GL_TEXTURE4; break;
+        case 5: textureUnit = GL_TEXTURE5; break;
+        case 6: textureUnit = GL_TEXTURE6; break;
+        case 7: textureUnit = GL_TEXTURE7; break;
+        default: break;
+    }
+    glActiveTexture(textureUnit);
+    glBindTexture(GL_TEXTURE_2D, glTexture);
+    glUniform1i(glGetUniformLocation(glProgram, textureNameInProgram.c_str()), texNum);
+}
+
+void Renderer::undindTexture(Uint16 texNum) {
+    switch(texNum) {
+        case 0: glActiveTexture(GL_TEXTURE0); break;
+        case 1: glActiveTexture(GL_TEXTURE1); break;
+        case 2: glActiveTexture(GL_TEXTURE2); break;
+        case 3: glActiveTexture(GL_TEXTURE3); break;
+        case 4: glActiveTexture(GL_TEXTURE4); break;
+        case 5: glActiveTexture(GL_TEXTURE5); break;
+        case 6: glActiveTexture(GL_TEXTURE6); break;
+        case 7: glActiveTexture(GL_TEXTURE7); break;
+        default: break;
+    }
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+
 void Renderer::destroyVertexArrays(GLuint vertexArray) {
     glDeleteVertexArrays(1, &vertexArray);
 }

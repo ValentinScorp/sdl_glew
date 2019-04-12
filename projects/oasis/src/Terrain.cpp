@@ -5,38 +5,6 @@
 |      |	|  /		  /	 |
 1------4	A			A----C
 */
-Terrain::Tile::Tile(glm::fvec3 point1, glm::fvec3 point2, glm::fvec3 point3, glm::fvec3 point4)
-{
-	triangle1.A.pos = point1;
-	triangle1.B.pos = point3;
-	triangle1.C.pos = point2;
-
-	triangle2.A.pos = point1;
-	triangle2.B.pos = point4;
-	triangle2.C.pos = point3;
-
-	triangle2.C.nor.x = 0;
-	triangle2.C.nor.y = 0;
-	triangle2.C.nor.z = 1;
-	triangle1.A.nor = triangle1.B.nor = triangle1.C.nor = triangle2.A.nor = triangle2.B.nor = triangle2.C.nor;
-
-	triangle1.A.tex0.x = 0; triangle1.A.tex0.y = 0;
-	triangle1.B.tex0.x = 1; triangle1.B.tex0.y = 1;
-	triangle1.C.tex0.x = 0; triangle1.C.tex0.y = 1;
-
-	triangle2.A.tex0.x = 0; triangle2.A.tex0.y = 0;
-	triangle2.B.tex0.x = 1; triangle2.B.tex0.y = 0;
-	triangle2.C.tex0.x = 1; triangle2.C.tex0.y = 1;
-
-	triangle1.A.tex1 = triangle1.A.tex0;
-	triangle1.B.tex1 = triangle1.B.tex0;
-	triangle1.C.tex1 = triangle1.C.tex0;
-
-	triangle2.A.tex1 = triangle2.A.tex0;
-	triangle2.B.tex1 = triangle2.B.tex0;
-	triangle2.C.tex1 = triangle2.C.tex0;
-
-}
 
 Terrain::Tile::Tile(Vertex point1, Vertex point2, Vertex point3, Vertex point4)
 {
@@ -53,7 +21,6 @@ Terrain::Tile::Tile(Vertex point1, Vertex point2, Vertex point3, Vertex point4)
 	triangle2.C.nor.z = 1;
 	triangle1.A.nor = triangle1.B.nor = triangle1.C.nor = triangle2.A.nor = triangle2.B.nor = triangle2.C.nor;
 
-
 	triangle1.A.tex1.x = 0; triangle1.A.tex1.y = 0;
 	triangle1.B.tex1.x = 1; triangle1.B.tex1.y = 1;
 	triangle1.C.tex1.x = 0; triangle1.C.tex1.y = 1;
@@ -69,10 +36,14 @@ Terrain::Tile::Tile(Vertex point1, Vertex point2, Vertex point3, Vertex point4)
 	triangle2.A.tex0 = point1.tex0;
 	triangle2.B.tex0 = point4.tex0;
 	triangle2.C.tex0 = point3.tex0;
+    
+    vertexes.push_back(triangle1.A);
+	vertexes.push_back(triangle1.B);
+	vertexes.push_back(triangle1.C);
 
-	textureFront = 0;
-	textureBack = 0;
-	alphaRotation = 0;
+	vertexes.push_back(triangle2.A);
+	vertexes.push_back(triangle2.B);
+	vertexes.push_back(triangle2.C);
 }
 
 Terrain::Tile::~Tile()
@@ -83,68 +54,18 @@ bool Terrain::Tile::intersection(RayVector ray, glm::fvec3 & intersectionVertex)
 	return intersectRayTriangle(ray, triangle1, intersectionVertex) | intersectRayTriangle(ray, triangle2, intersectionVertex);
 }
 
-std::vector<Terrain::Vertex>& Terrain::Tile::GetPoints()
+std::vector<Terrain::Vertex>& Terrain::Tile::getVertexes()
 {
-	points.push_back(triangle1.A);
-	points.push_back(triangle1.B);
-	points.push_back(triangle1.C);
-
-	points.push_back(triangle2.A);
-	points.push_back(triangle2.B);
-	points.push_back(triangle2.C);
-
-	return points;
+	return vertexes;
 }
 
 void Terrain::Tile::ClearPoints()
 {
-	points.clear();
+	vertexes.clear();
 }
 
-void Terrain::Tile::SetTexFront(size_t textureIndex)
-{
-	textureFront = textureIndex;
-}
-
-void Terrain::Tile::SetTexBack(size_t textureIndex)
-{
-	textureBack = textureIndex;
-}
-
-void Terrain::Tile::SetTexAlpha(size_t texIndex)
-{
-	textureAlpha = texIndex;
-}
-
-void Terrain::Tile::SetAlphaRotaion(int arot)
-{
-	alphaRotation = arot;
-}
-
-size_t Terrain::Tile::GetTexFront()
-{
-	return textureFront;
-}
-
-size_t Terrain::Tile::GetTexBack()
-{
-	return textureBack;
-}
-
-size_t Terrain::Tile::GetTexAlpha()
-{
-	return textureAlpha;
-}
-
-int Terrain::Tile::GetAlphaRotation()
-{
-	return alphaRotation;
-}
-
-
-void Terrain::Tile::RotateAlpha(int rotateNum)
-{
-	alphaRotation = rotateNum;
+void Terrain::Tile::setTexture(Uint16 textureNum, GLuint glTexture) {
+    glTextures[textureNum] = glTexture;
 }
 
 bool Terrain::Tile::intersectRayTriangle(RayVector ray, Triangle triangle, glm::fvec3 &intersectionVertex)
@@ -246,7 +167,7 @@ Terrain::Patch::Patch(int x, int y, int tilesDim, float tileSize)
 			tp4.tex0.y = i * k;
             
 			Tile t(tp1, tp2, tp3, tp4);
-
+            
 			tiles.push_back(t);
 		}
 	}
@@ -261,22 +182,23 @@ Terrain::~Terrain() {
 void Terrain::createCanvasMesh() {
     int width = 16;
     int height = 16;
-    float tile = 4;
+    float tileWidth = 4;
         
 	for (int i = 0; i < width; i++) {
 		for (int j = 0; j < height; j++) {
-			Patch patch(i, j, 4, tile);
+			Patch patch(i, j, 4, tileWidth);
 			tiles.insert(tiles.end(), patch.tiles.begin(), patch.tiles.end());
 		}
 	}
     
-    for (auto t : tiles) {
-		auto points = t.GetPoints();
-		for (auto p : points) {
-			vertexes.push_back(p);
-		}
-		t.ClearPoints();
-	}
+    for (Terrain::Tile &t: tiles) {
+        t.setTexture(0, glGrassTex);
+        t.setTexture(1, glGrassTex);
+        t.setTexture(2, glGrassTex);
+        t.setTexture(3, glGrassTex);
+        t.setTexture(4, glGrassTex);
+        t.setTexture(5, glAlphaCornerNew);
+    }
 }
 
 void Terrain::init(std::shared_ptr<Renderer> renderer, Configuration *cfg) {
@@ -304,7 +226,7 @@ void Terrain::init(std::shared_ptr<Renderer> renderer, Configuration *cfg) {
     glModelMatrixUniform = renderer->getParamFromProgram(glProgram, "modelMatrix");
     glCameraMatricesUbo = renderer->createUbo(glProgram, "cameraMatrices", sizeof(glm::mat4) * 2);
 
-    glVbo = renderer->createVbo(vertexes.data(), vertexes.size() * sizeof(Vertex));
+    glVbo = renderer->createVbo(0, tiles.size() * 6 * sizeof(Vertex));
     glVao = renderer->createVao(glVbo, 3, 3, 2, 2, 0, sizeof(float));
     
     renderer->updateView(glCameraMatricesUbo);
@@ -332,62 +254,42 @@ void Terrain::update() {
     
 }
 
+void Terrain::Tile::render(std::shared_ptr<Renderer> renderer, GLuint glVbo, GLintptr offset, GLuint glProgram) {
+    renderer->sendSubDataToVbo(glVbo, offset * sizeof(Vertex) * 6, vertexes.data(), vertexes.size() * sizeof(Vertex));
+       
+    renderer->sendTexture(0, glTextures[0], glProgram, "texture0");
+    renderer->sendTexture(1, glTextures[1], glProgram, "texture1");
+    renderer->sendTexture(2, glTextures[2], glProgram, "texture2");
+    renderer->sendTexture(3, glTextures[3], glProgram, "texture3");
+    renderer->sendTexture(4, glTextures[4], glProgram, "texture4");
+    renderer->sendTexture(5, glTextures[5], glProgram, "textureAlpha");
+    
+    glDrawArrays(GL_TRIANGLES, offset * 6, vertexes.size());
+    
+    renderer->undindTexture(5);
+    renderer->undindTexture(4);
+    renderer->undindTexture(3);
+    renderer->undindTexture(2);
+    renderer->undindTexture(1);
+    renderer->undindTexture(0);
+}
+
 void Terrain::render() {
     glUseProgram(glProgram);
     mRenderer->updateView(glCameraMatricesUbo);
     glUniformMatrix4fv(glModelMatrixUniform, 1, GL_FALSE, glm::value_ptr(orientationMatrix));
-    glBindBuffer(GL_ARRAY_BUFFER, glVbo);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, vertexes.size() * sizeof(Vertex), vertexes.data());
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    
     glBindVertexArray(glVao);
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
     glEnableVertexAttribArray(2);
     glEnableVertexAttribArray(3);
     
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, glGrassTex);
-    glUniform1i(glGetUniformLocation(glProgram, "texture0"), 0);
-    
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, glSandTex);
-    glUniform1i(glGetUniformLocation(glProgram, "texture1"), 1);
-    
-    glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D, glRockTex);
-    glUniform1i(glGetUniformLocation(glProgram, "texture2"), 2);
-    
-    glActiveTexture(GL_TEXTURE3);
-    glBindTexture(GL_TEXTURE_2D, glAlphaSide);
-    glUniform1i(glGetUniformLocation(glProgram, "textureAlphaSide"), 3);
-    
-    glActiveTexture(GL_TEXTURE4);
-    glBindTexture(GL_TEXTURE_2D, glAlphaCorner);
-    glUniform1i(glGetUniformLocation(glProgram, "textureAlphaCorner"), 4);
-    
-    glActiveTexture(GL_TEXTURE5);
-    glBindTexture(GL_TEXTURE_2D, glAlphaFull);
-    glUniform1i(glGetUniformLocation(glProgram, "textureAlphaFull"), 5);
-    
-    glActiveTexture(GL_TEXTURE6);
-    glBindTexture(GL_TEXTURE_2D, glAlphaDiag);
-    glUniform1i(glGetUniformLocation(glProgram, "textureAlphaDiag"), 6);
-    
-    glDrawArrays(GL_TRIANGLES, 0, vertexes.size());
-       
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glActiveTexture(GL_TEXTURE5);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glActiveTexture(GL_TEXTURE4);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glActiveTexture(GL_TEXTURE3);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, 0);
+    int tileCounter = 0;
+    for(auto& t: tiles) {
+        t.render(mRenderer, glVbo, tileCounter, glProgram);
+        tileCounter++;
+    }
     
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
@@ -408,4 +310,36 @@ glm::fvec3 Terrain::getTerrainIntersection(RayVector rv) {
 	}
 
 	return glm::fvec3(0.0f, 0.0f, 0.0f);
+}
+
+bool Terrain::Tile::isPointOnTile(glm::fvec3 p) {
+    if ((p.x > triangle1.A.pos.x && p.x < triangle1.B.pos.x) &&
+			(p.y > triangle1.A.pos.y && p.y < triangle1.B.pos.y) ) {
+		return 1;
+	}
+	return 0;
+}
+
+void Terrain::onMessage(IMessage *message) {
+    if (message->getKeyPressed() == "left_mouse_button_pressed") {
+        glm::fvec2 pos = message->getMousePosition();
+        RayVector camRay = mRenderer->camera->getVectorRay(pos.x, pos.y);
+		glm::fvec3 intersection = mRenderer->terrain->getTerrainIntersection(camRay);
+        
+        glm::fvec3 point2(intersection.x + 2.0f, intersection.y - 2.0f, 0.0);
+        glm::fvec3 point1(intersection.x - 2.0f, intersection.y - 2.0f, 0.0);
+        glm::fvec3 point3(intersection.x - 2.0f, intersection.y + 2.0f, 0.0);
+        glm::fvec3 point4(intersection.x + 2.0f, intersection.y + 2.0f, 0.0);
+
+        for (Tile &tile : tiles) {
+            if (tile.isPointOnTile(point1))
+                tile.setTexture(4, glSandTex);
+            if (tile.isPointOnTile(point2))
+                tile.setTexture(1, glSandTex);
+            if (tile.isPointOnTile(point3))
+                tile.setTexture(3, glSandTex);
+            if (tile.isPointOnTile(point4))
+                tile.setTexture(2, glSandTex);
+        }
+    }
 }

@@ -3,8 +3,7 @@
 class Renderer;
 class Configuration;
 
-class Terrain
-{
+class Terrain : public IMessageRecipient {
     class Vertex {
     public:
         Vertex() {}
@@ -47,15 +46,12 @@ class Terrain
             Vertex C;
         };
 
-        std::vector <Vertex> points;
+        std::vector <Vertex> vertexes;
 
         Triangle triangle1;
         Triangle triangle2;
 
-        size_t textureFront;
-        size_t textureBack;
-        size_t textureAlpha;
-        int alphaRotation;
+        GLuint glTextures[6] = { 0, 0, 0, 0, 0 };
             
     public:
         Tile(glm::fvec3 point1, glm::fvec3 point2, glm::fvec3 point3, glm::fvec3 point4);
@@ -64,21 +60,14 @@ class Terrain
 
         bool intersection(RayVector ray, glm::fvec3 &intersectionVertex);
 
-        std::vector <Vertex> & GetPoints();
+        std::vector <Vertex> & getVertexes();
         void ClearPoints();
-
-        void SetTexFront(size_t textureIndex);
-        void SetTexBack(size_t textureIndex);
-        void SetTexAlpha(size_t texIndex);
-        void SetAlphaRotaion(int arot);
-
-        size_t GetTexFront();
-        size_t GetTexBack();
-        size_t GetTexAlpha();
-        int GetAlphaRotation();
-
-        void RotateAlpha(int rotateNum);
+        void render(std::shared_ptr<Renderer> renderer, GLuint glVbo, GLintptr offset, GLuint glProgram);
         
+        void setTexture(Uint16 textureNum, GLuint glTexture);
+
+        bool isPointOnTile(glm::fvec3 p);
+
     private:
         bool intersectRayTriangle(RayVector ray, Triangle triangle, glm::fvec3 &intersectionVertex);
     };
@@ -93,7 +82,6 @@ class Terrain
     
     
     std::vector<Tile> tiles;
-    std::vector<Vertex> vertexes;
     
     Uint16 xPatchesNum = 0;
     Uint16 yPatchesNum = 0;
@@ -131,5 +119,6 @@ public:
     glm::fvec3 getTerrainIntersection(RayVector rv);
     
     void createCanvasMesh();
+    virtual void onMessage(IMessage *message);
 };
 
