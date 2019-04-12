@@ -81,9 +81,12 @@ void TerrainBrush::render() {
 void TerrainBrush::onMessage(IMessage *message) {
     if (message->getKeyPressed() == "motion") {
         glm::fvec2 pos = message->getMousePosition();
+        
+        std::cout << "mouse position: " << pos.x << " x " << pos.y << std::endl;
+        
         RayVector camRay = renderer->camera->getVectorRay(pos.x, pos.y);
         
-        //std::cout << camRay.end.x << " x " << camRay.end.y << " x " << camRay.end.z << " x " << std::endl;
+        std::cout << "cam ray end: " << camRay.end.x << " x " << camRay.end.y << " x " << camRay.end.z << " x " << std::endl;
         
 		glm::fvec3 intersection = renderer->terrain->getTerrainIntersection(camRay);
         

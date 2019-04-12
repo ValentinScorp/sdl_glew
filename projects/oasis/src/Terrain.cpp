@@ -165,7 +165,7 @@ bool Terrain::Tile::intersectRayTriangle(RayVector ray, Triangle triangle, glm::
 	// векор от точки на треугольнике до начала луча
 	glm::fvec3 w0 = ray.begin - triangle.A.pos;
 
-    float a = glm::dot(n, w0);
+    float a = -glm::dot(n, w0);
     float b = glm::dot(n, dir);
 
 	if (fabs(b) < 0.0001) {       // луч паралельный плоскости треугольника
@@ -181,9 +181,7 @@ bool Terrain::Tile::intersectRayTriangle(RayVector ray, Triangle triangle, glm::
 
 	intersectionVertex = ray.begin + dir * r;           // точка пересечения луча и плоскости
 														// лежит ли точка в треугольнике
-    
-    //std::cout << intersectionVertex.x << " x " << intersectionVertex.y << " x " << intersectionVertex.z << std::endl;
-    
+       
 	float    uu, uv, vv, wu, wv, D;
 	uu = glm::dot(u, u);
 	uv = glm::dot(u, v);

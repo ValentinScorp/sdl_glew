@@ -61,20 +61,6 @@ void Camera::init(Configuration* cfg) {
     screenHeight = cfg->getParameter("Window", "height").toFloat();
 }
 
-RayVector Camera::getVectorRay(int x, int y) {
-	glm::fvec3 pts[4];
-	getPlanePoints(farPlane, pts);
-	float dx = (float)x / screenWidth;
-	float dz = (float)y / screenHeight;
-	glm::fvec3 vdx = pts[1] - pts[0];
-	glm::fvec3 vdz = pts[3] - pts[0];
-	glm::fvec3 end = pts[0] + (vdx * dx) + (vdz * dz);
-    
-	glm::mat4 orientation = getCamMatrix();
-    glm::fvec4 end1 = orientation * glm::fvec4(end, 1.0);
-	return RayVector(position, glm::fvec3(end1.x, end1.y, end1.z));
-}
-
 void Camera::getPlanePoints(float dist, glm::fvec3 *pts)
 {
 	float fov = glm::radians(45.0);
@@ -82,25 +68,51 @@ void Camera::getPlanePoints(float dist, glm::fvec3 *pts)
 	float y = dist * float(glm::tan(fov * 0.5));
 	float x = y * aspectRatio;
 
-	pts[0].x = -x;  pts[0].y = y;   pts[0].z = dist;
-	pts[1].x = x;   pts[1].y = y;   pts[1].z = dist;
-	pts[2].x = x;   pts[2].y = -y;  pts[2].z = dist;
-	pts[3].x = -x;  pts[3].y = -y;  pts[3].z = dist;
+  	pts[0].x = -x;  pts[0].y = y;   pts[0].z = -dist;
+	pts[1].x = -x;  pts[1].y = -y;  pts[1].z = -dist;
+	pts[2].x = x;   pts[2].y = -y;  pts[2].z = -dist;
+	pts[3].x = x;   pts[3].y = y;   pts[3].z = -dist;
+}
+
+RayVector Camera::getVectorRay(int x, int y) {
+	glm::fvec3 pts[4];
+	getPlanePoints(farPlane, pts);
+    
+    std::cout << "plane point 0: " << pts[0].x << " x " << pts[0].y << " x " << pts[0].z << " x " << std::endl;
+    std::cout << "plane point 1: " << pts[1].x << " x " << pts[1].y << " x " << pts[1].z << " x " << std::endl;
+    std::cout << "plane point 2: " << pts[2].x << " x " << pts[2].y << " x " << pts[2].z << " x " << std::endl;
+    std::cout << "plane point 3: " << pts[3].x << " x " << pts[3].y << " x " << pts[3].z << " x " << std::endl;
+    
+	float dx = (float)x / screenWidth;
+	float dz = (float)y / screenHeight;
+	glm::fvec3 vdx = pts[3] - pts[0];
+	glm::fvec3 vdz = pts[1] - pts[0];
+	glm::fvec3 end = pts[0] + (vdx * dx) + (vdz * dz);
+    
+    std::cout << "cam ray end before: " << end.x << " x " << end.y << " x " << end.z << " x " << std::endl;
+    
+	glm::mat4 orientation = makeOrientationMatrix();
+    glm::fvec4 end1 = orientation * glm::fvec4(end, 1.0);
+    
+    RayVector camRay(position, glm::fvec3(end1.x, end1.y, end1.z));
+    
+    std::cout << "cam ray end after: " << camRay.end.x << " x " << camRay.end.y << " x " << camRay.end.z << " x " << std::endl;
+    
+	return camRay;
 }
 
 glm::mat4 Camera::makeOrientationMatrix()
 {
 	glm::fvec3 cam_pos = position;
-	glm::fvec3 cam_rot = glm::fvec3(45.0, 0, 0);
-
+	
 	glm::mat4 mat_rot_x, mat_rot_y, mat_rot_z, mat_trans;
     
     mat_trans = glm::translate(glm::mat4(1.0f), cam_pos);
-    mat_rot_x = glm::rotate(glm::mat4(1.0f), cam_rot.x, glm::fvec3(1, 0, 0));
-    mat_rot_y = glm::rotate(glm::mat4(1.0f), cam_rot.y, glm::fvec3(0, 1, 0));
-    mat_rot_z = glm::rotate(glm::mat4(1.0f), cam_rot.z, glm::fvec3(0, 0, 1));
+    mat_rot_x = glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::fvec3(1, 0, 0));
+    mat_rot_y = glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::fvec3(0, 1, 0));
+    mat_rot_z = glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::fvec3(0, 0, 1));
 
-	glm::mat4 orientation = mat_rot_x * mat_rot_y * mat_rot_z * mat_trans;
+	glm::mat4 orientation =mat_trans * mat_rot_x * mat_rot_y * mat_rot_z;
 
 	return orientation;
 }
