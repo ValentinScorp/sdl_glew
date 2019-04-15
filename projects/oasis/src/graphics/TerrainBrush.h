@@ -59,5 +59,8 @@ private:
 	float posY = 0;
     float posZ = 0.01;
 	float width = 4.0f;
+    
+    GLuint glTexture;
+    std::string textureName;
 };
 

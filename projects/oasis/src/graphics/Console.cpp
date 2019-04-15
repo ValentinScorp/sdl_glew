@@ -1,11 +1,11 @@
 #include "../Precompiled.h"
 
-void convertUtf8ToUtf16(std::string &src, std::u16string &dst) {
+void Console::convertUtf8ToUtf16(std::string &src, std::u16string &dst) {
     std::wstring_convert<std::codecvt_utf8_utf16<char16_t>,char16_t> convert; 
     dst = convert.from_bytes(src);
 }
 
-void convertUtf16ToUtf8(std::u16string src, std::string &dst) {
+void Console::convertUtf16ToUtf8(std::u16string &src, std::string &dst) {
     std::wstring_convert<std::codecvt_utf8_utf16<char16_t>,char16_t> convert; 
     dst = convert.to_bytes(src);
 }
@@ -37,8 +37,10 @@ void Console::init(std::shared_ptr<Renderer> renderer, Configuration *cfg) {
                                         "data/" + cfg->getParameter("Console", "fontFragmentShader").value);
 
     glFontProjectionMatrix = renderer->getParamFromProgram(glFontProgram, "projectionMatrix");
-    glm::mat4 projection = glm::ortho(0.0f, cfg->getParameter("Window", "width").toFloat(), 
-                                      0.0f, cfg->getParameter("Window", "height").toFloat());
+    
+    glm::mat4 projection = renderer->camera->getProjectionMatrix();
+    //glm::mat4 projection = glm::ortho(0.0f, cfg->getParameter("Window", "width").toFloat(), 
+     //                                 0.0f, cfg->getParameter("Window", "height").toFloat());
 
     glUseProgram(glFontProgram);
     glUniformMatrix4fv(glFontProjectionMatrix, 1, GL_FALSE, glm::value_ptr(projection));
@@ -52,7 +54,7 @@ void Console::init(std::shared_ptr<Renderer> renderer, Configuration *cfg) {
     if (FT_New_Face(ft, fontPath.c_str(), 0, &face)) {
         std::cerr << "Unable to load font " << fontPath << std::endl;
     }
-    FT_Set_Pixel_Sizes(face, 0, 32);
+    FT_Set_Pixel_Sizes(face, 0, fontHeight);
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     
@@ -80,7 +82,8 @@ void Console::init(std::shared_ptr<Renderer> renderer, Configuration *cfg) {
     
     FT_Done_Face(face);
     FT_Done_FreeType(ft);
-    
+        
+  
     glFontVbo = mRenderer->createVbo(0, sizeof(GLfloat) * 6 * 4);
     glFontVao = mRenderer->createVao(glFontVbo, 2, 2, 0, 0, 0, sizeof(float));
 }
@@ -100,11 +103,15 @@ void Console::renderFrameParameters() {
     std::string strFt = "Frame time: " + std::to_string((Uint16)(*frameTime)) + " ms";
     std::u16string u16Ft;
     convertUtf8ToUtf16(strFt, u16Ft);
-    renderAt(screenWidth - 120, screenHeight - 20, 0.5, u16Ft);
+    renderAt(screenWidth - 120, screenHeight - 20, 0.3, u16Ft);
 }
 
 void Console::render() {
     renderFrameParameters();
+}
+
+void Console::renderAt(glm::fvec2 position, float scale, std::u16string text) {
+    renderAt(position.x, position.y, scale, text);
 }
 
 void Console::renderAt(Uint16 x, Uint16 y, float scale, std::u16string text) {

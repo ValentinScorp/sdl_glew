@@ -6,6 +6,7 @@ public:
     virtual ~IMessage() {}
     virtual std::string getKeyPressed() { return std::string(""); }
     virtual glm::fvec2 getMousePosition() {return glm::fvec2(0.0); }
+    virtual std::string getMessage() { return std::string(""); }
     virtual bool isQuit() { return false; }
 };
 
@@ -92,6 +93,19 @@ public:
 private:
     std::string buttonPressed;
     std::pair<Sint32, Sint32> pos = {0, 0};
+};
+
+class GuiButtonMessage : public IMessage {
+public:
+    GuiButtonMessage() {}
+    GuiButtonMessage(std::string m) : message(m) {}
+    ~GuiButtonMessage() {}
+    
+    std::string getMessage() {
+        return message;
+    }
+private:
+    std::string message;
 };
 
 void sendEvents();

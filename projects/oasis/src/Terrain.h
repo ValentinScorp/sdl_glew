@@ -50,8 +50,9 @@ class Terrain : public IMessageRecipient {
 
         Triangle triangle1;
         Triangle triangle2;
-
-        GLuint glTextures[6] = { 0, 0, 0, 0, 0 };
+        
+        GLuint glTextures[6];
+        Uint8 texturesId[6];
             
     public:
         Tile(glm::fvec3 point1, glm::fvec3 point2, glm::fvec3 point3, glm::fvec3 point4);
@@ -64,8 +65,10 @@ class Terrain : public IMessageRecipient {
         void ClearPoints();
         void render(std::shared_ptr<Renderer> renderer, GLuint glVbo, GLintptr offset, GLuint glProgram);
         
-        void setTexture(Uint16 textureNum, GLuint glTexture);
-
+        void setTexture(Uint16 textureNum, GLuint glTexture, Uint8 textureId);
+        Uint8 getTextureId(Uint16 textureNum);
+        GLuint getGlTexture(Uint8 id);
+        
         bool isPointOnTile(glm::fvec3 p);
 
     private:
@@ -79,7 +82,6 @@ class Terrain : public IMessageRecipient {
         Patch(int x, int y, int tilesDim, float tileSize);
         ~Patch() {}
     };
-    
     
     std::vector<Tile> tiles;
     
@@ -106,6 +108,8 @@ class Terrain : public IMessageRecipient {
     
     glm::mat4 orientationMatrix;
     
+    std::unique_ptr<TerrainBrush> terrainBrush = nullptr;
+    
     std::shared_ptr<Renderer> mRenderer = nullptr;
 public:
     Terrain();
@@ -116,7 +120,15 @@ public:
     void update();
     void render();
     
+    void saveMap(std::string mapName);
+    void loadMap(std::string mapName);
+    
+    Uint8 convertTextureName(std::string textureName);
+    GLuint getGlTexture(Uint8 id);
+    std::string convertTextureId(Uint8 id);
+    
     glm::fvec3 getTerrainIntersection(RayVector rv);
+    
     
     void createCanvasMesh();
     virtual void onMessage(IMessage *message);

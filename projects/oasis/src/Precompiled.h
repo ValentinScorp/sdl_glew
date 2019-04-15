@@ -28,6 +28,7 @@
 #include "MessageManager.h"
 #include "Configuration.h"
 
+#include "gui/Button.h"
 #include "gui/GuiPanel.h"
 #include "graphics/TerrainBrush.h"
 #include "graphics/Console.h"

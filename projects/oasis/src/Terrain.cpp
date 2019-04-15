@@ -44,6 +44,11 @@ Terrain::Tile::Tile(Vertex point1, Vertex point2, Vertex point3, Vertex point4)
 	vertexes.push_back(triangle2.A);
 	vertexes.push_back(triangle2.B);
 	vertexes.push_back(triangle2.C);
+    
+    for (int i = 0; i < 6; i++) {
+        glTextures[i] = 0;
+        texturesId[i] = 0;
+    }
 }
 
 Terrain::Tile::~Tile()
@@ -64,8 +69,13 @@ void Terrain::Tile::ClearPoints()
 	vertexes.clear();
 }
 
-void Terrain::Tile::setTexture(Uint16 textureNum, GLuint glTexture) {
+void Terrain::Tile::setTexture(Uint16 textureNum, GLuint glTexture, Uint8 textureId) {
     glTextures[textureNum] = glTexture;
+    texturesId[textureNum] = textureId;
+}
+
+Uint8 Terrain::Tile::getTextureId(Uint16 textureNum) {
+    return texturesId[textureNum];
 }
 
 bool Terrain::Tile::intersectRayTriangle(RayVector ray, Triangle triangle, glm::fvec3 &intersectionVertex)
@@ -148,11 +158,11 @@ Terrain::Patch::Patch(int x, int y, int tilesDim, float tileSize)
 		for (int j = 0; j < tilesDim; j++) {
 			
 			Vertex tp1, tp2, tp3, tp4;
-
-			tp1.pos = { xPos + j * tileSize, yPos + i * tileSize, 0.0f };
-			tp2.pos = { xPos + j * tileSize, yPos + (i + 1) * tileSize, 0.0f };
-			tp3.pos = { xPos + (j + 1) * tileSize, yPos + (i + 1) * tileSize, 0.0f };
-			tp4.pos = { xPos + (j + 1) * tileSize, yPos + i * tileSize, 0.0f };
+            const float tileOverlap = 0.2;
+			tp1.pos = { xPos + j * tileSize,                        yPos + i * tileSize,                        0.0f };
+			tp2.pos = { xPos + j * tileSize,                        yPos + (i + 1) * tileSize + tileOverlap,    0.0f };
+			tp3.pos = { xPos + (j + 1) * tileSize + tileOverlap,    yPos + (i + 1) * tileSize + tileOverlap,    0.0f };
+			tp4.pos = { xPos + (j + 1) * tileSize + tileOverlap,    yPos + i * tileSize,                        0.0f };
 
 			tp1.tex0.x = j * k;
 			tp1.tex0.y = i * k;
@@ -192,12 +202,12 @@ void Terrain::createCanvasMesh() {
 	}
     
     for (Terrain::Tile &t: tiles) {
-        t.setTexture(0, glGrassTex);
-        t.setTexture(1, glGrassTex);
-        t.setTexture(2, glGrassTex);
-        t.setTexture(3, glGrassTex);
-        t.setTexture(4, glGrassTex);
-        t.setTexture(5, glAlphaCornerNew);
+        t.setTexture(0, glGrassTex, convertTextureName("grass"));
+        t.setTexture(1, glGrassTex, convertTextureName("grass"));
+        t.setTexture(2, glGrassTex, convertTextureName("grass"));
+        t.setTexture(3, glGrassTex, convertTextureName("grass"));
+        t.setTexture(4, glGrassTex, convertTextureName("grass"));
+        t.setTexture(5, glAlphaCornerNew, convertTextureName("alpha"));
     }
 }
 
@@ -232,6 +242,9 @@ void Terrain::init(std::shared_ptr<Renderer> renderer, Configuration *cfg) {
     renderer->updateView(glCameraMatricesUbo);
     
     orientationMatrix = glm::mat4(1.0f);
+    
+    terrainBrush = std::make_unique<TerrainBrush>();
+    terrainBrush->init(renderer);
 }
 
 void Terrain::destroy() {
@@ -248,6 +261,9 @@ void Terrain::destroy() {
     mRenderer->destroyProgram(glProgram);
     mRenderer->destroyBuffer(glVao);
     mRenderer->destroyBuffer(glVbo);
+    
+    terrainBrush->destroy();
+    terrainBrush.reset();
 }
 
 void Terrain::update() {
@@ -298,6 +314,8 @@ void Terrain::render() {
     
     glBindVertexArray(0);
     glUseProgram(0);
+    
+    terrainBrush->render();
 }
 
 glm::fvec3 Terrain::getTerrainIntersection(RayVector rv) {
@@ -320,6 +338,91 @@ bool Terrain::Tile::isPointOnTile(glm::fvec3 p) {
 	return 0;
 }
 
+Uint8 Terrain::convertTextureName(std::string textureName) {
+    if (textureName == "grass") {
+        return 0;
+    }
+    if (textureName == "sand") {
+        return 1;
+    }
+    if (textureName == "rock") {
+        return 2;
+    }
+    if (textureName == "alpha") {
+        return 3;
+    }
+    return 0;
+}
+
+std::string Terrain::convertTextureId(Uint8 id) {
+    switch (id) {
+        case 0: return "grass"; break;
+        case 1: return "sand"; break;
+        case 2: return "rock"; break;
+        case 3: return "alpha"; break;
+        default: break;
+    }
+    return "grass";
+}
+
+
+void Terrain::saveMap(std::string mapName)
+{
+    std::ofstream outFile(mapName.c_str(), std::ios::out | std::ios::binary);
+
+    for (Tile &tile : tiles) {
+        outFile << tile.getTextureId(0);
+        outFile << tile.getTextureId(1);
+        outFile << tile.getTextureId(2);
+        outFile << tile.getTextureId(3);
+        outFile << tile.getTextureId(4);
+    }
+
+    outFile.close();
+}
+GLuint Terrain::getGlTexture(Uint8 id) {
+    switch (id) {
+        case 0: return glGrassTex; break;
+        case 1: return glSandTex; break;
+        case 2: return glRockTex; break;
+        case 3: return glAlphaCornerNew; break;
+        default: break;
+    }
+    return glGrassTex;
+}
+
+void Terrain::loadMap(std::string mapName)
+{
+    std::ifstream inFile(mapName.c_str(), std::ios::in | std::ios::binary);
+
+    inFile.seekg(0, std::ios::end);
+	long fileSize = inFile.tellg();
+	inFile.seekg(0, std::ios::beg);
+
+	unsigned char *data = new unsigned char[fileSize];
+	inFile.read((char*)data, fileSize);
+	inFile.close();
+
+	unsigned char *data_iterator = data;
+    char textures[5];
+
+    size_t totalPatches = fileSize / 5 / sizeof(char);
+
+    for (size_t i = 0; i < totalPatches; i++) {
+        memcpy(textures, data_iterator, sizeof(char) * 5);
+        
+        Uint8   texId = textures[0]-'0';  tiles[i].setTexture(0, getGlTexture(texId), texId);
+                texId = textures[1]-'0';  tiles[i].setTexture(1, getGlTexture(texId), texId);
+                texId = textures[2]-'0';  tiles[i].setTexture(2, getGlTexture(texId), texId);
+                texId = textures[3]-'0';  tiles[i].setTexture(3, getGlTexture(texId), texId);
+                texId = textures[4]-'0';  tiles[i].setTexture(4, getGlTexture(texId), texId);
+                
+        data_iterator += sizeof(char) * 5;
+    }
+
+    delete data;
+}
+
 void Terrain::onMessage(IMessage *message) {
     if (message->getKeyPressed() == "left_mouse_button_pressed") {
         glm::fvec2 pos = message->getMousePosition();
@@ -333,13 +436,19 @@ void Terrain::onMessage(IMessage *message) {
 
         for (Tile &tile : tiles) {
             if (tile.isPointOnTile(point1))
-                tile.setTexture(4, glSandTex);
+                tile.setTexture(4, glSandTex, convertTextureName("sand"));
             if (tile.isPointOnTile(point2))
-                tile.setTexture(1, glSandTex);
+                tile.setTexture(1, glSandTex, convertTextureName("sand"));
             if (tile.isPointOnTile(point3))
-                tile.setTexture(3, glSandTex);
+                tile.setTexture(3, glSandTex, convertTextureName("sand"));
             if (tile.isPointOnTile(point4))
-                tile.setTexture(2, glSandTex);
+                tile.setTexture(2, glSandTex, convertTextureName("sand"));
         }
+    }
+    if (message->getMessage() == "Save Map") {
+        saveMap("data/mapfile");
+    }
+    if (message->getMessage() == "Load Map") {
+        loadMap("data/mapfile");
     }
 }

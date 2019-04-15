@@ -29,7 +29,11 @@ public:
     
     void renderFrameParameters();
     void renderAt(Uint16 x, Uint16 y, float scale, std::u16string text);
+    void renderAt(glm::fvec2 position, float scale, std::u16string text);
     
+    void convertUtf8ToUtf16(std::string &src, std::u16string &dst);
+    void convertUtf16ToUtf8(std::u16string &src, std::string &dst);
+    float fontHeight = 48;
 private:
     std::shared_ptr<Renderer> mRenderer = nullptr;
     GLuint glFontVbo = 0;

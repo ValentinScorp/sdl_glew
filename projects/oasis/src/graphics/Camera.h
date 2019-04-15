@@ -29,8 +29,10 @@ public:
     glm::mat4 getViewMatrix();
     glm::mat4 getCamMatrix();
     glm::mat4 makeOrientationMatrix();
+    glm::mat4 getProjectionMatrix();
     RayVector getVectorRay(int x, int y);
     void getPlanePoints(float dist, glm::fvec3 *pts);
+    glm::fvec2 convertMouseToScreen(glm::fvec2 point);
     
     void moveForward();
     void moveBackward();
@@ -49,6 +51,8 @@ public:
     float farPlane = 500.0f;
     
     std::shared_ptr<Renderer> mRenderer;
+    
+    
 };
 
 

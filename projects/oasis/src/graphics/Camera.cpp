@@ -107,3 +107,10 @@ glm::mat4 Camera::makeOrientationMatrix()
 
 	return orientation;
 }
+
+glm::mat4 Camera::getProjectionMatrix() {
+    return glm::ortho(0.0f, screenWidth, 0.0f, screenHeight);
+}
+glm::fvec2 Camera::convertMouseToScreen(glm::fvec2 point) {
+    return glm::fvec2(point.x, screenHeight - point.y);
+}

@@ -102,9 +102,9 @@ int main(int argc, char **argv)
     Console::getInstance().init(renderer, &config);
     
     GuiPanel guiPanel;
-    TerrainBrush terrainBrush;
+    guiPanel.init(renderer);
     
-    terrainBrush.init(renderer);
+    
 
     Terrain terrain;
     terrain.init(renderer, &config);
@@ -143,8 +143,6 @@ int main(int argc, char **argv)
         Time renderTime;
         terrain.update();
         terrain.render();
-        
-        terrainBrush.render();
                 
         GLfloat rotationAngle = 0;
         Time romanUpdate;
@@ -152,6 +150,8 @@ int main(int argc, char **argv)
         
         Time romanRender;
         objectRoman.render();
+        
+        guiPanel.render();
         
         Console::getInstance().render();
         
@@ -165,6 +165,7 @@ int main(int argc, char **argv)
         }
     }
     
+    guiPanel.destroy();
     objectRoman.destroy();
     terrain.destroy();
     Console::getInstance().destroy();
