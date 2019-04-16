@@ -1,9 +1,9 @@
 #include "Precompiled.h"
 
 /*
-2 ---- 3	B ---C			 B
-|      |	|  /		  /	 |
-1------4	A			A----C
+2 ---- 3          C ---B          C
+|      |          |  /         /   |
+1------4          A           A----B
 */
 
 Terrain::Tile::Tile(Vertex point1, Vertex point2, Vertex point3, Vertex point4)
@@ -58,6 +58,31 @@ Terrain::Tile::~Tile()
 bool Terrain::Tile::intersection(RayVector ray, glm::fvec3 & intersectionVertex) {
 	return intersectRayTriangle(ray, triangle1, intersectionVertex) | intersectRayTriangle(ray, triangle2, intersectionVertex);
 }
+
+/* 
+ *          2   3
+ * 
+ *          1   4
+ * */
+void Terrain::Tile::setCornerHeight(Uint8 cornerId, float h) {
+    switch (cornerId) {
+        case 1: triangle1.A.pos.z += h; triangle2.A.pos.z += h; break;
+        case 2: triangle1.C.pos.z += h;                        break;
+        case 3: triangle1.B.pos.z += h; triangle2.C.pos.z += h; break;
+        case 4:                         triangle2.B.pos.z += h; break;
+    }
+    
+    vertexes.clear();
+    
+    vertexes.push_back(triangle1.A);
+	vertexes.push_back(triangle1.B);
+	vertexes.push_back(triangle1.C);
+
+	vertexes.push_back(triangle2.A);
+	vertexes.push_back(triangle2.B);
+	vertexes.push_back(triangle2.C);
+}
+
 
 std::vector<Terrain::Vertex>& Terrain::Tile::getVertexes()
 {
@@ -134,6 +159,7 @@ bool Terrain::Tile::intersectRayTriangle(RayVector ray, Triangle triangle, glm::
 
 	return 1;
 }
+
 /*
     tile order:
     3 -- 2
@@ -146,6 +172,8 @@ bool Terrain::Tile::intersectRayTriangle(RayVector ray, Triangle triangle, glm::
     8   7   6   5
     4   3   2   1
 */
+
+////////////////////////////// Patch ////////////////////////////////
 
 Terrain::Patch::Patch(int x, int y, int tilesDim, float tileSize)
 {
@@ -182,6 +210,8 @@ Terrain::Patch::Patch(int x, int y, int tilesDim, float tileSize)
 		}
 	}
 }
+
+/////////////////////////// Terrain //////////////////////////////////////
 
 Terrain::Terrain() {
 }
@@ -366,20 +396,24 @@ std::string Terrain::convertTextureId(Uint8 id) {
 }
 
 
-void Terrain::saveMap(std::string mapName)
+void Terrain::saveMap(std::string fileName)
 {
-    std::ofstream outFile(mapName.c_str(), std::ios::out | std::ios::binary);
+    std::ofstream outFile(fileName.c_str(), std::ios::out);
+    if (outFile) {
+        for (Tile &tile : tiles) {
+            outFile << std::to_string(tile.getTextureId(0)) << ","
+                    << std::to_string(tile.getTextureId(1)) << ","
+                    << std::to_string(tile.getTextureId(2)) << ","
+                    << std::to_string(tile.getTextureId(3)) << ","
+                    << std::to_string(tile.getTextureId(4)) << "\n";
+        }
 
-    for (Tile &tile : tiles) {
-        outFile << tile.getTextureId(0);
-        outFile << tile.getTextureId(1);
-        outFile << tile.getTextureId(2);
-        outFile << tile.getTextureId(3);
-        outFile << tile.getTextureId(4);
+        outFile.close();
+    } else {
+        std::cerr << "Unable to save file: " << fileName << std::endl;
     }
-
-    outFile.close();
 }
+
 GLuint Terrain::getGlTexture(Uint8 id) {
     switch (id) {
         case 0: return glGrassTex; break;
@@ -391,64 +425,97 @@ GLuint Terrain::getGlTexture(Uint8 id) {
     return glGrassTex;
 }
 
-void Terrain::loadMap(std::string mapName)
+void Terrain::loadMap(std::string fileName)
 {
-    std::ifstream inFile(mapName.c_str(), std::ios::in | std::ios::binary);
-
-    inFile.seekg(0, std::ios::end);
-	long fileSize = inFile.tellg();
-	inFile.seekg(0, std::ios::beg);
-
-	unsigned char *data = new unsigned char[fileSize];
-	inFile.read((char*)data, fileSize);
-	inFile.close();
-
-	unsigned char *data_iterator = data;
-    char textures[5];
-
-    size_t totalPatches = fileSize / 5 / sizeof(char);
-
-    for (size_t i = 0; i < totalPatches; i++) {
-        memcpy(textures, data_iterator, sizeof(char) * 5);
-        
-        Uint8   texId = textures[0]-'0';  tiles[i].setTexture(0, getGlTexture(texId), texId);
-                texId = textures[1]-'0';  tiles[i].setTexture(1, getGlTexture(texId), texId);
-                texId = textures[2]-'0';  tiles[i].setTexture(2, getGlTexture(texId), texId);
-                texId = textures[3]-'0';  tiles[i].setTexture(3, getGlTexture(texId), texId);
-                texId = textures[4]-'0';  tiles[i].setTexture(4, getGlTexture(texId), texId);
-                
-        data_iterator += sizeof(char) * 5;
+    std::ifstream file(fileName);
+    std::vector<std::string> fileContent;
+    if (file.is_open()) {
+        std::string line;
+        while (file.good()) {
+            line.clear();
+            std::getline(file, line);
+            fileContent.push_back(line);
+        }
+        file.close();
+    } else {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Unable to open file -> %s\n", fileName.c_str());
     }
+    
+    std::vector<std::array<Uint8, 5>> texturesId;
+    for (auto l: fileContent) {
+        std::stringstream line(l);
+        std::string idStr;
+        std::array<Uint8, 5> texId;
+        Uint8 textureCounter = 0;
+        while (std::getline(line, idStr, ',')) {
+            texId[textureCounter] = std::stoi(idStr);
+            textureCounter++;
+            if (textureCounter > 5) {
+                break;
+            }
+        }
+        texturesId.push_back(texId);
+    }
+    for (auto& tile: tiles) {
+        auto i = &tile - &tiles[0];
+        
+        tile.setTexture(0, getGlTexture(texturesId[i][0]), texturesId[i][0]);
+        tile.setTexture(1, getGlTexture(texturesId[i][1]), texturesId[i][1]);
+        tile.setTexture(2, getGlTexture(texturesId[i][2]), texturesId[i][2]);
+        tile.setTexture(3, getGlTexture(texturesId[i][3]), texturesId[i][3]);
+        tile.setTexture(4, getGlTexture(texturesId[i][4]), texturesId[i][4]);
+    }
+}
 
-    delete data;
+void Terrain::setNodeTexture(glm::fvec2 mousePos, std::string texName) {
+    RayVector camRay = mRenderer->camera->getVectorRay(mousePos.x, mousePos.y);
+    glm::fvec3 intersection = mRenderer->terrain->getTerrainIntersection(camRay);
+    
+    glm::fvec3 point2(intersection.x + 2.0f, intersection.y - 2.0f, 0.0);
+    glm::fvec3 point1(intersection.x - 2.0f, intersection.y - 2.0f, 0.0);
+    glm::fvec3 point3(intersection.x - 2.0f, intersection.y + 2.0f, 0.0);
+    glm::fvec3 point4(intersection.x + 2.0f, intersection.y + 2.0f, 0.0);
+
+    for (Tile &tile : tiles) {
+        if (tile.isPointOnTile(point1))
+            tile.setTexture(4, glSandTex, convertTextureName(texName));
+        if (tile.isPointOnTile(point2))
+            tile.setTexture(1, glSandTex, convertTextureName(texName));
+        if (tile.isPointOnTile(point3))
+            tile.setTexture(3, glSandTex, convertTextureName(texName));
+        if (tile.isPointOnTile(point4))
+            tile.setTexture(2, glSandTex, convertTextureName(texName));
+    }
+}
+
+void Terrain::setNodeHeight(glm::fvec2 mousePos, float height) {
+    RayVector camRay = mRenderer->camera->getVectorRay(mousePos.x, mousePos.y);
+    glm::fvec3 intersection = mRenderer->terrain->getTerrainIntersection(camRay);
+    
+    glm::fvec3 point1(intersection.x - 2.0f, intersection.y - 2.0f, 0.0);
+    glm::fvec3 point2(intersection.x - 2.0f, intersection.y + 2.0f, 0.0);
+    glm::fvec3 point3(intersection.x + 2.0f, intersection.y + 2.0f, 0.0);
+    glm::fvec3 point4(intersection.x + 2.0f, intersection.y - 2.0f, 0.0);
+
+    for (Tile &tile : tiles) {
+        if (tile.isPointOnTile(point1)) tile.setCornerHeight(3, height);
+        if (tile.isPointOnTile(point2)) tile.setCornerHeight(4, height);
+        if (tile.isPointOnTile(point3)) tile.setCornerHeight(1, height);
+        if (tile.isPointOnTile(point4)) tile.setCornerHeight(2, height);
+    }
 }
 
 void Terrain::onMessage(IMessage *message) {
     if (message->getKeyPressed() == "left_mouse_button_pressed") {
         glm::fvec2 pos = message->getMousePosition();
-        RayVector camRay = mRenderer->camera->getVectorRay(pos.x, pos.y);
-		glm::fvec3 intersection = mRenderer->terrain->getTerrainIntersection(camRay);
-        
-        glm::fvec3 point2(intersection.x + 2.0f, intersection.y - 2.0f, 0.0);
-        glm::fvec3 point1(intersection.x - 2.0f, intersection.y - 2.0f, 0.0);
-        glm::fvec3 point3(intersection.x - 2.0f, intersection.y + 2.0f, 0.0);
-        glm::fvec3 point4(intersection.x + 2.0f, intersection.y + 2.0f, 0.0);
-
-        for (Tile &tile : tiles) {
-            if (tile.isPointOnTile(point1))
-                tile.setTexture(4, glSandTex, convertTextureName("sand"));
-            if (tile.isPointOnTile(point2))
-                tile.setTexture(1, glSandTex, convertTextureName("sand"));
-            if (tile.isPointOnTile(point3))
-                tile.setTexture(3, glSandTex, convertTextureName("sand"));
-            if (tile.isPointOnTile(point4))
-                tile.setTexture(2, glSandTex, convertTextureName("sand"));
-        }
+        //setNodeTexture(pos, "sand");
+        setNodeHeight(pos, 1.0f);
     }
     if (message->getMessage() == "Save Map") {
-        saveMap("data/mapfile");
+        saveMap("data/mapfile.txt");
     }
     if (message->getMessage() == "Load Map") {
-        loadMap("data/mapfile");
+        loadMap("data/mapfile.txt");
     }
 }
+

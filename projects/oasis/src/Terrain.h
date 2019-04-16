@@ -70,6 +70,7 @@ class Terrain : public IMessageRecipient {
         GLuint getGlTexture(Uint8 id);
         
         bool isPointOnTile(glm::fvec3 p);
+        void setCornerHeight(Uint8 cornerId, float h);
 
     private:
         bool intersectRayTriangle(RayVector ray, Triangle triangle, glm::fvec3 &intersectionVertex);
@@ -120,15 +121,16 @@ public:
     void update();
     void render();
     
-    void saveMap(std::string mapName);
-    void loadMap(std::string mapName);
+    void saveMap(std::string fileName);
+    void loadMap(std::string fileName);
     
     Uint8 convertTextureName(std::string textureName);
     GLuint getGlTexture(Uint8 id);
     std::string convertTextureId(Uint8 id);
     
     glm::fvec3 getTerrainIntersection(RayVector rv);
-    
+    void setNodeTexture(glm::fvec2 mousePos, std::string texName);
+    void setNodeHeight(glm::fvec2 mousePos, float height);
     
     void createCanvasMesh();
     virtual void onMessage(IMessage *message);
