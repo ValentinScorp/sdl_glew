@@ -226,10 +226,34 @@ void Terrain::createCanvasMesh() {
     int width = 16;
     int height = 16;
     float tileWidth = 4;
+    
+    for (int i = 0; i < height; i++) {
+		for (int j = 0; j < width; j++) {
+            glm::fvec3 pos = { j * tileWidth, i * tileWidth, 0.0f };
+            glm::fvec3 nor = { 0.0f, 0.0f, 1.0f };
+            auto node = std::make_shared<Node>(pos, nor, 0.0f, 0);
+        }
+    }
         
-	for (int i = 0; i < width; i++) {
-		for (int j = 0; j < height; j++) {
-			Patch patch(i, j, 4, tileWidth);
+	for (int y = 0; y < height; y++) {
+		for (int x = 0; x < width; x++) {
+            aux::surface surface;
+            glm::fvec3 offs(x * patchDimension * tileWidth, y * patchDimension * tileWidth);
+            surface.create(offs, patchDimension, patchDimension, tileWidth);
+            
+            size_t vertexesTotal = surface.getRenderVertexSize();
+            for (size_t i = 0; i < vertexesTotal; i++) {
+                Vertex v;
+                v.pos = surface.getVertexPos(i);
+                v.nor = surface.getVertexNor(i);
+                v.tex0 = surface.getVertexTex(i);
+                
+                // todo
+            }
+            
+           
+            
+			Patch patch(x, y, patchDimension, tileWidth);
 			tiles.insert(tiles.end(), patch.tiles.begin(), patch.tiles.end());
 		}
 	}

@@ -8,6 +8,7 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
+    <File Name="../src/Auxiliary.h"/>
     <VirtualDirectory Name="gui">
       <File Name="../src/gui/Button.cpp"/>
       <File Name="../src/gui/Button.h"/>

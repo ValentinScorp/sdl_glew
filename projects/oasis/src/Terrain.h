@@ -38,6 +38,24 @@ class Terrain : public IMessageRecipient {
         glm::fvec2 tex1;
     };
     
+    class Node {
+    public:
+        Node() {}
+        Node(glm::fvec3 position, glm::fvec3 normal, float h, Uint8 tId) {
+            pos = position;
+            nor = normal;
+            height = h;
+            terrainId = tId;
+        }
+        ~Node() {}
+    
+    private:
+        glm::fvec3 pos;
+        glm::fvec2 nor;
+        float height = 0;
+        Uint8 terrainId = 0;
+    };
+    
     class Tile {
     private:
         struct Triangle {
@@ -61,6 +79,8 @@ class Terrain : public IMessageRecipient {
         
         GLuint glTextures[6];
         Uint8 texturesId[6];
+        
+        std::vector<std::shared_ptr<Node>> nodes;
             
     public:
         Tile(glm::fvec3 point1, glm::fvec3 point2, glm::fvec3 point3, glm::fvec3 point4);
@@ -146,5 +166,9 @@ public:
     
     void createCanvasMesh();
     virtual void onMessage(IMessage *message);
+
+private:
+    
+    std::vector<std::shared_ptr<Node>> nodes;
 };
 
