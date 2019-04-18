@@ -44,8 +44,16 @@ class Terrain : public IMessageRecipient {
             Vertex A;
             Vertex B;
             Vertex C;
+            
+            void calcNormals () {
+                glm::fvec3 nor = glm::normalize(glm::cross(B.pos - A.pos, C.pos - A.pos));
+                A.nor = nor; B.nor = nor; C.nor = nor;
+            }
         };
-
+        
+        void calcNormal();
+        void formVertexes();
+        
         std::vector <Vertex> vertexes;
 
         Triangle triangle1;
@@ -106,6 +114,10 @@ class Terrain : public IMessageRecipient {
     GLuint glCameraMatricesUbo = 0;
     GLuint glVbo = 0;
     GLuint glVao = 0;
+        
+    GLuint glUniform_ligthDirection = 0;
+    GLuint glUniform_lightIntensity = 0;
+    GLuint glUniform_ambientIntensity = 0;
     
     glm::mat4 orientationMatrix;
     

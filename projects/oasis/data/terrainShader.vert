@@ -5,7 +5,7 @@ layout(location = 1) in vec3 iNormal;
 layout(location = 2) in vec2 iUv0;
 layout(location = 3) in vec2 iUv1;
 
-out vec3 normal;
+out vec3 vertexNormal;
 out vec2 uvTerrain;
 out vec2 uvAlpha;
 
@@ -20,7 +20,7 @@ uniform mat4 modelMatrix;
 void main()
 {
    gl_Position = projection * view * modelMatrix * vec4(iPosition, 1.0);
-   normal = iNormal;
+   vertexNormal = iNormal;
    uvTerrain = iUv0;
    uvAlpha = iUv1;
 }

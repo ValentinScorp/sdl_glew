@@ -37,14 +37,8 @@ Terrain::Tile::Tile(Vertex point1, Vertex point2, Vertex point3, Vertex point4)
 	triangle2.B.tex0 = point4.tex0;
 	triangle2.C.tex0 = point3.tex0;
     
-    vertexes.push_back(triangle1.A);
-	vertexes.push_back(triangle1.B);
-	vertexes.push_back(triangle1.C);
-
-	vertexes.push_back(triangle2.A);
-	vertexes.push_back(triangle2.B);
-	vertexes.push_back(triangle2.C);
-    
+    formVertexes();
+   
     for (int i = 0; i < 6; i++) {
         glTextures[i] = 0;
         texturesId[i] = 0;
@@ -59,6 +53,17 @@ bool Terrain::Tile::intersection(RayVector ray, glm::fvec3 & intersectionVertex)
 	return intersectRayTriangle(ray, triangle1, intersectionVertex) | intersectRayTriangle(ray, triangle2, intersectionVertex);
 }
 
+void Terrain::Tile::formVertexes() {
+    vertexes.clear();
+    
+    vertexes.push_back(triangle1.A);
+	vertexes.push_back(triangle1.B);
+	vertexes.push_back(triangle1.C);
+
+	vertexes.push_back(triangle2.A);
+	vertexes.push_back(triangle2.B);
+	vertexes.push_back(triangle2.C);
+}
 /* 
  *          2   3
  * 
@@ -72,15 +77,13 @@ void Terrain::Tile::setCornerHeight(Uint8 cornerId, float h) {
         case 4:                         triangle2.B.pos.z += h; break;
     }
     
-    vertexes.clear();
-    
-    vertexes.push_back(triangle1.A);
-	vertexes.push_back(triangle1.B);
-	vertexes.push_back(triangle1.C);
+    calcNormal();
+    formVertexes();
+}
 
-	vertexes.push_back(triangle2.A);
-	vertexes.push_back(triangle2.B);
-	vertexes.push_back(triangle2.C);
+void Terrain::Tile::calcNormal() {
+    triangle1.calcNormals();
+    triangle2.calcNormals();
 }
 
 
@@ -264,6 +267,10 @@ void Terrain::init(std::shared_ptr<Renderer> renderer, Configuration *cfg) {
     createCanvasMesh();
     
     glModelMatrixUniform = renderer->getParamFromProgram(glProgram, "modelMatrix");
+    glUniform_ligthDirection = renderer->getParamFromProgram(glProgram, "ligthDirection");
+    glUniform_lightIntensity = renderer->getParamFromProgram(glProgram, "lightIntensity");
+    glUniform_ambientIntensity = renderer->getParamFromProgram(glProgram, "ambientIntensity");
+    
     glCameraMatricesUbo = renderer->createUbo(glProgram, "cameraMatrices", sizeof(glm::mat4) * 2);
 
     glVbo = renderer->createVbo(0, tiles.size() * 6 * sizeof(Vertex));
@@ -321,10 +328,17 @@ void Terrain::Tile::render(std::shared_ptr<Renderer> renderer, GLuint glVbo, GLi
 }
 
 void Terrain::render() {
+        
     glUseProgram(glProgram);
     mRenderer->updateView(glCameraMatricesUbo);
     glUniformMatrix4fv(glModelMatrixUniform, 1, GL_FALSE, glm::value_ptr(orientationMatrix));
-    
+        
+    float intense = 0.2;
+    float ambient = 1.0;
+    glUniform3f(glUniform_ligthDirection, 1.0, 1.0, 1.0);
+    glUniform4f(glUniform_lightIntensity, intense, intense, intense, 1.0f);
+    glUniform4f(glUniform_ambientIntensity, ambient, ambient, ambient, 1.0f);
+        
     glBindVertexArray(glVao);
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
