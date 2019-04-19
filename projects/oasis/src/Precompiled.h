@@ -25,7 +25,7 @@
 #include <locale> 
 #include <codecvt>
 
-#inlcude "Auxiliary.h"
+#include "Auxiliary.h"
 #include "MessageManager.h"
 #include "Configuration.h"
 

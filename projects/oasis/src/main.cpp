@@ -104,8 +104,6 @@ int main(int argc, char **argv)
     GuiPanel guiPanel;
     guiPanel.init(renderer);
     
-    
-
     Terrain terrain;
     terrain.init(renderer, &config);
     

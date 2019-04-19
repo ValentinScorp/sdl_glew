@@ -56,13 +56,13 @@ bool Terrain::Tile::intersection(RayVector ray, glm::fvec3 & intersectionVertex)
 void Terrain::Tile::formVertexes() {
     vertexes.clear();
     
-    vertexes.push_back(triangle1.A);
-	vertexes.push_back(triangle1.B);
-	vertexes.push_back(triangle1.C);
+    Tile::vertexes.push_back(triangle1.A);
+	Tile::vertexes.push_back(triangle1.B);
+	Tile::vertexes.push_back(triangle1.C);
 
-	vertexes.push_back(triangle2.A);
-	vertexes.push_back(triangle2.B);
-	vertexes.push_back(triangle2.C);
+	Tile::vertexes.push_back(triangle2.A);
+	Tile::vertexes.push_back(triangle2.B);
+	Tile::vertexes.push_back(triangle2.C);
 }
 /* 
  *          2   3
@@ -237,26 +237,25 @@ void Terrain::createCanvasMesh() {
         
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
-            aux::surface surface;
-            glm::fvec3 offs(x * patchDimension * tileWidth, y * patchDimension * tileWidth);
-            surface.create(offs, patchDimension, patchDimension, tileWidth);
             
-            size_t vertexesTotal = surface.getRenderVertexSize();
-            for (size_t i = 0; i < vertexesTotal; i++) {
-                Vertex v;
-                v.pos = surface.getVertexPos(i);
-                v.nor = surface.getVertexNor(i);
-                v.tex0 = surface.getVertexTex(i);
-                
-                // todo
-            }
-            
-           
-            
-			Patch patch(x, y, patchDimension, tileWidth);
-			tiles.insert(tiles.end(), patch.tiles.begin(), patch.tiles.end());
+			//Patch patch(x, y, patchDimension, tileWidth);
+			//tiles.insert(tiles.end(), patch.tiles.begin(), patch.tiles.end());
 		}
 	}
+    
+    
+    surface.create(4, 4, 8, 8, 4.0f);
+    size_t vertexesTotal = surface.getRenderVertexSize();
+    
+    for (size_t i = 0; i < vertexesTotal; i++) {
+        Vertex v;
+        v.pos = surface.getVertexPos(i);
+        v.nor = surface.getVertexNor(i);
+        v.tex0 = surface.getVertexTex0(i);
+        v.tex1 = surface.getVertexTex1(i);
+        
+        vertexes.push_back(v);
+    }
     
     for (Terrain::Tile &t: tiles) {
         t.setTexture(0, glGrassTex, convertTextureName("grass"));
@@ -266,6 +265,11 @@ void Terrain::createCanvasMesh() {
         t.setTexture(4, glGrassTex, convertTextureName("grass"));
         t.setTexture(5, glAlphaCornerNew, convertTextureName("alpha"));
     }
+}
+
+void Terrain::recalcTiles() {
+    ntiles.clear();
+    
 }
 
 void Terrain::init(std::shared_ptr<Renderer> renderer, Configuration *cfg) {
@@ -297,7 +301,9 @@ void Terrain::init(std::shared_ptr<Renderer> renderer, Configuration *cfg) {
     
     glCameraMatricesUbo = renderer->createUbo(glProgram, "cameraMatrices", sizeof(glm::mat4) * 2);
 
-    glVbo = renderer->createVbo(0, tiles.size() * 6 * sizeof(Vertex));
+    // new glVbo = renderer->createVbo(0, tiles.size() * 6 * sizeof(Vertex));
+    glVbo = renderer->createVbo(vertexes.data(), vertexes.size() * sizeof(Vertex));
+    
     glVao = renderer->createVao(glVbo, 3, 3, 2, 2, 0, sizeof(float));
     
     renderer->updateView(glCameraMatricesUbo);
@@ -369,11 +375,37 @@ void Terrain::render() {
     glEnableVertexAttribArray(2);
     glEnableVertexAttribArray(3);
     
-    int tileCounter = 0;
-    for(auto& t: tiles) {
-        t.render(mRenderer, glVbo, tileCounter, glProgram);
-        tileCounter++;
+     //renderer->sendSubDataToVbo(glVbo, offset * sizeof(Vertex) * 6, vertexes.data(), vertexes.size() * sizeof(Vertex));
+    size_t tilesMax = vertexes.size() / 6;
+    
+    for (size_t i = 0; i < tilesMax; i++) {
+        
+        size_t a_idx = surface.triangles[i * 2].getVertexIdx(0);
+        size_t b_idx = surface.triangles[i * 2].getVertexIdx(1);
+        size_t c_idx = surface.triangles[i * 2].getVertexIdx(2);
+        size_t d_idx = surface.triangles[i * 2 + 1].getVertexIdx(2);
+        
+        mRenderer->sendTexture(0, glGrassTex, glProgram, "texture0");
+        mRenderer->sendTexture(1, getGlTexture(surface.vertices[a_idx].terrainType), glProgram, "texture1");
+        mRenderer->sendTexture(2, getGlTexture(surface.vertices[b_idx].terrainType), glProgram, "texture2");
+        mRenderer->sendTexture(3, getGlTexture(surface.vertices[c_idx].terrainType), glProgram, "texture3");
+        mRenderer->sendTexture(4, getGlTexture(surface.vertices[d_idx].terrainType), glProgram, "texture4");
+        mRenderer->sendTexture(5, glAlphaCornerNew, glProgram, "textureAlpha");
+        
+        glDrawArrays(GL_TRIANGLES, i * 6, 6);
+        
+        mRenderer->undindTexture(5);
+        mRenderer->undindTexture(4);
+        mRenderer->undindTexture(3);
+        mRenderer->undindTexture(2);
+        mRenderer->undindTexture(1);
+        mRenderer->undindTexture(0);
     }
+    //new int tileCounter = 0;
+    //for(auto& t: tiles) {
+    //    t.render(mRenderer, glVbo, tileCounter, glProgram);
+    //    tileCounter++;
+   // }
     
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
@@ -526,6 +558,24 @@ void Terrain::setNodeTexture(glm::fvec2 mousePos, std::string texName) {
     }
 }
 
+void Terrain::setSurfaceVertexTexure(glm::fvec2 mousePos, std::string texName) {
+    RayVector camRay = mRenderer->camera->getVectorRay(mousePos.x, mousePos.y);
+    
+    for (auto &triangle: surface.triangles) {
+        aux::ray ray;
+        ray.begin = camRay.begin;
+        ray.end = camRay.end;
+        glm::fvec3 intersection;
+        auto t = &triangle - &surface.triangles[0];
+        if (surface.intersectRayTriangle(ray, t, intersection)) {
+            size_t vIdx = surface.getClosestPoint(t, intersection);
+            surface.vertices[vIdx].terrainType = 2;
+            std::cout << surface.vertices[vIdx].pos.x << " x " << surface.vertices[vIdx].pos.y << " x "<< surface.vertices[vIdx].pos.z << std::endl;
+        }
+    }
+
+}
+
 void Terrain::setNodeHeight(glm::fvec2 mousePos, float height) {
     RayVector camRay = mRenderer->camera->getVectorRay(mousePos.x, mousePos.y);
     glm::fvec3 intersection = mRenderer->terrain->getTerrainIntersection(camRay);
@@ -548,6 +598,7 @@ void Terrain::onMessage(IMessage *message) {
         glm::fvec2 pos = message->getMousePosition();
         //setNodeTexture(pos, "sand");
         setNodeHeight(pos, 1.0f);
+        setSurfaceVertexTexure(pos, "sand");
     }
     if (message->getMessage() == "Save Map") {
         saveMap("data/mapfile.txt");

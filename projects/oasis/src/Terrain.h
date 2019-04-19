@@ -5,9 +5,10 @@ class Configuration;
 
 class Terrain : public IMessageRecipient {
     class Vertex {
+       // Vertex(const Vertex & v){}
     public:
         Vertex() {}
-        Vertex(Vertex const& v) {
+        Vertex(const Vertex & v) {
             pos = v.pos; nor = v.nor; tex0 = v.tex0; tex1 = v.tex1;
         }
         Vertex(glm::vec3 p, glm::vec3 n, glm::vec2 t0, glm::vec2 t1) {
@@ -58,7 +59,15 @@ class Terrain : public IMessageRecipient {
     
     class Tile {
     private:
-        struct Triangle {
+        class Triangle {
+        public:
+            Triangle() {}
+            ~Triangle() {}
+            
+            Triangle(const Triangle & v){
+                A = v.A; B = v.B; C = v.C;
+            }
+        public:
             Vertex A;
             Vertex B;
             Vertex C;
@@ -79,8 +88,6 @@ class Terrain : public IMessageRecipient {
         
         GLuint glTextures[6];
         Uint8 texturesId[6];
-        
-        std::vector<std::shared_ptr<Node>> nodes;
             
     public:
         Tile(glm::fvec3 point1, glm::fvec3 point2, glm::fvec3 point3, glm::fvec3 point4);
@@ -113,6 +120,11 @@ class Terrain : public IMessageRecipient {
     };
     
     std::vector<Tile> tiles;
+        
+    aux::surface surface;
+    std::vector<aux::surface::tile> ntiles;
+    
+    std::vector<Vertex> vertexes;
     
     Uint16 xPatchesNum = 0;
     Uint16 yPatchesNum = 0;
@@ -164,11 +176,14 @@ public:
     void setNodeTexture(glm::fvec2 mousePos, std::string texName);
     void setNodeHeight(glm::fvec2 mousePos, float height);
     
+    void setSurfaceVertexTexure(glm::fvec2 mousePos, std::string texName);
+    
     void createCanvasMesh();
+    void recalcTiles();
     virtual void onMessage(IMessage *message);
 
 private:
     
-    std::vector<std::shared_ptr<Node>> nodes;
+    
 };
 
