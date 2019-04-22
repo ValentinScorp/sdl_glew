@@ -43,6 +43,10 @@ public:
 	void setX(float x);
 	void setY(float y);
 
+    float posX = 0;
+	float posY = 0;
+    float posZ = 0.01;
+    
 private:
 	std::shared_ptr<Renderer> renderer;
 	std::vector<Vertex> vertexes;
@@ -55,9 +59,7 @@ private:
     
     glm::fmat4 orientationMatrix;
     
-    float posX = 0;
-	float posY = 0;
-    float posZ = 0.01;
+
 	float width = 4.0f;
     
     GLuint glTexture;

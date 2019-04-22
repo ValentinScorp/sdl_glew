@@ -43,7 +43,8 @@ void main()
 	vec4 texColor = mix(texColor4, color2, texAlphaHoriz.r);
 	
 	// adding light
-	float cosAngIncidence = dot(normalize(vertexNormal), normalize(ligthDirection));
+	float cosAngIncidence = dot(normalize(vertexNormal), normalize(ligthDirection));	
+	//cosAngIncidence = cosAngIncidence * 0.2;
 	cosAngIncidence = clamp(cosAngIncidence, 0.0, 1.0);
 
 	vec4 diffuseColor = vec4(1.0);

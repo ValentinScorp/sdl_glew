@@ -82,9 +82,8 @@ void TerrainBrush::onMessage(IMessage *message) {
     if (message->getKeyPressed() == "motion") {
         glm::fvec2 pos = message->getMousePosition();
         RayVector camRay = renderer->camera->getVectorRay(pos.x, pos.y);
-		glm::fvec3 intersection = renderer->terrain->getTerrainIntersection(camRay);
-        setX(intersection.x);
-		setY(intersection.y);
+        //setX(intersection.x);
+		//setY(intersection.y);
     }
     if (message->getKeyPressed() == "a") {
         

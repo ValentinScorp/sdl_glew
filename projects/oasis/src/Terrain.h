@@ -38,92 +38,8 @@ class Terrain : public IMessageRecipient {
         glm::fvec2 tex0;
         glm::fvec2 tex1;
     };
-    
-    class Node {
-    public:
-        Node() {}
-        Node(glm::fvec3 position, glm::fvec3 normal, float h, Uint8 tId) {
-            pos = position;
-            nor = normal;
-            height = h;
-            terrainId = tId;
-        }
-        ~Node() {}
-    
-    private:
-        glm::fvec3 pos;
-        glm::fvec2 nor;
-        float height = 0;
-        Uint8 terrainId = 0;
-    };
-    
-    class Tile {
-    private:
-        class Triangle {
-        public:
-            Triangle() {}
-            ~Triangle() {}
-            
-            Triangle(const Triangle & v){
-                A = v.A; B = v.B; C = v.C;
-            }
-        public:
-            Vertex A;
-            Vertex B;
-            Vertex C;
-            
-            void calcNormals () {
-                glm::fvec3 nor = glm::normalize(glm::cross(B.pos - A.pos, C.pos - A.pos));
-                A.nor = nor; B.nor = nor; C.nor = nor;
-            }
-        };
-        
-        void calcNormal();
-        void formVertexes();
-        
-        std::vector <Vertex> vertexes;
-
-        Triangle triangle1;
-        Triangle triangle2;
-        
-        GLuint glTextures[6];
-        Uint8 texturesId[6];
-            
-    public:
-        Tile(glm::fvec3 point1, glm::fvec3 point2, glm::fvec3 point3, glm::fvec3 point4);
-        Tile(Vertex point1, Vertex point2, Vertex point3, Vertex point4);
-        ~Tile();
-
-        bool intersection(RayVector ray, glm::fvec3 &intersectionVertex);
-
-        std::vector <Vertex> & getVertexes();
-        void ClearPoints();
-        void render(std::shared_ptr<Renderer> renderer, GLuint glVbo, GLintptr offset, GLuint glProgram);
-        
-        void setTexture(Uint16 textureNum, GLuint glTexture, Uint8 textureId);
-        Uint8 getTextureId(Uint16 textureNum);
-        GLuint getGlTexture(Uint8 id);
-        
-        bool isPointOnTile(glm::fvec3 p);
-        void setCornerHeight(Uint8 cornerId, float h);
-
-    private:
-        bool intersectRayTriangle(RayVector ray, Triangle triangle, glm::fvec3 &intersectionVertex);
-    };
-        
-    class Patch {
-    public:
-        std::vector <Tile> tiles;
-        
-        Patch(int x, int y, int tilesDim, float tileSize);
-        ~Patch() {}
-    };
-    
-    std::vector<Tile> tiles;
         
     aux::surface surface;
-    std::vector<aux::surface::tile> ntiles;
-    
     std::vector<Vertex> vertexes;
     
     Uint16 xPatchesNum = 0;
@@ -172,14 +88,15 @@ public:
     GLuint getGlTexture(Uint8 id);
     std::string convertTextureId(Uint8 id);
     
-    glm::fvec3 getTerrainIntersection(RayVector rv);
     void setNodeTexture(glm::fvec2 mousePos, std::string texName);
     void setNodeHeight(glm::fvec2 mousePos, float height);
     
     void setSurfaceVertexTexure(glm::fvec2 mousePos, std::string texName);
+    void setSurfaceVertexHeight(glm::fvec2 mousePos, float height);
+    size_t getVertexIntersecIdx(glm::fvec2 mousePos);
     
     void createCanvasMesh();
-    void recalcTiles();
+    void getDataFromSurface();
     virtual void onMessage(IMessage *message);
 
 private:

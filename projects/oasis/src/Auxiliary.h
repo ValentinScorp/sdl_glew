@@ -88,15 +88,6 @@ public:
 
 class surface {
 public:
-    class tile {
-    public:
-        tile() {}
-        ~tile() {}
-        
-        size_t triangleIdxs[2] = { 0, 0 };
-        Uint8 textureType = 0; 
-    };
-public:
     surface() {}
     ~surface() {}
 
@@ -127,6 +118,10 @@ public:
     glm::fvec3 getVertexNor(size_t idx) {
         return getVertex(idx).nor;
     }
+    glm::fvec3 getTriangleNor(size_t idx) {
+        size_t triangleIdx = idx / 3;
+        return triangles[triangleIdx].nor;
+    }
     glm::fvec2 getVertexTex0(size_t idx) {
         return getTexture0(idx);
     }
@@ -135,6 +130,8 @@ public:
     }
         
     size_t getClosestPoint(size_t tIdx, glm::fvec3 point);
+    void recalcTriangleNormals();
+    void recalcVertexNormals();
         
     std::vector<vertex> vertices;
     std::vector<triangle> triangles;

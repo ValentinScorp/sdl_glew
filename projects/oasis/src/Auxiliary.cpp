@@ -1,11 +1,5 @@
 #include "Precompiled.h"
 
-void aux::vertex::calcNormal() {
-    for (auto& t: triangles) {
-        // todo
-    }
-}
-
 void aux::surface::create(Uint16 patch_w, Uint16 patch_h, Uint16 w, Uint16 h, float tileStep) {
     width = patch_w * w;
     height = patch_h * h;
@@ -138,22 +132,44 @@ bool aux::surface::intersectRayTriangle(aux::ray ray, size_t tIdx, glm::fvec3 &i
 }
 
 size_t aux::surface::getClosestPoint(size_t tIdx, glm::fvec3 point) {
-    glm::fvec3 a_vector = point - vertices[triangles[tIdx].a_idx].pos;
-    glm::fvec3 b_vector = point - vertices[triangles[tIdx].b_idx].pos;
-    glm::fvec3 c_vector = point - vertices[triangles[tIdx].c_idx].pos;
+    glm::fvec3 a_vector = glm::abs(point - vertices[triangles[tIdx].a_idx].pos);
+    glm::fvec3 b_vector = glm::abs(point - vertices[triangles[tIdx].b_idx].pos);
+    glm::fvec3 c_vector = glm::abs(point - vertices[triangles[tIdx].c_idx].pos);
     
-    if (glm::length(a_vector) > glm::length(b_vector)) {
-        if (glm::length(a_vector) > glm::length(c_vector)) {
+    float length_a = glm::length(a_vector);
+    float length_b = glm::length(b_vector);
+    float length_c = glm::length(c_vector);
+    
+    if (length_a < length_b) {
+        if (length_a < length_c) {
             return triangles[tIdx].a_idx;
         } else {
             return triangles[tIdx].c_idx;
         }
     } else {
-        if (glm::length(b_vector) > glm::length(c_vector)) {
+        if (length_b < length_c) {
             return triangles[tIdx].b_idx;
         } else {
             return triangles[tIdx].c_idx;
         }
     }
     return 0;
+}
+
+void aux::surface::recalcTriangleNormals() {
+    for (auto& tri: triangles) {
+        tri.calcNormal(vertices);
+    }
+}
+
+void aux::surface::recalcVertexNormals() {
+    for (auto &v : vertices) {
+        glm::fvec3 normal = { 0.0f, 0.0f, 0.0f };
+        for (auto &t: v.triangles) {
+            normal += triangles[t].nor;
+        }
+        normal /= v.triangles.size();
+        normal = glm::normalize(normal);
+        v.nor = normal;
+    }
 }
