@@ -27,6 +27,7 @@ glm::mat4 Camera::getViewMatrix() {
 }
 
 glm::mat4 Camera::getCamMatrix() {
+    //return makeOrientationMatrix();
     return glm::lookAt(position, lookTarget, upVector);
 }
 
@@ -51,10 +52,20 @@ void Camera::moveRight() {
 }
 
 void Camera::init(Configuration* cfg) {
-    position = cfg->getParameter("Camera", "position").toFvec3();
+    Uint16 wPatchesNum = cfg->getParameter("Terrain", "wPatchesNum").toInt();
+    Uint16 hPatchesNum = cfg->getParameter("Terrain", "hPatchesNum").toInt();
+    Uint16 wTilesInPatch = cfg->getParameter("Terrain", "wTilesInPatch").toInt();
+    Uint16 hTilesInPatch = cfg->getParameter("Terrain", "hTilesInPatch").toInt();
+    float tileSize = cfg->getParameter("Terrain", "tileSize").toFloat();
+    
+    glm::fvec3 mapCenter(wPatchesNum * wTilesInPatch * tileSize / 2, hPatchesNum * hTilesInPatch * tileSize / 2, 0.0);
+    position.x = mapCenter.x + cfg->getParameter("Camera", "position").toFvec3().x;;
+    position.y = mapCenter.y + cfg->getParameter("Camera", "position").toFvec3().y;
+    position.z = mapCenter.z + cfg->getParameter("Camera", "position").toFvec3().z;
+    lookTarget = mapCenter;
+    
     aspectRatio = cfg->getScreenAspectRatio();
     upVector = cfg->getParameter("Camera", "upVector").toFvec3();
-    lookTarget = cfg->getParameter("Camera", "lookAt").toFvec3();
     nearPlane = cfg->getParameter("Camera", "nearPlane").toFloat();
     farPlane = cfg->getParameter("Camera", "farPlane").toFloat();
     screenWidth = cfg->getParameter("Window", "width").toFloat();
@@ -84,7 +95,7 @@ RayVector Camera::getVectorRay(int x, int y) {
 	glm::fvec3 vdz = pts[1] - pts[0];
 	glm::fvec3 end = pts[0] + (vdx * dx) + (vdz * dz);
     
-	glm::mat4 orientation = makeOrientationMatrix();
+	glm::mat4 orientation = glm::inverse(getCamMatrix());//makeOrientationMatrix();
     glm::fvec4 end1 = orientation * glm::fvec4(end, 1.0);
     
     RayVector camRay(position, glm::fvec3(end1.x, end1.y, end1.z));
@@ -103,7 +114,7 @@ glm::mat4 Camera::makeOrientationMatrix()
     mat_rot_y = glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::fvec3(0, 1, 0));
     mat_rot_z = glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::fvec3(0, 0, 1));
 
-	glm::mat4 orientation =mat_trans * mat_rot_x * mat_rot_y * mat_rot_z;
+	glm::mat4 orientation = mat_trans * mat_rot_x * mat_rot_y * mat_rot_z;
 
 	return orientation;
 }

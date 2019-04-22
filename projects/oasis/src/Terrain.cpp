@@ -6,9 +6,14 @@ Terrain::Terrain() {
 Terrain::~Terrain() {
 }
 
-void Terrain::createCanvasMesh() {
-    
-    surface.create(4, 4, 8, 8, 4.0f);
+void Terrain::createCanvasMesh(Configuration* cfg) {
+    Uint16 wPatchesNum = cfg->getParameter("Terrain", "wPatchesNum").toInt();
+    Uint16 hPatchesNum = cfg->getParameter("Terrain", "hPatchesNum").toInt();
+    Uint16 wTilesInPatch = cfg->getParameter("Terrain", "wTilesInPatch").toInt();
+    Uint16 hTilesInPatch = cfg->getParameter("Terrain", "hTilesInPatch").toInt();
+    float tileSize = cfg->getParameter("Terrain", "tileSize").toFloat();
+
+    surface.create(wTilesInPatch, hTilesInPatch, wPatchesNum, hPatchesNum, tileSize);
     surface.recalcTriangleNormals();
     surface.recalcVertexNormals();
 }
@@ -31,10 +36,6 @@ void Terrain::getDataFromSurface() {
 void Terrain::init(std::shared_ptr<Renderer> renderer, Configuration *cfg) {
     mRenderer = renderer;
     renderer->terrain = this;
-    xPatchesNum = cfg->getParameter("Terrain", "xPatchesNum").toInt();
-    yPatchesNum = cfg->getParameter("Terrain", "yPatchesNum").toInt();
-    patchDimension = cfg->getParameter("Terrain", "patchDimension").toInt();
-    tileDimension = cfg->getParameter("Terrain", "tileDimension").toFloat();
     
     glSandTex = renderer->loadTexture("img/terrainSand.png");
     glGrassTex = renderer->loadTexture("img/terrainGrass.png");
@@ -48,7 +49,7 @@ void Terrain::init(std::shared_ptr<Renderer> renderer, Configuration *cfg) {
     glProgram = renderer->createProgram("data/" + cfg->getParameter("Terrain", "vertexShader").value, 
                                         "data/" + cfg->getParameter("Terrain", "fragmentShader").value);
     
-    createCanvasMesh();
+    createCanvasMesh(cfg);
     getDataFromSurface();
     
     glModelMatrixUniform = renderer->getParamFromProgram(glProgram, "modelMatrix");

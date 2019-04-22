@@ -44,6 +44,9 @@ public:
     glm::vec3 position = {0.0f, 0.0f, 0.0f};
     glm::vec3 upVector = {0.0f, 0.0f, 0.0f};
     glm::vec3 lookTarget = {0.0f, 0.0f, 0.0f};
+    float rotationX = 0;
+    float rotationY = 0;
+    float rotationZ = 0;
     
     float aspectRatio = 0.0f;
     float moveSpeed = 1.0f;

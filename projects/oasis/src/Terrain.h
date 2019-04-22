@@ -95,7 +95,7 @@ public:
     void setSurfaceVertexHeight(glm::fvec2 mousePos, float height);
     size_t getVertexIntersecIdx(glm::fvec2 mousePos);
     
-    void createCanvasMesh();
+    void createCanvasMesh(Configuration* cfg);
     void getDataFromSurface();
     virtual void onMessage(IMessage *message);
 
