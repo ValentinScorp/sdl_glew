@@ -3,6 +3,7 @@
 void aux::surface::create(Uint16 patch_w, Uint16 patch_h, Uint16 w, Uint16 h, float tileStep) {
     width = patch_w * w;
     height = patch_h * h;
+    step = tileStep;
     
     for (Uint16 y = 0; y <= height; y++) {
         for (Uint16 x = 0; x <= width; x++) {
@@ -171,5 +172,56 @@ void aux::surface::recalcVertexNormals() {
         normal /= v.triangles.size();
         normal = glm::normalize(normal);
         v.nor = normal;
+    }
+}
+
+float aux::surface::sign(glm::fvec2 p1, glm::fvec2 p2, glm::fvec2 p3) {
+    return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
+}
+
+bool aux::surface::isPointOnTriangle(glm::fvec2 point, size_t tIdx) {
+    float d1, d2, d3;
+    bool has_neg, has_pos;
+    
+    glm::fvec2 a (vertices[triangles[tIdx].a_idx].pos.x, vertices[triangles[tIdx].a_idx].pos.y);
+    glm::fvec2 b (vertices[triangles[tIdx].b_idx].pos.x, vertices[triangles[tIdx].b_idx].pos.y);
+    glm::fvec2 c (vertices[triangles[tIdx].c_idx].pos.x, vertices[triangles[tIdx].c_idx].pos.y);
+    
+    d1 = sign(point, a, b);
+    d2 = sign(point, b, c);
+    d3 = sign(point, c, a);
+    
+    has_neg = (d1 < 0) || (d2 < 0) || (d3 < 0);
+    has_pos = (d1 > 0) || (d2 > 0) || (d3 > 0);
+    
+    return !(has_neg && has_pos);
+}
+
+size_t aux::surface::findTriangle(glm::fvec2 coord) {
+    for (auto &tri: triangles) {
+        auto tIdx = &tri - &triangles[0];
+        if (isPointOnTriangle(coord, tIdx)) {
+            return tIdx;
+        }
+    }
+    return 0;
+}
+
+void aux::surface::setHeight(glm::fvec2 coord, float height) {
+    size_t tIdx = findTriangle(coord);
+    vertices[triangles[tIdx].a_idx].pos.z += height;
+    vertices[triangles[tIdx].b_idx].pos.z += height;
+    vertices[triangles[tIdx].c_idx].pos.z += height;
+}
+
+void aux::surface::getAreaIndexes(glm::fvec2 center, float radius, std::vector<size_t> &indexes) {
+    size_t centerIdx = findTriangle(center);
+    for (auto& vert: vertices) {
+        glm::fvec2 point(vert.pos.x, vert.pos.y);
+        float distance = glm::abs(glm::length(point - center));
+        if (distance < radius) {
+            auto vIdx = &vert - &vertices[0];
+            indexes.push_back(vIdx);
+        }
     }
 }

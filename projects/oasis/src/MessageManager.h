@@ -6,6 +6,7 @@ public:
     virtual ~IMessage() {}
     virtual std::string getKeyPressed() { return std::string(""); }
     virtual glm::fvec2 getMousePosition() {return glm::fvec2(0.0); }
+    virtual glm::fvec2 getWheelDirection() {return glm::fvec2(0.0); }
     virtual std::string getMessage() { return std::string(""); }
     virtual bool isQuit() { return false; }
 };
@@ -88,6 +89,9 @@ public:
         return buttonPressed;
     }
     glm::fvec2 getMousePosition() {
+        return glm::fvec2(pos.first, pos.second);
+    }
+    glm::fvec2 getWheelDirection() {
         return glm::fvec2(pos.first, pos.second);
     }
 private:

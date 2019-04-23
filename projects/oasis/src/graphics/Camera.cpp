@@ -8,6 +8,11 @@ Camera::~Camera() {
 }
 
 void Camera::onMessage(IMessage *message) {
+    if (message->getKeyPressed() == "wheel") {
+        glm::fvec2 pos = message->getWheelDirection();
+        glm::fvec3 camViewVector = position - lookTarget;
+        position += (camViewVector * 0.1f * -pos.y);
+    }
     if (message->getKeyPressed() == "arrow_left") {
         moveLeft();
     }
@@ -122,6 +127,7 @@ glm::mat4 Camera::makeOrientationMatrix()
 glm::mat4 Camera::getProjectionMatrix() {
     return glm::ortho(0.0f, screenWidth, 0.0f, screenHeight);
 }
+
 glm::fvec2 Camera::convertMouseToScreen(glm::fvec2 point) {
     return glm::fvec2(point.x, screenHeight - point.y);
 }

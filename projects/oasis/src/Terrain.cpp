@@ -228,14 +228,8 @@ void Terrain::loadMap(std::string fileName)
             surface.vertices[i].pos.z = std::stoi(idStr);
         }
     }
-    surface.recalcTriangleNormals();
-    surface.recalcVertexNormals();
     
-    getDataFromSurface();
-    
-    glBindBuffer(GL_ARRAY_BUFFER, glVbo);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, vertexes.size() * sizeof(Vertex), vertexes.data());
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    updateRenderData();
 }
 
 size_t Terrain::getVertexIntersecIdx(glm::fvec2 mousePos) {
@@ -262,6 +256,10 @@ void Terrain::setSurfaceVertexTexure(glm::fvec2 mousePos, std::string texName) {
 void Terrain::setSurfaceVertexHeight(glm::fvec2 mousePos, float height) {
     size_t vIdx = getVertexIntersecIdx(mousePos);
     surface.vertices[vIdx].pos.z += height;
+    
+    updateRenderData();
+}
+void Terrain::updateRenderData() {
     surface.recalcTriangleNormals();
     surface.recalcVertexNormals();
     
@@ -270,6 +268,15 @@ void Terrain::setSurfaceVertexHeight(glm::fvec2 mousePos, float height) {
     glBindBuffer(GL_ARRAY_BUFFER, glVbo);
     glBufferSubData(GL_ARRAY_BUFFER, 0, vertexes.size() * sizeof(Vertex), vertexes.data());
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void Terrain::genCircle(glm::fvec2 center, float radius, float height) {
+    for (float x = center.x - radius; x <= center.x + radius; x += 0.5) {
+        float y1 = glm::sqrt(glm::pow(radius, 2) - glm::pow((x - center.x), 2)) + center.y;
+        float y2 = center.y - (y1 - center.y);
+        surface.setHeight(glm::fvec2(x, y1), height);
+        surface.setHeight(glm::fvec2(x, y2), height);
+    }
 }
 
 void Terrain::onMessage(IMessage *message) {
@@ -290,7 +297,17 @@ void Terrain::onMessage(IMessage *message) {
         if (vIdx != 0) {
             terrainBrush->posX = (surface.vertices[vIdx].pos.x);
             terrainBrush->posY = (surface.vertices[vIdx].pos.y);
+            terrainBrush->posZ = (surface.vertices[vIdx].pos.z + 0.1f);
         }
+    }
+    if (message->getMessage() == "Generate") {
+        glm::fvec2 center(surface.width * surface.step / 2, surface.height * surface.step / 2);
+        std::vector<size_t> indexes;
+        surface.getAreaIndexes(center, center.x / 2, indexes);
+        for (auto &idx: indexes) {
+            surface.vertices[idx].pos.z = -2;
+        }
+        updateRenderData();
     }
 }
 

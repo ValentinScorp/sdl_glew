@@ -40,6 +40,9 @@ void sendEvents() {
             case SDL_MOUSEMOTION:
                 SMessageManager::getInstance().invokeMessage(new MouseMessage("motion", event.motion.x, event.motion.y));
                 break;
+            case SDL_MOUSEWHEEL:
+                SMessageManager::getInstance().invokeMessage(new MouseMessage("wheel", event.wheel.x, event.wheel.y));
+                break;
             case SDL_MOUSEBUTTONDOWN:
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     SMessageManager::getInstance().invokeMessage(new MouseMessage("left_mouse_button_pressed", event.button.x, event.button.y));

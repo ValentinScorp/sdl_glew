@@ -93,6 +93,10 @@ public:
 
     void create(Uint16 patch_w, Uint16 patch_h, Uint16 w, Uint16 h, float tileStep);
     bool intersectRayTriangle(aux::ray ray, size_t tIdx, glm::fvec3 &intersectionVertex);
+    float sign(glm::fvec2 p1, glm::fvec2 p2, glm::fvec2 p3);
+    bool isPointOnTriangle(glm::fvec2 point, size_t tIdx);
+    void setHeight(glm::fvec2 coord, float height);
+    size_t findTriangle(glm::fvec2 coord);
     
     size_t getRenderVertexSize() {
         return triangles.size() * 3;
@@ -128,6 +132,8 @@ public:
     glm::fvec2 getVertexTex1(size_t idx) {
         return getTexture1(idx);
     }
+    
+    void getAreaIndexes(glm::fvec2 center, float radius, std::vector<size_t> &indexes);
         
     size_t getClosestPoint(size_t tIdx, glm::fvec3 point);
     void recalcTriangleNormals();
@@ -138,6 +144,7 @@ public:
     
     size_t width = 0;
     size_t height = 0;
+    float step = 0;
 };
 
 

@@ -95,8 +95,10 @@ public:
     void setSurfaceVertexHeight(glm::fvec2 mousePos, float height);
     size_t getVertexIntersecIdx(glm::fvec2 mousePos);
     
+    void updateRenderData();
     void createCanvasMesh(Configuration* cfg);
     void getDataFromSurface();
+    void genCircle(glm::fvec2 center, float radius, float height);
     virtual void onMessage(IMessage *message);
 
 private:
