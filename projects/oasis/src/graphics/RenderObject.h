@@ -5,6 +5,7 @@ class Mesh;
 class IMessage;
 
 class RenderObject : public IMessageRecipient {
+
 public:
     RenderObject();
     virtual ~RenderObject();
@@ -31,5 +32,11 @@ public:
     glm::fmat4 orientationMatrix;
     
     std::shared_ptr<Renderer> mRenderer = nullptr;
+    UnitSelection *unitSelection = nullptr;
+    glm::fvec3 position = { 0.0f, 0.0f, 0.0f };
+    glm::fvec3 rotation = { 0.0f, 0.0f, 0.0f };
+    
+    aux::surface selectionBox;
+    bool selected = false;
 };
 

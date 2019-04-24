@@ -39,6 +39,6 @@ public:
     Terrain *terrain = nullptr;
 private:
     GLuint createProgram(GLuint vertexShader, GLuint fragmentShader);
-    
+    GLuint uniformBlockBindingCounter = 0;
 };
 

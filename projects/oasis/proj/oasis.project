@@ -21,6 +21,8 @@
     <File Name="../src/MessageManager.cpp"/>
     <File Name="../src/MessageManager.h"/>
     <VirtualDirectory Name="graphics">
+      <File Name="../src/graphics/UnitSelection.cpp"/>
+      <File Name="../src/graphics/UnitSelection.h"/>
       <File Name="../src/graphics/TerrainBrush.cpp"/>
       <File Name="../src/graphics/TerrainBrush.h"/>
       <File Name="../src/graphics/Console.cpp"/>

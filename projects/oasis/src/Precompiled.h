@@ -35,6 +35,7 @@
 #include "graphics/Console.h"
 #include "graphics/Camera.h"
 #include "graphics/Mesh.h"
+#include "graphics/UnitSelection.h"
 #include "graphics/RenderObject.h"
 #include "graphics/Renderer.h"
 #include "Terrain.h"

@@ -58,7 +58,7 @@ void Terrain::init(std::shared_ptr<Renderer> renderer, Configuration *cfg) {
     glUniform_ambientIntensity = renderer->getParamFromProgram(glProgram, "ambientIntensity");
     
     glCameraMatricesUbo = renderer->createUbo(glProgram, "cameraMatrices", sizeof(glm::mat4) * 2);
-    
+        
     glVbo = renderer->createVbo(vertexes.data(), vertexes.size() * sizeof(Vertex));
     glVao = renderer->createVao(glVbo, 3, 3, 2, 2, 0, sizeof(float));
     
@@ -97,6 +97,7 @@ void Terrain::render() {
         
     glUseProgram(glProgram);
     mRenderer->updateView(glCameraMatricesUbo);
+    
     glUniformMatrix4fv(glModelMatrixUniform, 1, GL_FALSE, glm::value_ptr(orientationMatrix));
         
     float intense = 0.2;
@@ -111,7 +112,7 @@ void Terrain::render() {
     glEnableVertexAttribArray(2);
     glEnableVertexAttribArray(3);
     
-     //renderer->sendSubDataToVbo(glVbo, offset * sizeof(Vertex) * 6, vertexes.data(), vertexes.size() * sizeof(Vertex));
+    //renderer->sendSubDataToVbo(glVbo, offset * sizeof(Vertex) * 6, vertexes.data(), vertexes.size() * sizeof(Vertex));
     size_t tilesMax = vertexes.size() / 6;
     
     for (size_t i = 0; i < tilesMax; i++) {

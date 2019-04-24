@@ -49,7 +49,7 @@ public:
     float rotationZ = 0;
     
     float aspectRatio = 0.0f;
-    float moveSpeed = 1.0f;
+    float moveSpeed = 5.0f;
     float nearPlane = 0.1f;
     float farPlane = 500.0f;
     

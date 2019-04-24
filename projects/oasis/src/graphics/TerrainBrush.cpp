@@ -25,6 +25,7 @@ void TerrainBrush::init(std::shared_ptr<Renderer> renderer) {
     glCameraMatricesUbo = renderer->createUbo(glProgram, "cameraMatrices", sizeof(glm::mat4) * 2);
     glVbo = renderer->createVbo(vertexes.data(), vertexes.size() * sizeof(Vertex));
     glVao = renderer->createVao(glVbo, 3, 0, 0, 0, 0, sizeof(float));
+    
     renderer->updateView(glCameraMatricesUbo);
 }
 

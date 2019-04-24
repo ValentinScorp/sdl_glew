@@ -74,6 +74,14 @@ void aux::surface::create(Uint16 patch_w, Uint16 patch_h, Uint16 w, Uint16 h, fl
     }
 }
 
+void aux::surface::createTriangle(size_t idx_a, size_t idx_b, size_t idx_c) {
+    triangle tri(idx_a, idx_b, idx_c);
+    vertices[idx_a].triangles.push_back(triangles.size());
+    vertices[idx_b].triangles.push_back(triangles.size());
+    vertices[idx_c].triangles.push_back(triangles.size());
+    triangles.push_back(tri);
+}
+
 bool aux::surface::intersectRayTriangle(aux::ray ray, size_t tIdx, glm::fvec3 &intersectionVertex)
 {
 	// находим вектора сторон треугольника
@@ -224,4 +232,16 @@ void aux::surface::getAreaIndexes(glm::fvec2 center, float radius, std::vector<s
             indexes.push_back(vIdx);
         }
     }
+}
+
+bool aux::surface::isIntersected(aux::ray ray) {
+    
+    for (auto &triangle: triangles) {
+        glm::fvec3 intersection;
+        auto t = &triangle - &triangles[0];
+        if (intersectRayTriangle(ray, t, intersection)) {
+            return true;
+        }
+    }
+    return false;
 }

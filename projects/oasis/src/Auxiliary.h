@@ -134,6 +134,8 @@ public:
     }
     
     void getAreaIndexes(glm::fvec2 center, float radius, std::vector<size_t> &indexes);
+    void createTriangle(size_t idx_a, size_t idx_b, size_t idx_c);
+    bool isIntersected(aux::ray ray);
         
     size_t getClosestPoint(size_t tIdx, glm::fvec3 point);
     void recalcTriangleNormals();

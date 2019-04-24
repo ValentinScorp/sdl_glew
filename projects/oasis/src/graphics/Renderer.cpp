@@ -173,15 +173,15 @@ GLuint Renderer::getParamFromProgram(GLuint program, std::string paramName) {
 GLuint Renderer::createUbo(GLuint program, std::string paramName, GLsizeiptr size) {
     
     GLuint uniformBlockIndex = glGetUniformBlockIndex(program, paramName.c_str());
-    GLuint uniformBlockBinding = 0;
-    glUniformBlockBinding(program, uniformBlockIndex, uniformBlockBinding);
+    glUniformBlockBinding(program, uniformBlockIndex, uniformBlockBindingCounter);
         
     GLuint glUniformBufferObject = 0;
     glGenBuffers(1, &glUniformBufferObject);
     glBindBuffer(GL_UNIFORM_BUFFER, glUniformBufferObject);
     glBufferData(GL_UNIFORM_BUFFER, size, NULL, GL_STREAM_DRAW);
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
-    glBindBufferRange(GL_UNIFORM_BUFFER, uniformBlockBinding, glUniformBufferObject, 0, size);
+    glBindBufferRange(GL_UNIFORM_BUFFER, uniformBlockBindingCounter, glUniformBufferObject, 0, size);
+    uniformBlockBindingCounter++;
     return glUniformBufferObject;
 }
 
