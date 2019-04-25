@@ -18,6 +18,7 @@ public:
     void destroy();
 
     void setOrientation(glm::fvec3 p, glm::fvec3 r);
+    void makeOrientationMatrix();
     
     std::string name;
     
@@ -34,7 +35,9 @@ public:
     std::shared_ptr<Renderer> mRenderer = nullptr;
     UnitSelection *unitSelection = nullptr;
     glm::fvec3 position = { 0.0f, 0.0f, 0.0f };
-    glm::fvec3 rotation = { 0.0f, 0.0f, 0.0f };
+    glm::fvec3 upVector = { 0.0f, 0.0f, 0.0f };
+    //glm::fvec3 rotation = { 0.0f, 0.0f, 0.0f };
+    glm::fmat4 rotationMatrix;
     
     aux::surface selectionBox;
     bool selected = false;

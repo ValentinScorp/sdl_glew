@@ -109,7 +109,7 @@ int main(int argc, char **argv)
     
     RenderObject objectRoman;
     objectRoman.init(renderer, &config, "Roman"); 
-    objectRoman.setOrientation(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    //objectRoman.setOrientation(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     
     objectRoman.mesh->beginAnimation("Walk");
     

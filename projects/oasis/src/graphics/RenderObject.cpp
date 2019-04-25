@@ -1,29 +1,19 @@
 #include "../Precompiled.h"
 
 RenderObject::RenderObject() {
+    position = glm::fvec3(10.0f, 10.0f, 0.0f);
+    
+    
+    upVector = glm::fvec3(0.0f, 0.0f, 1.0f);
+   // rotationMatrix = glm::inverse(glm::lookAt(position, glm::fvec3(0.0f, 0.0f, -1.0f), upVector));
+    
+    rotationMatrix = glm::fmat4(1.0f);
+    
+    makeOrientationMatrix();
 }
 
 RenderObject::~RenderObject() {
     delete mesh;
-}
-
-void RenderObject::onMessage(IMessage *message) {
-    if (message->getKeyPressed() == "e") {
-    }
-    if (message->getKeyPressed() == "a") {
-        mesh->beginAnimation("Walk");
-    }
-    if (message->getKeyPressed() == "s") {
-        mesh->stopAnimation();
-    }
-    if (message->getKeyPressed() == "left_mouse_button_pressed") {
-        glm::fvec2 pos = message->getMousePosition();
-        RayVector camRay = mRenderer->camera->getVectorRay(pos.x, pos.y);
-        aux::ray ray;
-        ray.begin = camRay.begin;
-        ray.end = camRay.end;
-        selected = selectionBox.isIntersected(ray);
-    }
 }
 
 void RenderObject::init(std::shared_ptr<Renderer> renderer, Configuration *cfg, std::string objectName) {
@@ -102,9 +92,15 @@ void RenderObject::destroy() {
 
 void RenderObject::setOrientation(glm::fvec3 p, glm::fvec3 r) {
     position = p;
-    rotation = r;
+    rotationMatrix = glm::rotate(glm::mat4(1.0f), 0.0f, r);
+    
     orientationMatrix = glm::translate(glm::mat4(1.0f), position);
-    orientationMatrix = glm::rotate(orientationMatrix, 0.0f, rotation);
+    orientationMatrix = glm::rotate(orientationMatrix, 0.0f, r);
+}
+
+void RenderObject::makeOrientationMatrix() {
+    glm::fmat4 positionMatrix = glm::translate(glm::mat4(1.0f), position);
+    orientationMatrix = rotationMatrix * positionMatrix;
 }
 
 void RenderObject::update(float time) {
@@ -141,5 +137,34 @@ void RenderObject::render() {
     
     if (selected) {
         unitSelection->render();
+    }
+}
+
+void RenderObject::onMessage(IMessage *message) {
+    if (message->getKeyPressed() == "e") {
+    }
+    if (message->getKeyPressed() == "a") {
+        mesh->beginAnimation("Walk");
+    }
+    if (message->getKeyPressed() == "s") {
+        mesh->stopAnimation();
+    }
+    if (message->getKeyPressed() == "left_mouse_button_pressed") {
+        glm::fvec2 pos = message->getMousePosition();
+        RayVector camRay = mRenderer->camera->getVectorRay(pos.x, pos.y);
+        aux::ray ray;
+        ray.begin = camRay.begin;
+        ray.end = camRay.end;
+        selected = selectionBox.isIntersected(ray);
+    }
+    if (message->getMessage() == "unit_walk") {
+        if (selected) {
+            glm::fvec3 dest = message->getPosition();
+            
+            rotationMatrix = glm::inverse(glm::lookAt(position, dest, upVector));
+            makeOrientationMatrix();
+            
+            std::cout << "wakling " << std::endl;
+        }
     }
 }

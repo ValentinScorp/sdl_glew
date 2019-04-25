@@ -47,10 +47,16 @@ void sendEvents() {
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     SMessageManager::getInstance().invokeMessage(new MouseMessage("left_mouse_button_pressed", event.button.x, event.button.y));
                 }
+                if (event.button.button == SDL_BUTTON_RIGHT) {
+                    SMessageManager::getInstance().invokeMessage(new MouseMessage("right_mouse_button_pressed", event.button.x, event.button.y));
+                }
                 break;
             case SDL_MOUSEBUTTONUP:
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     SMessageManager::getInstance().invokeMessage(new MouseMessage("left_mouse_button_released", event.button.x, event.button.y));
+                }
+                if (event.button.button == SDL_BUTTON_RIGHT) {
+                    SMessageManager::getInstance().invokeMessage(new MouseMessage("right_mouse_button_released", event.button.x, event.button.y));
                 }
                 break;
             case SDL_KEYDOWN:

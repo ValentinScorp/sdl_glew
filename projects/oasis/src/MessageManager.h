@@ -6,8 +6,9 @@ public:
     virtual ~IMessage() {}
     virtual std::string getKeyPressed() { return std::string(""); }
     virtual glm::fvec2 getMousePosition() {return glm::fvec2(0.0); }
-    virtual glm::fvec2 getWheelDirection() {return glm::fvec2(0.0); }
+    virtual glm::fvec2 getWheelDirection() { return glm::fvec2(0.0); }
     virtual std::string getMessage() { return std::string(""); }
+    virtual glm::fvec3 getPosition() { return glm::fvec3(0.0); }
     virtual bool isQuit() { return false; }
 };
 
@@ -110,6 +111,19 @@ public:
     }
 private:
     std::string message;
+};
+
+class UnitMessage : public IMessage {
+public:
+    UnitMessage() {}
+    UnitMessage(std::string m, glm::fvec3 pos) : message(m), position(pos) {}
+    ~UnitMessage() {}
+    
+    std::string getMessage() { return message; }
+    glm::fvec3 getPosition() { return position; }
+private:
+    std::string message;
+    glm::fvec3 position = {0.0f, 0.0f, 0.0f };
 };
 
 void sendEvents();

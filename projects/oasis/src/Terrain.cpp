@@ -283,8 +283,8 @@ void Terrain::genCircle(glm::fvec2 center, float radius, float height) {
 void Terrain::onMessage(IMessage *message) {
     if (message->getKeyPressed() == "left_mouse_button_pressed") {
         glm::fvec2 pos = message->getMousePosition();
-        setSurfaceVertexTexure(pos, "sand");
-        setSurfaceVertexHeight(pos, 1.0f);
+     //   setSurfaceVertexTexure(pos, "sand");
+     //   setSurfaceVertexHeight(pos, 1.0f);
     }
     if (message->getMessage() == "Save Map") {
         saveMap("data/mapfile.txt");
@@ -309,6 +309,22 @@ void Terrain::onMessage(IMessage *message) {
             surface.vertices[idx].pos.z = -2;
         }
         updateRenderData();
+    }
+    
+    if (message->getKeyPressed() == "right_mouse_button_pressed") {
+        glm::fvec2 pos = message->getMousePosition();
+        RayVector camRay = mRenderer->camera->getVectorRay(pos.x, pos.y);
+    
+        for (auto &triangle: surface.triangles) {
+            aux::ray ray;
+            ray.begin = camRay.begin;
+            ray.end = camRay.end;
+            glm::fvec3 intersection;
+            auto t = &triangle - &surface.triangles[0];
+            if (surface.intersectRayTriangle(ray, t, intersection)) {
+                SMessageManager::getInstance().invokeMessage(new UnitMessage("unit_walk", intersection));
+            }
+        }
     }
 }
 

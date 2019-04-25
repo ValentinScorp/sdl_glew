@@ -163,12 +163,12 @@ void Mesh::loadSmaMesh(std::string fileName) {
 			float *y = (float*)data_iterator; data_iterator += sizeof(float);
 			float *z = (float*)data_iterator; data_iterator += sizeof(float);
 
-			glm::vec3 p((*x), *y, *z);
+			glm::vec3 p((*x), (*y), (*z));
 
 			positions.push_back(p);
 		}
 	}
-
+    
 	// normals
 	unsigned short normalsTotal = *(unsigned short*)data_iterator;
 	data_iterator += sizeof(unsigned short);
@@ -180,7 +180,7 @@ void Mesh::loadSmaMesh(std::string fileName) {
 			float *y = (float*)data_iterator; data_iterator += sizeof(float);
 			float *z = (float*)data_iterator; data_iterator += sizeof(float);
 
-			glm::vec3 n((*x), *y, *z);
+			glm::vec3 n((*x), (*y), (*z));
 
 			normals.push_back(n);
 		}
@@ -236,12 +236,12 @@ void Mesh::loadSmaMesh(std::string fileName) {
 		
 		glm::fvec3 rot, pos;
 		rot.x = (*(float*)data_iterator); data_iterator += sizeof(float);
-		rot.y = *(float*)data_iterator; data_iterator += sizeof(float);
-		rot.z = *(float*)data_iterator; data_iterator += sizeof(float);
+		rot.y = (*(float*)data_iterator); data_iterator += sizeof(float);
+		rot.z = (*(float*)data_iterator); data_iterator += sizeof(float);
 
 		pos.x = (*(float*)data_iterator); data_iterator += sizeof(float);
-		pos.y = *(float*)data_iterator; data_iterator += sizeof(float);
-		pos.z = *(float*)data_iterator; data_iterator += sizeof(float);
+		pos.y = (*(float*)data_iterator); data_iterator += sizeof(float);
+		pos.z = (*(float*)data_iterator); data_iterator += sizeof(float);
 		
 		AddBone(pos, rot);
 	}
