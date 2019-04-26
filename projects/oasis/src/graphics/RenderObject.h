@@ -17,8 +17,10 @@ public:
     void render();
     void destroy();
 
-    void setOrientation(glm::fvec3 p, glm::fvec3 r);
-    void makeOrientationMatrix();
+    void setPosition(glm::fvec3 pos);
+    void rotateToward(glm::fvec3 direction);
+    
+    void makeFinalMatrix();
     
     std::string name;
     

@@ -81,6 +81,11 @@ class ray {
 public:
     ray() {}
     ~ray() {}
+    
+    void shift(glm::fvec3 offs) {
+        begin += offs;
+        end += offs;
+    }
 
     glm::fvec3 begin;
     glm::fvec3 end;
@@ -147,6 +152,8 @@ public:
     size_t width = 0;
     size_t height = 0;
     float step = 0;
+    
+    glm::fvec3 position = { 0.0f, 0.0f, 0.0f };
 };
 
 

@@ -1,14 +1,12 @@
 #include "../Precompiled.h"
 
 RenderObject::RenderObject() {
-    position = glm::fvec3(0.0f, 0.0f, 0.0f);    
-    
+    position = glm::fvec3(10.0f, 10.0f, 0.0f);
     upVector = glm::fvec3(0.0f, 0.0f, 1.0f);
-   // rotationMatrix = glm::inverse(glm::lookAt(position, glm::fvec3(0.0f, 0.0f, -1.0f), upVector));
-    
     rotationMatrix = glm::fmat4(1.0f);
     
-    makeOrientationMatrix();
+    setPosition(position);
+    makeFinalMatrix();
 }
 
 RenderObject::~RenderObject() {
@@ -89,21 +87,24 @@ void RenderObject::destroy() {
     mRenderer->destroyBuffer(glVbo);
 }
 
-void RenderObject::setOrientation(glm::fvec3 p, glm::fvec3 r) {
-    position = p;
-    rotationMatrix = glm::rotate(glm::mat4(1.0f), 0.0f, r);
-    
-    orientationMatrix = glm::translate(glm::mat4(1.0f), position);
-    orientationMatrix = glm::rotate(orientationMatrix, 0.0f, r);
+void RenderObject::setPosition(glm::fvec3 pos) {
+    position = pos;
+    selectionBox.position = pos;
 }
 
-void RenderObject::makeOrientationMatrix() {
-    glm::fmat4 positionMatrix = glm::translate(glm::mat4(1.0f), position);
-    orientationMatrix = rotationMatrix * positionMatrix;
+void RenderObject::rotateToward(glm::fvec3 direction) {
+    glm::fvec3 dir = glm::normalize(direction - position);
+    rotationMatrix = glm::inverse(glm::lookAt(glm::fvec3(0.0f), dir, upVector)); // LH version
     
-    orientationMatrix = glm::rotate(orientationMatrix, glm::radians(-90.0f), glm::fvec3(0.0f, 1.0f, 0.0f));
-    orientationMatrix = glm::rotate(orientationMatrix, glm::radians(-90.0f), glm::fvec3(1.0f, 0.0f, 0.0f));
-    orientationMatrix = glm::rotate(orientationMatrix, glm::radians(-90.0f), glm::fvec3(0.0f, 0.0f, 1.0f));
+    // adjust rotation of model
+    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(-90.0f), glm::fvec3(0.0f, 1.0f, 0.0f));
+    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(-90.0f), glm::fvec3(1.0f, 0.0f, 0.0f));
+    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(-90.0f), glm::fvec3(0.0f, 0.0f, 1.0f));
+}
+    
+
+void RenderObject::makeFinalMatrix() {
+    orientationMatrix =  glm::translate(glm::mat4(1.0f), position) * rotationMatrix;
 }
 
 void RenderObject::update(float time) {
@@ -163,11 +164,8 @@ void RenderObject::onMessage(IMessage *message) {
     if (message->getMessage() == "unit_walk") {
         if (selected) {
             glm::fvec3 dest = message->getPosition();
-            
-            rotationMatrix = glm::inverse(glm::lookAt(position, dest, upVector));
-            makeOrientationMatrix();
-            
-            std::cout << "wakling " << std::endl;
+            rotateToward(dest);
+            makeFinalMatrix();
         }
     }
 }

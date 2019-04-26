@@ -235,7 +235,7 @@ void aux::surface::getAreaIndexes(glm::fvec2 center, float radius, std::vector<s
 }
 
 bool aux::surface::isIntersected(aux::ray ray) {
-    
+    ray.shift(glm::fvec3(-position.x, -position.y, -position.z));
     for (auto &triangle: triangles) {
         glm::fvec3 intersection;
         auto t = &triangle - &triangles[0];
