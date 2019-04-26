@@ -90,6 +90,10 @@ void RenderObject::destroy() {
 void RenderObject::setPosition(glm::fvec3 pos) {
     position = pos;
     selectionBox.position = pos;
+    if (unitSelection) {
+        unitSelection->position = position;
+        unitSelection->position.z += 0.1;
+    }
 }
 
 void RenderObject::rotateToward(glm::fvec3 direction) {
@@ -109,6 +113,15 @@ void RenderObject::makeFinalMatrix() {
 
 void RenderObject::update(float time) {
     mesh->update(time);
+    
+    if (moving) {
+        setPosition(position + movementDirection * movementSpeed);
+        makeFinalMatrix();
+        
+        if (glm::abs(glm::length(movementTarget - position)) < movementSpeed) {
+            moving = false;
+        }
+    }
 }
 
 void RenderObject::render() {
@@ -166,6 +179,10 @@ void RenderObject::onMessage(IMessage *message) {
             glm::fvec3 dest = message->getPosition();
             rotateToward(dest);
             makeFinalMatrix();
+            
+            movementTarget = dest;
+            moving = true;
+            movementDirection = glm::normalize(movementTarget - position);
         }
     }
 }

@@ -43,5 +43,9 @@ public:
     
     aux::surface selectionBox;
     bool selected = false;
+    bool moving = false;
+    glm::fvec3 movementDirection = { 0.0f, 0.0f, 0.0f };
+    float movementSpeed = 0.5;
+    glm::fvec3 movementTarget = { 0.0f, 0.0f, 0.0f };
 };
 
