@@ -1,8 +1,7 @@
 #include "../Precompiled.h"
 
 RenderObject::RenderObject() {
-    position = glm::fvec3(10.0f, 10.0f, 0.0f);
-    
+    position = glm::fvec3(0.0f, 0.0f, 0.0f);    
     
     upVector = glm::fvec3(0.0f, 0.0f, 1.0f);
    // rotationMatrix = glm::inverse(glm::lookAt(position, glm::fvec3(0.0f, 0.0f, -1.0f), upVector));
@@ -101,6 +100,10 @@ void RenderObject::setOrientation(glm::fvec3 p, glm::fvec3 r) {
 void RenderObject::makeOrientationMatrix() {
     glm::fmat4 positionMatrix = glm::translate(glm::mat4(1.0f), position);
     orientationMatrix = rotationMatrix * positionMatrix;
+    
+    orientationMatrix = glm::rotate(orientationMatrix, glm::radians(-90.0f), glm::fvec3(0.0f, 1.0f, 0.0f));
+    orientationMatrix = glm::rotate(orientationMatrix, glm::radians(-90.0f), glm::fvec3(1.0f, 0.0f, 0.0f));
+    orientationMatrix = glm::rotate(orientationMatrix, glm::radians(-90.0f), glm::fvec3(0.0f, 0.0f, 1.0f));
 }
 
 void RenderObject::update(float time) {

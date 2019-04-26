@@ -53,7 +53,7 @@ void Button::render() {
     glUseProgram(glProgram);
     
     glBindBuffer(GL_ARRAY_BUFFER, glVbo);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices.data());
+    glBufferSubData(GL_ARRAY_BUFFER, 0, vertices.size() * sizeof(Vertex), vertices.data());
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     
     glBindVertexArray(glVao);
