@@ -46,9 +46,10 @@ void Mesh::loadObjMesh(std::string fileName) {
     } else {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Unable to open file -> %s\n", fileName.c_str());
     }
-    std::vector<glm::vec4> pos;
-    std::vector<glm::vec2> tex;
-    std::vector<glm::ivec2> indexes;
+    std::vector<glm::fvec3> pos;
+    std::vector<glm::fvec3> nor;
+    std::vector<glm::fvec2> tex;
+    std::vector<glm::ivec3> indexes;
     for (auto line: fileContent) {
         std::vector<std::string> words;
         std::stringstream ssLine(line);
@@ -61,8 +62,12 @@ void Mesh::loadObjMesh(std::string fileName) {
                 SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Loaded object -> %s\n", words[1].c_str());
             }
             if (words[0] == "v") {
-                glm::vec4 v(stof(words[1]), stof(words[2]), stof(words[3]), 1.0f);
+                glm::vec3 v(stof(words[1]), stof(words[2]), stof(words[3]));
                 pos.push_back(v);
+            }
+            if (words[0] == "vn") {
+                glm::vec3 n(stof(words[1]), stof(words[2]), stof(words[3]));
+                nor.push_back(n);
             }
             if (words[0] == "vt") {
                 glm::vec2 t(stof(words[1]), stof(words[2]));
@@ -71,35 +76,41 @@ void Mesh::loadObjMesh(std::string fileName) {
             if (words[0] == "f") {
                 std::stringstream a(words[1]);
                 std::string tmpa;
-                glm::ivec2 inda;
+                glm::ivec3 inda;
                 std::getline(a, tmpa, '/');
                 inda.x = std::stoi(tmpa);
                 std::getline(a, tmpa, '/');
                 inda.y = std::stoi(tmpa);
+                std::getline(a, tmpa, '/');
+                inda.z = std::stoi(tmpa);
                 indexes.push_back(inda-1);
                 
                 std::stringstream b(words[2]);
                 std::string tmpb;
-                glm::ivec2 indb;
+                glm::ivec3 indb;
                 std::getline(b, tmpb, '/');
                 indb.x = std::stoi(tmpb);
                 std::getline(b, tmpb, '/');
                 indb.y = std::stoi(tmpb);
+                std::getline(b, tmpb, '/');
+                indb.z = std::stoi(tmpb);
                 indexes.push_back(indb-1);
                 
                 std::stringstream c(words[3]);
                 std::string tmpc;
-                glm::ivec2 indc;
+                glm::ivec3 indc;
                 std::getline(c, tmpc, '/');
                 indc.x = std::stoi(tmpc);
                 std::getline(c, tmpc, '/');
                 indc.y = std::stoi(tmpc);
+                std::getline(c, tmpc, '/');
+                indc.z = std::stoi(tmpc);
                 indexes.push_back(indc-1);
             }
         }
     }
     for (auto i: indexes) {
-        Vertex v(pos[i.x], glm::fvec3(0.0f), tex[i.y]);
+        Vertex v(pos[i.x], nor[i.z], tex[i.y]);
         vertexes.push_back(v);
     }
 }

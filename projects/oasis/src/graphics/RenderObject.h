@@ -19,6 +19,7 @@ public:
 
     void setPosition(glm::fvec3 pos);
     void rotateToward(glm::fvec3 direction);
+    void adjustRotation();
     
     void makeFinalMatrix();
     
@@ -47,5 +48,7 @@ public:
     glm::fvec3 movementDirection = { 0.0f, 0.0f, 0.0f };
     float movementSpeed = 0.5;
     glm::fvec3 movementTarget = { 0.0f, 0.0f, 0.0f };
+    
+    bool selectable = false;
 };
 

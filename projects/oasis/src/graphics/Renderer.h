@@ -13,7 +13,7 @@ public:
     void init(Configuration *config);
     
     GLuint createTexture(GLsizei width, GLsizei height, GLenum internalFormat, GLenum format, GLvoid *data);
-    GLuint loadTexture(std::string fileName);
+    GLuint loadTexture(std::string fileName, bool flipVertical = false);
     void unloadTexture(GLuint texture);
     
     GLuint createProgram(std::string vertexShader, std::string fragmentShader);

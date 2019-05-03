@@ -65,7 +65,7 @@ GLuint Renderer::createTexture(GLsizei width, GLsizei height, GLenum internalFor
     return glTexture;
 }
 
-GLuint Renderer::loadTexture(std::string fileName) {
+GLuint Renderer::loadTexture(std::string fileName, bool flipVertical) {
     SDL_Surface *surface = IMG_Load(fileName.c_str());
     if (surface == NULL) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Unable to load image %s! SDL error -> %s\n", fileName.c_str(), SDL_GetError());
@@ -77,10 +77,15 @@ GLuint Renderer::loadTexture(std::string fileName) {
     if (surface->format->BytesPerPixel == 4) {
         mode = GL_RGBA;
     }
-        
-    GLuint glTexture = createTexture(surface->w, surface->h, mode, mode, (GLvoid*)surface->pixels);
+    SDL_Surface * surf;
+    if (flipVertical) {
+        surf = flipSdlSurfaceVertical(surface);
+    } else {
+        surf = surface;
+    }
+    GLuint glTexture = createTexture(surf->w, surf->h, mode, mode, (GLvoid*)surf->pixels);
     
-    SDL_FreeSurface(surface);
+    SDL_FreeSurface(surf);
      
     return glTexture;
 }

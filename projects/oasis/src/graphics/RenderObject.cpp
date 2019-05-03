@@ -17,8 +17,17 @@ void RenderObject::init(std::shared_ptr<Renderer> renderer, Configuration *cfg, 
     mRenderer = renderer;
     mesh = new Mesh();
     
-    glTexture = renderer->loadTexture("img/" + cfg->getParameter(objectName, "texture").value);
-    mesh->loadSmaMesh("model/" + cfg->getParameter(objectName, "meshFile").value);
+    
+    
+    std::string fileFormat = cfg->getParameter(objectName, "fileFormat").value;
+    if (fileFormat == "sma") {
+        glTexture = renderer->loadTexture("img/" + cfg->getParameter(objectName, "texture").value);
+        mesh->loadSmaMesh("model/" + cfg->getParameter(objectName, "meshFile").value);
+    }
+    if (fileFormat == "obj") {
+        glTexture = renderer->loadTexture("img/" + cfg->getParameter(objectName, "texture").value, true);
+        mesh->loadObjMesh("model/" + cfg->getParameter(objectName, "meshFile").value);
+    }
     
     glProgram = renderer->createProgram("data/" + cfg->getParameter(objectName, "vertexShader").value, 
                                         "data/" + cfg->getParameter(objectName, "fragmentShader").value);
@@ -74,7 +83,6 @@ void RenderObject::init(std::shared_ptr<Renderer> renderer, Configuration *cfg, 
     selectionBox.createTriangle(1, 6, 5);
     selectionBox.createTriangle(3, 0, 4);
     selectionBox.createTriangle(3, 4, 7);
-     
 }
 
 void RenderObject::destroy() {
@@ -99,8 +107,10 @@ void RenderObject::setPosition(glm::fvec3 pos) {
 void RenderObject::rotateToward(glm::fvec3 direction) {
     glm::fvec3 dir = glm::normalize(direction - position);
     rotationMatrix = glm::inverse(glm::lookAt(glm::fvec3(0.0f), dir, upVector)); // LH version
+}
+
+void RenderObject::adjustRotation() {
     
-    // adjust rotation of model
     rotationMatrix = glm::rotate(rotationMatrix, glm::radians(-90.0f), glm::fvec3(0.0f, 1.0f, 0.0f));
     rotationMatrix = glm::rotate(rotationMatrix, glm::radians(-90.0f), glm::fvec3(1.0f, 0.0f, 0.0f));
     rotationMatrix = glm::rotate(rotationMatrix, glm::radians(-90.0f), glm::fvec3(0.0f, 0.0f, 1.0f));
@@ -167,17 +177,20 @@ void RenderObject::onMessage(IMessage *message) {
         mesh->stopAnimation();
     }
     if (message->getKeyPressed() == "left_mouse_button_pressed") {
-        glm::fvec2 pos = message->getMousePosition();
-        RayVector camRay = mRenderer->camera->getVectorRay(pos.x, pos.y);
-        aux::ray ray;
-        ray.begin = camRay.begin;
-        ray.end = camRay.end;
-        selected = selectionBox.isIntersected(ray);
+        if (selectable) {
+            glm::fvec2 pos = message->getMousePosition();
+            RayVector camRay = mRenderer->camera->getVectorRay(pos.x, pos.y);
+            aux::ray ray;
+            ray.begin = camRay.begin;
+            ray.end = camRay.end;
+            selected = selectionBox.isIntersected(ray);
+        }
     }
     if (message->getMessage() == "unit_walk") {
         if (selected) {
             glm::fvec3 dest = message->getPosition();
             rotateToward(dest);
+            adjustRotation();
             makeFinalMatrix();
             
             movementTarget = dest;

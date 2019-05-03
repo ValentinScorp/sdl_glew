@@ -133,7 +133,7 @@ public:
 	Bone* GetBone(size_t id);
 	size_t GetBonesNum();
 	void AddVertexWeights(std::vector<Weight> w);
-	void AddAnimation(Animation *anim);	
+	void AddAnimation(Animation *anim);
 	
 	virtual void addVertex(glm::fvec3 pos, glm::fvec3 nor, glm::fvec2 uv);
 	virtual void addVertex(Vertex ver);

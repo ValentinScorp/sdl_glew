@@ -109,9 +109,14 @@ int main(int argc, char **argv)
     
     RenderObject objectRoman;
     objectRoman.init(renderer, &config, "Roman"); 
+    objectRoman.selectable = true;
     //objectRoman.setOrientation(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     
-    objectRoman.mesh->beginAnimation("Walk");
+    objectRoman.mesh->beginAnimation("Walk");    
+    
+    RenderObject objectTree;
+    objectTree.init(renderer, &config, "Tree"); 
+    
     
     GLenum err1;
     while ((err1 = glGetError()) != GL_NO_ERROR) {
@@ -145,9 +150,13 @@ int main(int argc, char **argv)
         GLfloat rotationAngle = 0;
         Time romanUpdate;
         objectRoman.update(rotationAngle);
+       
+        objectTree.rotateToward(glm::fvec3(0.0f, 0.0f, 0.0f));
+        objectTree.makeFinalMatrix();
         
         Time romanRender;
         objectRoman.render();
+        objectTree.render();
         
         guiPanel.render();
         
@@ -164,6 +173,7 @@ int main(int argc, char **argv)
     }
     
     guiPanel.destroy();
+    objectTree.destroy();
     objectRoman.destroy();
     terrain.destroy();
     Console::getInstance().destroy();
