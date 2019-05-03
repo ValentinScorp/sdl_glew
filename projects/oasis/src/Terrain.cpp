@@ -95,6 +95,9 @@ void Terrain::update() {
 
 void Terrain::render() {
         
+    if (gridView) {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }
     glUseProgram(glProgram);
     mRenderer->updateView(glCameraMatricesUbo);
     
@@ -147,6 +150,9 @@ void Terrain::render() {
     glBindVertexArray(0);
     glUseProgram(0);
     
+    if (gridView) {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
     terrainBrush->render();
 }
 
@@ -280,9 +286,18 @@ void Terrain::genCircle(glm::fvec2 center, float radius, float height) {
     }
 }
 
+void Terrain::toggleGridView() {
+    gridView = !gridView;
+}
+
 void Terrain::onMessage(IMessage *message) {
     if (message->getKeyPressed() == "left_mouse_button_pressed") {
         glm::fvec2 pos = message->getMousePosition();
+     //   setSurfaceVertexTexure(pos, "sand");
+     //   setSurfaceVertexHeight(pos, 1.0f);
+    }
+    if (message->getKeyPressed() == "w") {
+        toggleGridView();
      //   setSurfaceVertexTexure(pos, "sand");
      //   setSurfaceVertexHeight(pos, 1.0f);
     }

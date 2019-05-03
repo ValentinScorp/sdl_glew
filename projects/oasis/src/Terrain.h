@@ -102,7 +102,8 @@ public:
     virtual void onMessage(IMessage *message);
 
 private:
+    void toggleGridView();
     
-    
+    bool gridView = false;
 };
 
