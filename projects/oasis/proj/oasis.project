@@ -11,6 +11,8 @@
     <File Name="../src/Auxiliary.cpp"/>
     <File Name="../src/Auxiliary.h"/>
     <VirtualDirectory Name="gui">
+      <File Name="../src/gui/Listbox.cpp"/>
+      <File Name="../src/gui/Listbox.h"/>
       <File Name="../src/gui/Button.cpp"/>
       <File Name="../src/gui/Button.h"/>
       <File Name="../src/gui/GuiPanel.h"/>

@@ -30,7 +30,9 @@
 #include "Configuration.h"
 
 #include "gui/Button.h"
+#include "gui/Listbox.h"
 #include "gui/GuiPanel.h"
+
 #include "graphics/TerrainBrush.h"
 #include "graphics/Console.h"
 #include "graphics/Camera.h"
@@ -38,5 +40,6 @@
 #include "graphics/UnitSelection.h"
 #include "graphics/RenderObject.h"
 #include "graphics/Renderer.h"
+
 #include "Terrain.h"
 

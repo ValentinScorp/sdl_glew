@@ -20,16 +20,26 @@ void GuiPanel::init(std::shared_ptr<Renderer> renderer) {
     std::unique_ptr<Button> buttonGen(new Button);
     buttonGen->init(renderer, glm::fvec2(500, 150), glm::fvec2(200, 40), "Generate");
     buttons.push_back(std::move(buttonGen));
+    
+    std::unique_ptr<Listbox> testlistbox(new Listbox);
+    testlistbox->init(renderer, glm::fvec2(40, 550), glm::fvec2(200, 40), "List box");
+    listboxes.push_back(std::move(testlistbox));
 }
 
 void GuiPanel::destroy() {
     for (auto& b: buttons) {
         b->destroy();
     }
+    for (auto& lb: listboxes) {
+        lb->destroy();
+    }
 }
 
 void GuiPanel::render() {
     for (auto& b: buttons) {
         b->render();
+    }
+    for (auto& lb: listboxes) {
+        lb->render();
     }
 }

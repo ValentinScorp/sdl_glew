@@ -2,6 +2,7 @@
 
 class Renderer;
 class Button;
+class Listbox;
 
 class GuiPanel
 {
@@ -19,5 +20,6 @@ private:
     glm::fvec2 dimension = { 0.0f, 0.0f };
     
     std::vector<std::unique_ptr<Button>> buttons;
+    std::vector<std::unique_ptr<Listbox>> listboxes;
 };
 
