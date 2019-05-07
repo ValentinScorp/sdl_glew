@@ -1,5 +1,7 @@
 #pragma once
 
+class Listbox;
+
 class ListboxItem : public IMessageRecipient {
      class Vertex {
     public:
@@ -24,7 +26,7 @@ public:
     ListboxItem();
     virtual ~ListboxItem();
 
-    void init(std::shared_ptr<Renderer> renderer, glm::fvec2 position, glm::fvec2 dimension, std::string text);
+    void init(std::shared_ptr<Renderer> renderer, glm::fvec2 position, glm::fvec2 dimension, std::string text, Listbox *parent);
     void destroy();
     void render();
     bool isPointOver(glm::fvec2 point);
@@ -32,9 +34,10 @@ public:
     void onMessage(IMessage *message);
     
     bool opened = false;
+    Listbox* parent;
     
  private:   
-   glm::fvec2 position = {0.0f, 0.0f};
+    glm::fvec2 position = {0.0f, 0.0f};
     glm::fvec2 dimension = {0.0f, 0.0f};
     std::string text;
     std::u16string u16text;
@@ -82,18 +85,23 @@ public:
     virtual ~Listbox();
 
     void init(std::shared_ptr<Renderer> renderer, glm::fvec2 position, glm::fvec2 dimension, std::string text);
+    void addItem(std::string itemText);
     void destroy();
     void render();
     bool isPointOver(glm::fvec2 point);
     
     void onMessage(IMessage *message);
+    void hideChildren();
+    
+    std::string text;
+    bool hidden = false;
     
 private:
-    bool opened = false;
-    
     glm::fvec2 position = {0.0f, 0.0f};
     glm::fvec2 dimension = {0.0f, 0.0f};
-    std::string text;
+    
+    std::string id;
+    
     std::u16string u16text;
     
     const glm::fvec4 colorBase = { 0.5f, 0.5f, 0.5f, 0.7f };

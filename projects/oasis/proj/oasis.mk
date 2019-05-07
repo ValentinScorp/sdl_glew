@@ -13,7 +13,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=valen
-Date                   :=06/05/2019
+Date                   :=07/05/2019
 CodeLitePath           :="C:/Program Files/CodeLite"
 LinkerName             :=C:/MinGW/bin/g++.exe
 SharedObjectLinkerName :=C:/MinGW/bin/g++.exe -shared -fPIC
@@ -62,8 +62,8 @@ AS       := C:/MinGW/bin/as.exe
 ## User defined environment variables
 ##
 CodeLiteDir:=C:\Program Files\CodeLite
-Objects0=$(IntermediateDirectory)/up_src_gui_Listbox.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_Mesh.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_Renderer.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_RenderObject.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_Console.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_MessageManager.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_Terrain.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_Auxiliary.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_Configuration.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_Camera.cpp$(ObjectSuffix) \
-	$(IntermediateDirectory)/up_src_main.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_TerrainBrush.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_gui_Button.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_gui_GuiPanel.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_UnitSelection.cpp$(ObjectSuffix) 
+Objects0=$(IntermediateDirectory)/up_src_graphics_Mesh.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_Renderer.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_RenderObject.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_UnitSelection.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_Console.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_MessageManager.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_Terrain.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_Auxiliary.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_Configuration.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_Camera.cpp$(ObjectSuffix) \
+	$(IntermediateDirectory)/up_src_main.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_gui_Listbox.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_TerrainBrush.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_gui_Button.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_gui_GuiPanel.cpp$(ObjectSuffix) 
 
 
 
@@ -106,14 +106,6 @@ PreBuild:
 ##
 ## Objects
 ##
-$(IntermediateDirectory)/up_src_gui_Listbox.cpp$(ObjectSuffix): ../src/gui/Listbox.cpp $(IntermediateDirectory)/up_src_gui_Listbox.cpp$(DependSuffix)
-	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/gui/Listbox.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_gui_Listbox.cpp$(ObjectSuffix) $(IncludePath)
-$(IntermediateDirectory)/up_src_gui_Listbox.cpp$(DependSuffix): ../src/gui/Listbox.cpp
-	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/up_src_gui_Listbox.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/up_src_gui_Listbox.cpp$(DependSuffix) -MM ../src/gui/Listbox.cpp
-
-$(IntermediateDirectory)/up_src_gui_Listbox.cpp$(PreprocessSuffix): ../src/gui/Listbox.cpp
-	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_gui_Listbox.cpp$(PreprocessSuffix) ../src/gui/Listbox.cpp
-
 $(IntermediateDirectory)/up_src_graphics_Mesh.cpp$(ObjectSuffix): ../src/graphics/Mesh.cpp $(IntermediateDirectory)/up_src_graphics_Mesh.cpp$(DependSuffix)
 	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/graphics/Mesh.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_graphics_Mesh.cpp$(ObjectSuffix) $(IncludePath)
 $(IntermediateDirectory)/up_src_graphics_Mesh.cpp$(DependSuffix): ../src/graphics/Mesh.cpp
@@ -137,6 +129,14 @@ $(IntermediateDirectory)/up_src_graphics_RenderObject.cpp$(DependSuffix): ../src
 
 $(IntermediateDirectory)/up_src_graphics_RenderObject.cpp$(PreprocessSuffix): ../src/graphics/RenderObject.cpp
 	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_graphics_RenderObject.cpp$(PreprocessSuffix) ../src/graphics/RenderObject.cpp
+
+$(IntermediateDirectory)/up_src_graphics_UnitSelection.cpp$(ObjectSuffix): ../src/graphics/UnitSelection.cpp $(IntermediateDirectory)/up_src_graphics_UnitSelection.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/graphics/UnitSelection.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_graphics_UnitSelection.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/up_src_graphics_UnitSelection.cpp$(DependSuffix): ../src/graphics/UnitSelection.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/up_src_graphics_UnitSelection.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/up_src_graphics_UnitSelection.cpp$(DependSuffix) -MM ../src/graphics/UnitSelection.cpp
+
+$(IntermediateDirectory)/up_src_graphics_UnitSelection.cpp$(PreprocessSuffix): ../src/graphics/UnitSelection.cpp
+	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_graphics_UnitSelection.cpp$(PreprocessSuffix) ../src/graphics/UnitSelection.cpp
 
 $(IntermediateDirectory)/up_src_graphics_Console.cpp$(ObjectSuffix): ../src/graphics/Console.cpp $(IntermediateDirectory)/up_src_graphics_Console.cpp$(DependSuffix)
 	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/graphics/Console.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_graphics_Console.cpp$(ObjectSuffix) $(IncludePath)
@@ -194,6 +194,14 @@ $(IntermediateDirectory)/up_src_main.cpp$(DependSuffix): ../src/main.cpp
 $(IntermediateDirectory)/up_src_main.cpp$(PreprocessSuffix): ../src/main.cpp
 	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_main.cpp$(PreprocessSuffix) ../src/main.cpp
 
+$(IntermediateDirectory)/up_src_gui_Listbox.cpp$(ObjectSuffix): ../src/gui/Listbox.cpp $(IntermediateDirectory)/up_src_gui_Listbox.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/gui/Listbox.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_gui_Listbox.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/up_src_gui_Listbox.cpp$(DependSuffix): ../src/gui/Listbox.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/up_src_gui_Listbox.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/up_src_gui_Listbox.cpp$(DependSuffix) -MM ../src/gui/Listbox.cpp
+
+$(IntermediateDirectory)/up_src_gui_Listbox.cpp$(PreprocessSuffix): ../src/gui/Listbox.cpp
+	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_gui_Listbox.cpp$(PreprocessSuffix) ../src/gui/Listbox.cpp
+
 $(IntermediateDirectory)/up_src_graphics_TerrainBrush.cpp$(ObjectSuffix): ../src/graphics/TerrainBrush.cpp $(IntermediateDirectory)/up_src_graphics_TerrainBrush.cpp$(DependSuffix)
 	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/graphics/TerrainBrush.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_graphics_TerrainBrush.cpp$(ObjectSuffix) $(IncludePath)
 $(IntermediateDirectory)/up_src_graphics_TerrainBrush.cpp$(DependSuffix): ../src/graphics/TerrainBrush.cpp
@@ -217,14 +225,6 @@ $(IntermediateDirectory)/up_src_gui_GuiPanel.cpp$(DependSuffix): ../src/gui/GuiP
 
 $(IntermediateDirectory)/up_src_gui_GuiPanel.cpp$(PreprocessSuffix): ../src/gui/GuiPanel.cpp
 	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_gui_GuiPanel.cpp$(PreprocessSuffix) ../src/gui/GuiPanel.cpp
-
-$(IntermediateDirectory)/up_src_graphics_UnitSelection.cpp$(ObjectSuffix): ../src/graphics/UnitSelection.cpp $(IntermediateDirectory)/up_src_graphics_UnitSelection.cpp$(DependSuffix)
-	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/graphics/UnitSelection.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_graphics_UnitSelection.cpp$(ObjectSuffix) $(IncludePath)
-$(IntermediateDirectory)/up_src_graphics_UnitSelection.cpp$(DependSuffix): ../src/graphics/UnitSelection.cpp
-	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/up_src_graphics_UnitSelection.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/up_src_graphics_UnitSelection.cpp$(DependSuffix) -MM ../src/graphics/UnitSelection.cpp
-
-$(IntermediateDirectory)/up_src_graphics_UnitSelection.cpp$(PreprocessSuffix): ../src/graphics/UnitSelection.cpp
-	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_graphics_UnitSelection.cpp$(PreprocessSuffix) ../src/graphics/UnitSelection.cpp
 
 
 -include $(IntermediateDirectory)/*$(DependSuffix)

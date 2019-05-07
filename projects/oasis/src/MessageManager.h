@@ -9,6 +9,8 @@ public:
     virtual glm::fvec2 getWheelDirection() { return glm::fvec2(0.0); }
     virtual std::string getMessage() { return std::string(""); }
     virtual glm::fvec3 getPosition() { return glm::fvec3(0.0); }
+    virtual std::string getParentId(){ return std::string(""); }
+    virtual std::string getSenderId(){ return std::string(""); }
     virtual bool isQuit() { return false; }
 };
 
@@ -124,6 +126,26 @@ public:
 private:
     std::string message;
     glm::fvec3 position = {0.0f, 0.0f, 0.0f };
+};
+
+class GuiMessage : public IMessage {
+public:
+    GuiMessage() {}
+    GuiMessage(std::string m, std::string s_id, std::string p_id) 
+        : message(m), 
+          senderId(s_id), 
+          parentId(p_id) {
+    }
+    ~GuiMessage() {}
+    
+    std::string getMessage() { return message; }
+    std::string getSenderId(){ return senderId; }
+    std::string getParentId(){ return parentId; }
+    
+private:
+    std::string message;
+    std::string senderId;
+    std::string parentId;
 };
 
 void sendEvents();

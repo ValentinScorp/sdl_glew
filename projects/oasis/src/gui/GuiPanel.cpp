@@ -23,6 +23,11 @@ void GuiPanel::init(std::shared_ptr<Renderer> renderer) {
     
     std::unique_ptr<Listbox> testlistbox(new Listbox);
     testlistbox->init(renderer, glm::fvec2(40, 550), glm::fvec2(200, 40), "List box");
+    testlistbox->addItem("Item 11");
+    testlistbox->addItem("Item 22");
+    testlistbox->addItem("Item 33");
+    testlistbox->addItem("Item 43");
+    testlistbox->addItem("Item 5");
     listboxes.push_back(std::move(testlistbox));
 }
 
