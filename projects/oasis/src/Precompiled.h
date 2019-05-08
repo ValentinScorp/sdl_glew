@@ -33,6 +33,9 @@
 #include "gui/Listbox.h"
 #include "gui/GuiPanel.h"
 
+#include "ai/AiAgent.h"
+#include "ai/AiContainer.h"
+
 #include "graphics/TerrainBrush.h"
 #include "graphics/Console.h"
 #include "graphics/Camera.h"

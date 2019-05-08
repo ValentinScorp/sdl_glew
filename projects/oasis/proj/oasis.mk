@@ -13,7 +13,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=valen
-Date                   :=07/05/2019
+Date                   :=08/05/2019
 CodeLitePath           :="C:/Program Files/CodeLite"
 LinkerName             :=C:/MinGW/bin/g++.exe
 SharedObjectLinkerName :=C:/MinGW/bin/g++.exe -shared -fPIC
@@ -62,8 +62,8 @@ AS       := C:/MinGW/bin/as.exe
 ## User defined environment variables
 ##
 CodeLiteDir:=C:\Program Files\CodeLite
-Objects0=$(IntermediateDirectory)/up_src_graphics_Mesh.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_Renderer.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_RenderObject.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_UnitSelection.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_Console.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_MessageManager.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_Terrain.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_Auxiliary.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_Configuration.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_Camera.cpp$(ObjectSuffix) \
-	$(IntermediateDirectory)/up_src_main.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_gui_Listbox.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_TerrainBrush.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_gui_Button.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_gui_GuiPanel.cpp$(ObjectSuffix) 
+Objects0=$(IntermediateDirectory)/up_src_ai_AiContainer.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_ai_AiAgent.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_Mesh.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_Renderer.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_RenderObject.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_UnitSelection.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_Console.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_MessageManager.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_Terrain.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_Auxiliary.cpp$(ObjectSuffix) \
+	$(IntermediateDirectory)/up_src_Configuration.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_Camera.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_main.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_gui_Listbox.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_TerrainBrush.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_gui_Button.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_gui_GuiPanel.cpp$(ObjectSuffix) 
 
 
 
@@ -106,6 +106,22 @@ PreBuild:
 ##
 ## Objects
 ##
+$(IntermediateDirectory)/up_src_ai_AiContainer.cpp$(ObjectSuffix): ../src/ai/AiContainer.cpp $(IntermediateDirectory)/up_src_ai_AiContainer.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/ai/AiContainer.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_ai_AiContainer.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/up_src_ai_AiContainer.cpp$(DependSuffix): ../src/ai/AiContainer.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/up_src_ai_AiContainer.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/up_src_ai_AiContainer.cpp$(DependSuffix) -MM ../src/ai/AiContainer.cpp
+
+$(IntermediateDirectory)/up_src_ai_AiContainer.cpp$(PreprocessSuffix): ../src/ai/AiContainer.cpp
+	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_ai_AiContainer.cpp$(PreprocessSuffix) ../src/ai/AiContainer.cpp
+
+$(IntermediateDirectory)/up_src_ai_AiAgent.cpp$(ObjectSuffix): ../src/ai/AiAgent.cpp $(IntermediateDirectory)/up_src_ai_AiAgent.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/ai/AiAgent.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_ai_AiAgent.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/up_src_ai_AiAgent.cpp$(DependSuffix): ../src/ai/AiAgent.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/up_src_ai_AiAgent.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/up_src_ai_AiAgent.cpp$(DependSuffix) -MM ../src/ai/AiAgent.cpp
+
+$(IntermediateDirectory)/up_src_ai_AiAgent.cpp$(PreprocessSuffix): ../src/ai/AiAgent.cpp
+	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_ai_AiAgent.cpp$(PreprocessSuffix) ../src/ai/AiAgent.cpp
+
 $(IntermediateDirectory)/up_src_graphics_Mesh.cpp$(ObjectSuffix): ../src/graphics/Mesh.cpp $(IntermediateDirectory)/up_src_graphics_Mesh.cpp$(DependSuffix)
 	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/graphics/Mesh.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_graphics_Mesh.cpp$(ObjectSuffix) $(IncludePath)
 $(IntermediateDirectory)/up_src_graphics_Mesh.cpp$(DependSuffix): ../src/graphics/Mesh.cpp

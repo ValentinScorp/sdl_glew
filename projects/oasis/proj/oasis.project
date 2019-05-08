@@ -8,6 +8,12 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
+    <VirtualDirectory Name="ai">
+      <File Name="../src/ai/AiAgent.h"/>
+      <File Name="../src/ai/AiAgent.cpp"/>
+      <File Name="../src/ai/AiContainer.h"/>
+      <File Name="../src/ai/AiContainer.cpp"/>
+    </VirtualDirectory>
     <File Name="../src/Auxiliary.cpp"/>
     <File Name="../src/Auxiliary.h"/>
     <VirtualDirectory Name="gui">

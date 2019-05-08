@@ -62,11 +62,11 @@ void Mesh::loadObjMesh(std::string fileName) {
                 SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Loaded object -> %s\n", words[1].c_str());
             }
             if (words[0] == "v") {
-                glm::vec3 v(stof(words[1]), stof(words[2]), stof(words[3]));
+                glm::vec3 v(stof(words[1]), -stof(words[3]), stof(words[2]));
                 pos.push_back(v);
             }
             if (words[0] == "vn") {
-                glm::vec3 n(stof(words[1]), stof(words[2]), stof(words[3]));
+                glm::vec3 n(stof(words[1]), -stof(words[3]), stof(words[2]));
                 nor.push_back(n);
             }
             if (words[0] == "vt") {
