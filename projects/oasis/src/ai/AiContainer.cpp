@@ -19,11 +19,13 @@ void AiContainer::destroy() {
 }
 
 void AiContainer::update() {
+    agents[0]->update(agents[1]);
+    /*
     for (auto& a: agents) {
         if (a != nullptr) {
-            a->update();
+            a->update(agents);
         }
-    }
+    }*/
 }
 
 size_t AiContainer::createAgent() {

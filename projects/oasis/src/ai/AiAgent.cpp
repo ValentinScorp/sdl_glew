@@ -55,10 +55,37 @@ void AiAgent::createSelectionBox(float unitWidth, float unitHeight) {
     selectionBox.createTriangle(3, 4, 7);
 }
 
-void AiAgent::update() {
+bool AiAgent::lineIntersetsCircle(glm::fvec3 p1, glm::fvec3 p2, glm::fvec3 center, float radius) {
+    return (glm::length(center - p1) <= radius) || (glm::length(center - p2) <= radius);
+}
+
+void AiAgent::update(AiAgent *obstacle) {
      if (moving) {
-        setPosition(position + movementDirection * movementSpeed);
+         
+        const float MAX_SEE_AHEAD = collisionRadius;
+        glm::fvec3 ahead = position + glm::normalize(movementDirection) * movementSpeed * MAX_SEE_AHEAD;
+        glm::fvec3 ahead2 = position + glm::normalize(movementDirection) * movementSpeed * MAX_SEE_AHEAD * 0.5f;
+        
+        glm::fvec3 avoidance_force(0.0f, 0.0f, 0.0f);
+                
+        const float MAX_AVOID_FORCE = movementSpeed * 1.0;
+        if (lineIntersetsCircle(ahead, ahead2, obstacle->position, obstacle->collisionRadius)) {
+            avoidance_force = glm::normalize(ahead - obstacle->position);
+        }
+                
+        float dotSpeed = glm::abs(glm::dot(avoidance_force, movementDirection));
+        
+        glm::fvec3 newDirection = glm::normalize(avoidance_force * dotSpeed + movementDirection);
+        rotateToward(position + newDirection * movementSpeed);
+        
+        
+        setPosition(position + newDirection * movementSpeed);
+        movementDirection = glm::normalize(movementTarget - position);
+        
+        adjustRotation();
         makeFinalMatrix();
+        
+        std::cout << glm::length(movementTarget - position) << std::endl;
         
         if (glm::abs(glm::length(movementTarget - position)) < movementSpeed) {
             moving = false;

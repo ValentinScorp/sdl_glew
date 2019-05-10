@@ -121,7 +121,11 @@ int main(int argc, char **argv)
     
     RenderObject objectTree;
     id = aiContainer.createAgent();
+    agent = aiContainer.getAgent(id);
+    agent->collisionRadius = 3;
     objectTree.init(renderer, &config, "Tree", aiContainer.getAgent(id)); 
+    
+    
     
     
     GLenum err1;

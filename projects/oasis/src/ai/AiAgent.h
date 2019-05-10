@@ -10,12 +10,13 @@ public:
     void createSelectionBox(float unitWidth, float unitHeight);
     
     void init(Camera* cam);
-    void update();
+    void update(AiAgent *obstacle);
     
     void setPosition(glm::fvec3 pos);
     void rotateToward(glm::fvec3 direction);
     void adjustRotation(); 
     void makeFinalMatrix();
+    bool lineIntersetsCircle(glm::fvec3 p1, glm::fvec3 p2, glm::fvec3 center, float radius);
     
     virtual void onMessage(IMessage *message);
     
@@ -31,7 +32,7 @@ public:
     bool moving = false;
     
     glm::fvec3 movementDirection = { 0.0f, 0.0f, 0.0f };
-    float movementSpeed = 0.5;
+    float movementSpeed = 0.3;
     glm::fvec3 movementTarget = { 0.0f, 0.0f, 0.0f };
     
     bool selectable = false;
