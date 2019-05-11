@@ -17,5 +17,7 @@ public:
 private:
     std::vector<AiAgent*> agents;
     Camera *camera = nullptr;
+    
+    Pathfinder pathfinder;
 };
 

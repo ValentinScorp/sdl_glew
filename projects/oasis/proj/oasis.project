@@ -9,6 +9,8 @@
   <Dependencies/>
   <VirtualDirectory Name="src">
     <VirtualDirectory Name="ai">
+      <File Name="../src/ai/Pathfinder.h"/>
+      <File Name="../src/ai/Pathfinder.cpp"/>
       <File Name="../src/ai/AiAgent.h"/>
       <File Name="../src/ai/AiAgent.cpp"/>
       <File Name="../src/ai/AiContainer.h"/>

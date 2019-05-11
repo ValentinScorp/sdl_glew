@@ -100,7 +100,8 @@ int main(int argc, char **argv)
     renderer->init(&config);
 
     AiContainer aiContainer;
-    aiContainer.init(renderer->camera);
+    Camera *cam = renderer->camera;
+    aiContainer.init(cam);
     
     Console::getInstance().init(renderer, &config);
     

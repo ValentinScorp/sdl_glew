@@ -1,6 +1,7 @@
 #pragma once
 
 class Camera;
+class Pathfinder;
 
 class AiAgent: public IMessageRecipient {
 public:
@@ -9,9 +10,9 @@ public:
     
     void createSelectionBox(float unitWidth, float unitHeight);
     
-    void init(Camera* cam);
+    void init(Camera* cam, Pathfinder *pf);
     void update(AiAgent *obstacle);
-    
+    void avoidObstacle(AiAgent *obstacle);
     void setPosition(glm::fvec3 pos);
     void rotateToward(glm::fvec3 direction);
     void adjustRotation(); 
@@ -40,5 +41,8 @@ public:
     float collisionRadius = 3;
     
     aux::surface selectionBox;
+    Pathfinder* pathfinder = nullptr;
+    std::vector<glm::fvec3> movementPath;
+    size_t movementPathStage = 0;
 };
 

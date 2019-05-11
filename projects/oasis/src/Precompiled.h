@@ -34,6 +34,7 @@
 #include "gui/GuiPanel.h"
 
 #include "ai/AiAgent.h"
+#include "ai/Pathfinder.h"
 #include "ai/AiContainer.h"
 
 #include "graphics/TerrainBrush.h"

@@ -1,6 +1,7 @@
 #include "../Precompiled.h"
 
 AiContainer::AiContainer() {
+
 }
 
 AiContainer::~AiContainer() {
@@ -8,6 +9,16 @@ AiContainer::~AiContainer() {
 
 void AiContainer::init(Camera *cam) {
     camera = cam;
+    
+    /* todo
+     * [Terrain]
+    wPatchesNum=8
+    hPatchesNum=8
+    wTilesInPatch=4
+    hTilesInPatch=4
+    tileSize=4.0
+*/
+   // pathfinder.init(4 * 4 * 2, 4 * 4 * 2, 4 / 2);
 }
 
 void AiContainer::destroy() {
@@ -30,7 +41,7 @@ void AiContainer::update() {
 
 size_t AiContainer::createAgent() {
     auto agent = new AiAgent();
-    agent->init(camera);
+    agent->init(camera, &pathfinder);
     agents.push_back(agent);
     return (agents.size() - 1);
 }
