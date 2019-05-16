@@ -1,33 +1,32 @@
 #pragma once
 
-class PfNode {
-public:
-    PfNode();
-    ~PfNode();
-    
-    float startNodeDitance = 0;
-    float endNodeDistance = 0;
-    float fullDistance = 0;
-    bool closed = false;
-    
-    glm::ivec3 position;
-    size_t originNode = 0;
-    std::vector<size_t> neighbors;
-};
+class RenderQuad;
 
 class Pathfinder {
 public:
     Pathfinder();
     virtual ~Pathfinder();
     
-    void init(Uint16 width, Uint16 height, Uint16 nodeWidth);
-    void getPath(glm::fvec3 begin, glm::fvec3 end, std::vector<glm::fvec3> &path);
-    size_t getNode(glm::fvec3 pos);
+    void init(std::shared_ptr<Renderer> renderer, Uint16 width, Uint16 height, Uint16 nodeWidth);
+    void render();
+    void destroy();
     
-    std::vector<PfNode> nodes;
+    void getPath(glm::fvec3 begin, glm::fvec3 end, std::vector<glm::fvec3> &path);
+    size_t getNodeIndex(glm::fvec3 pos);
+    glm::fvec3 getNodePosition(size_t index);
+    
+    void setStaticObstacle(glm::fvec3 position);
+    void removeStaticObstacle(glm::fvec3 position);
+    bool isObstacle(glm::fvec3 position);
+    
+    AiMap aiMap;
     
     Uint16 nodeRows = 0;
     Uint16 nodeCols = 0;
     Uint16 nodeWidth = 0;
+    
+    RenderQuad *renderQuad = nullptr;
+    
+    std::shared_ptr<Renderer> renderer = nullptr;
 };
 

@@ -101,7 +101,7 @@ int main(int argc, char **argv)
 
     AiContainer aiContainer;
     Camera *cam = renderer->camera;
-    aiContainer.init(cam);
+    aiContainer.init(renderer, cam, &config);
     
     Console::getInstance().init(renderer, &config);
     
@@ -124,11 +124,10 @@ int main(int argc, char **argv)
     id = aiContainer.createAgent();
     agent = aiContainer.getAgent(id);
     agent->collisionRadius = 3;
-    objectTree.init(renderer, &config, "Tree", aiContainer.getAgent(id)); 
-    
-    
-    
-    
+    agent->setPosition(glm::fvec3(7.0f, 5.0f, 0.0f));
+    agent->setObstacleOnAiMap();
+    objectTree.init(renderer, &config, "Tree", agent); 
+        
     GLenum err1;
     while ((err1 = glGetError()) != GL_NO_ERROR) {
         std::cerr << "OpenGL init error -> " << err1 << std::endl;
@@ -149,8 +148,6 @@ int main(int argc, char **argv)
             runMainLoop = false;
         }
         
-        aiContainer.update();
-        
         SDL_GL_MakeCurrent(window, gl_context);
 
         glClearColor(0.0f, 0.8f, 0.8f, 0.0f);
@@ -159,6 +156,9 @@ int main(int argc, char **argv)
         Time renderTime;
         terrain.update();
         terrain.render();
+        
+        aiContainer.update();
+        aiContainer.render();
                 
         GLfloat rotationAngle = 0;
         Time romanUpdate;

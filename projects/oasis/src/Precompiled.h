@@ -33,10 +33,12 @@
 #include "gui/Listbox.h"
 #include "gui/GuiPanel.h"
 
+#include "ai/AiMap.h"
 #include "ai/AiAgent.h"
 #include "ai/Pathfinder.h"
 #include "ai/AiContainer.h"
 
+#include "graphics/RenderQuad.h"
 #include "graphics/TerrainBrush.h"
 #include "graphics/Console.h"
 #include "graphics/Camera.h"

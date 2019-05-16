@@ -67,7 +67,8 @@ void Terrain::init(std::shared_ptr<Renderer> renderer, Configuration *cfg) {
     orientationMatrix = glm::mat4(1.0f);
     
     terrainBrush = std::make_unique<TerrainBrush>();
-    terrainBrush->init(renderer);
+    float tileSize = cfg->getParameter("Terrain", "tileSize").toFloat();
+    terrainBrush->init(renderer, tileSize);
 }
 
 void Terrain::destroy() {

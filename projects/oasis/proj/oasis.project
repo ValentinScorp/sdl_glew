@@ -9,6 +9,8 @@
   <Dependencies/>
   <VirtualDirectory Name="src">
     <VirtualDirectory Name="ai">
+      <File Name="../src/ai/AiMap.h"/>
+      <File Name="../src/ai/AiMap.cpp"/>
       <File Name="../src/ai/Pathfinder.h"/>
       <File Name="../src/ai/Pathfinder.cpp"/>
       <File Name="../src/ai/AiAgent.h"/>
@@ -31,6 +33,8 @@
     <File Name="../src/MessageManager.cpp"/>
     <File Name="../src/MessageManager.h"/>
     <VirtualDirectory Name="graphics">
+      <File Name="../src/graphics/RenderQuad.h"/>
+      <File Name="../src/graphics/RenderQuad.cpp"/>
       <File Name="../src/graphics/UnitSelection.cpp"/>
       <File Name="../src/graphics/UnitSelection.h"/>
       <File Name="../src/graphics/TerrainBrush.cpp"/>

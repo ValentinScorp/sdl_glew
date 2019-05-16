@@ -1,12 +1,7 @@
 #include "../Precompiled.h"
 
 AiAgent::AiAgent() {
-    position = glm::fvec3(10.0f, 10.0f, 0.0f);
-    upVector = glm::fvec3(0.0f, 0.0f, 1.0f);
-    rotationMatrix = glm::fmat4(1.0f);
     
-    setPosition(position);
-    makeFinalMatrix();
 }
 
 AiAgent::~AiAgent()
@@ -16,6 +11,13 @@ AiAgent::~AiAgent()
 void AiAgent::init(Camera* cam, Pathfinder *pf){
     camera = cam;
     pathfinder = pf;
+    
+    position = glm::fvec3(0.0f, 0.0f, 0.0f);
+    upVector = glm::fvec3(0.0f, 0.0f, 1.0f);
+    rotationMatrix = glm::fmat4(1.0f);
+    
+    setPosition(position);
+    makeFinalMatrix();
 }
 
 void AiAgent::createSelectionBox(float unitWidth, float unitHeight) {
@@ -81,22 +83,54 @@ void AiAgent::avoidObstacle(AiAgent *obstacle) {
     movementDirection = glm::normalize(movementTarget - position);
 }
 
+void AiAgent::move() {
+    if (currentPath < (movementPath.size() - 1)) {
+        movementDirection = glm::normalize(movementPath[currentPath + 1] - movementPath[currentPath]);
+        glm::fvec3 newPosition = position + movementDirection * movementSpeed;
+        pathfinder->removeStaticObstacle(position);
+        if (pathfinder->isObstacle(newPosition) == false) {
+            pathfinder->setStaticObstacle(newPosition);
+            rotateToward(newPosition);
+            setPosition(newPosition);
+            adjustRotation();
+            if (glm::abs(glm::length(movementPath[currentPath + 1] - newPosition) < movementSpeed)) {
+                currentPath++;
+                if (currentPath >= movementPath.size()) {
+                    moving = false;
+                }
+            }
+        } else {
+            pathfinder->setStaticObstacle(position);
+            moving = false;
+            currentPath = 0;
+            movementPath.clear();
+        }
+    }
+    
+}
+
 void AiAgent::update(AiAgent *obstacle) {
-     if (moving) {
-        avoidObstacle(obstacle);
-                
-        adjustRotation();
+    
+    if (moving) {
+        //avoidObstacle(obstacle);
+        move();
+        
         makeFinalMatrix();
         
         if (glm::abs(glm::length(movementTarget - position)) < movementSpeed) {
             moving = false;
         }
     }
+    pathfinder->setStaticObstacle(position);
 }
 
 void AiAgent::setPosition(glm::fvec3 pos) {
     position = pos;
     selectionBox.position = pos;
+}
+
+void AiAgent::setObstacleOnAiMap() {
+    pathfinder->setStaticObstacle(position);
 }
 
 void AiAgent::rotateToward(glm::fvec3 direction) {
@@ -137,14 +171,15 @@ void AiAgent::onMessage(IMessage *message) {
         if (selected) {
             glm::fvec3 dest = message->getPosition();
             
-            movementPathStage = 0;
+            currentPath = 0;
             movementPath.clear();
             pathfinder->getPath(position, dest, movementPath);
-            if(movementPath.size() != 0) {
+            if(movementPath.size() > 1) {
                 rotateToward(movementPath[1]);
                 adjustRotation();
                 makeFinalMatrix();
                 
+                currentPath = 0;
                 movementTarget = movementPath[1];
                 moving = true;
                 movementDirection = glm::normalize(movementTarget - position);

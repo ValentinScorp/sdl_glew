@@ -13,7 +13,9 @@ public:
     void init(Camera* cam, Pathfinder *pf);
     void update(AiAgent *obstacle);
     void avoidObstacle(AiAgent *obstacle);
+    void move();
     void setPosition(glm::fvec3 pos);
+    void setObstacleOnAiMap();
     void rotateToward(glm::fvec3 direction);
     void adjustRotation(); 
     void makeFinalMatrix();
@@ -22,7 +24,7 @@ public:
     virtual void onMessage(IMessage *message);
     
     Camera* camera = nullptr;
-
+        
     glm::fvec3 position;
     glm::fvec3 upVector;
     glm::fmat4 rotationMatrix;
@@ -43,6 +45,6 @@ public:
     aux::surface selectionBox;
     Pathfinder* pathfinder = nullptr;
     std::vector<glm::fvec3> movementPath;
-    size_t movementPathStage = 0;
+    size_t currentPath = 0;
 };
 

@@ -62,6 +62,8 @@ void RenderObject::update(float time) {
 }
 
 void RenderObject::render() {
+    aiAgent->makeFinalMatrix();
+    
     glUseProgram(glProgram);
     
     mRenderer->updateView(glCameraMatricesUbo);
