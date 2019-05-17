@@ -14,6 +14,7 @@
 
 #include <stdio.h>
 #include <vector>
+#include <list>
 #include <string>
 #include <algorithm>
 #include <iterator>

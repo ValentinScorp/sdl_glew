@@ -85,7 +85,8 @@ void AiAgent::avoidObstacle(AiAgent *obstacle) {
 
 void AiAgent::move() {
     if (currentPath < (movementPath.size() - 1)) {
-        movementDirection = glm::normalize(movementPath[currentPath + 1] - movementPath[currentPath]);
+        movementDirection = glm::normalize(movementPath[currentPath + 1] - position);
+        //std::cout << movementDirection.x << " x " << movementDirection.y << " x " << movementDirection.z << std::endl;
         glm::fvec3 newPosition = position + movementDirection * movementSpeed;
         pathfinder->removeStaticObstacle(position);
         if (pathfinder->isObstacle(newPosition) == false) {
@@ -93,33 +94,36 @@ void AiAgent::move() {
             rotateToward(newPosition);
             setPosition(newPosition);
             adjustRotation();
-            if (glm::abs(glm::length(movementPath[currentPath + 1] - newPosition) < movementSpeed)) {
+            
+            float distance = glm::length(movementPath[currentPath + 1] - newPosition);
+          //  std::cout << distance << std::endl;
+            if (glm::abs(glm::length(movementPath[currentPath + 1] - newPosition) <= movementSpeed)) {
                 currentPath++;
-                if (currentPath >= movementPath.size()) {
+                //std::cout << "currentPath " << currentPath << std::endl;
+                if (currentPath >= (movementPath.size() - 1)) {
                     moving = false;
+                    //std::cout << "no path left \n";
                 }
             }
+            
         } else {
             pathfinder->setStaticObstacle(position);
             moving = false;
             currentPath = 0;
             movementPath.clear();
+            std::cout << "obstacle found \n";
         }
     }
-    
 }
 
 void AiAgent::update(AiAgent *obstacle) {
     
     if (moving) {
+        //
         //avoidObstacle(obstacle);
         move();
         
         makeFinalMatrix();
-        
-        if (glm::abs(glm::length(movementTarget - position)) < movementSpeed) {
-            moving = false;
-        }
     }
     pathfinder->setStaticObstacle(position);
 }
@@ -174,6 +178,9 @@ void AiAgent::onMessage(IMessage *message) {
             currentPath = 0;
             movementPath.clear();
             pathfinder->getPath(position, dest, movementPath);
+           // for (auto &p: movementPath) {
+            //    std::cout << p.x << " x " << p.y << " x " << p.z << std::endl;
+            //}
             if(movementPath.size() > 1) {
                 rotateToward(movementPath[1]);
                 adjustRotation();

@@ -42,10 +42,8 @@ void AiMapNode::render(RenderQuad *renderQuad, float nodeWidth) {
     renderQuad->renderAt(glm::fvec3(selfX * nodeWidth + nodeWidth / 2, selfY * nodeWidth + nodeWidth / 2, 0.2f));
 }
 
-void AiMapNode::calcDistances(AiMapNode *nodes, Sint16 distanceFromStart, Sint16 endNode) {
-    startNodeDitance = distanceFromStart + 10;
-    endNodeDistance = glm::abs(nodes[endNode].selfX - selfX) + glm::abs(nodes[endNode].selfY - selfY);
-    fullDistance = startNodeDitance + endNodeDistance;
+Sint16 AiMapNode::getFullDistance() {
+    return startNodeDistance + endNodeDistance;
 }
 
 AiMap::AiMap() {
@@ -99,87 +97,107 @@ bool AiMap::isObstacle(Sint16 nodeIndex) {
     return (nodes[nodeIndex].blockLevel != 0);
 }
 
+Sint16 AiMap::getDistance(Sint16 nodeA, Sint16 nodeB) {
+    glm::fvec2 a(nodes[nodeA].selfX, nodes[nodeA].selfY);
+    glm::fvec2 b(nodes[nodeB].selfX, nodes[nodeB].selfY);
+    return glm::length(a - b);
+    //return glm::abs(nodes[nodeA].selfX - nodes[nodeB].selfX) + glm::abs(nodes[nodeA].selfY - nodes[nodeB].selfY);
+}
+
+
+
 bool AiMap::getPath(std::vector<Sint16> &path, Sint16 start, Sint16 end) {
-    Sint16 currentNode = start;
-    nodes[start].closed = 1;
-        
-    while (currentNode != end) {
-        std::cout << "current node " << currentNode << std::endl;
-        // calc distances for neib nodes
-        for (Sint16 i = 0; i < 4; i++) {
-            Sint16 neib = nodes[currentNode].neibours[i];
-            if (neib >= 0 && nodes[neib].closed == false) {
-                nodes[neib].opened = true;
-                nodes[neib].calcDistances(nodes, nodes[currentNode].startNodeDitance, end);
-            }
-        }
-        
-        // select random not closed neib node
-        Sint16 closedCounter = 0;
-        Sint16 newNode = 0;
-        for (Sint16 i = 0; i < 4; i++) {
-            newNode = nodes[currentNode].neibours[i];
-            if (newNode >= 0) {
-                if (nodes[newNode].closed == false) {
-                    closedCounter++;
-                    break;
-                }
-            }
-        }
-        
-        // compare selected node distance with others neib nodes
-        for (Sint16 i = 0; i < 4; i++) {
-            if (nodes[newNode].closed == true) {
-                closedCounter++;
-            } else {
-                Sint16 neib = nodes[currentNode].neibours[i];
-                if (neib >= 0 && nodes[neib].closed == false) {
-                    if (nodes[neib].fullDistance < nodes[newNode].fullDistance) {
-                        newNode = neib;
+    
+    if (nodes[end].blockLevel != 0) {
+        Sint16 closestNode = -1;
+        for (size_t i = 0; i < 4; i++) {
+            Sint16 neibIndex = nodes[end].neibours[i];
+            if (neibIndex != -1) {
+                if (nodes[neibIndex].blockLevel == 0) {
+                    if (closestNode == -1) {
+                        closestNode = neibIndex;
                     } else {
-                        if (nodes[neib].fullDistance == nodes[newNode].fullDistance) {
-                            if (nodes[neib].endNodeDistance < nodes[newNode].endNodeDistance) {
-                                newNode = neib;
-                            } else {
-                                if (nodes[neib].endNodeDistance < nodes[newNode].startNodeDitance) {
-                                    newNode = neib;
-                                }
-                            }
+                        Sint16 newLen = getDistance(start, neibIndex);
+                        Sint16 len = getDistance(start, closestNode);
+                        if (newLen < len) {
+                            closestNode = neibIndex;
                         }
                     }
                 }
             }
         }
-        if (closedCounter >= 4) {
-            break;
+        if (closestNode != -1) {
+            end = closestNode;
+        } else {
+            return false;
+            std::cout << "Couldnot find end node\n";
+        }
+    }
+    
+    std::list<Sint16> openSet;
+    std::list<Sint16> closedSet;
+    
+    openSet.push_front(start);
+    
+    while (openSet.size() > 0) {
+        Sint16 currentNode = openSet.front();
+        for (auto &i: openSet) {
+            if (nodes[i].getFullDistance() < nodes[currentNode].getFullDistance()) {
+                currentNode = i;
+            } else {
+                if (nodes[i].getFullDistance() == nodes[currentNode].getFullDistance()) {
+                    if (nodes[i].endNodeDistance < nodes[currentNode].endNodeDistance) {
+                        currentNode = i;
+                    } 
+                } 
+            }
+        }
+        openSet.remove(currentNode);
+        closedSet.push_front(currentNode);
+        
+        if (currentNode == end) {
+            std::vector<Sint16> reversePath;
+            Sint16 itNode = end;
+            while (itNode != start) {
+                reversePath.push_back(itNode);
+                itNode = nodes[itNode].parentNode;
+                if (itNode == -1) {
+                    std::cout << "path error: invalid node in path" << std::endl;
+                    return false;
+                }
+            }
+            if (reversePath.size() == 0) {
+                std::cout << "path error: start == end" << std::endl;
+                return false;
+            }
+            for (size_t i = (reversePath.size() - 1); i > 0; i--) {
+                path.push_back(reversePath[i]);
+            }
+            return true;
         }
         
-        nodes[newNode].closed = 1;
-        currentNode = newNode;
-    }
-    std::cout << "current node " << currentNode << std::endl;
-    
-    path.push_back(currentNode);
-    while (currentNode != start) {
-        //std::cout << "current node out " << currentNode << std::endl;
-        Sint16 nextNode = nodes[currentNode].neibours[0];
         for (Sint16 i = 0; i < 4; i++) {
-            Sint16 neibNode = nodes[currentNode].neibours[i];
-            if (neibNode >= 0 && nodes[neibNode].closed == true) {
-                nextNode = neibNode;
-            }
-        }
-        for (Sint16 i = 0; i < 4; i++) {
-            Sint16 neibNode = nodes[currentNode].neibours[i];
-            if (neibNode >= 0 && nodes[neibNode].closed == true) {
-                if (nodes[neibNode].fullDistance < nodes[nextNode].fullDistance) {
-                    nextNode = neibNode;
+            Sint16 neib = nodes[currentNode].neibours[i];
+            if (neib >= 0) {
+                auto it = std::find(closedSet.begin(), closedSet.end(), neib);
+                if (isObstacle(neib) || it != closedSet.end()) {
+                    continue;
+                } else {
+                    Sint16 newNeibStartDistanse = nodes[currentNode].startNodeDistance + getDistance(currentNode, neib);
+                    auto it = std::find(openSet.begin(), openSet.end(), neib);
+                    if (newNeibStartDistanse < nodes[neib].startNodeDistance || it == openSet.end()) {
+                        nodes[neib].startNodeDistance = newNeibStartDistanse;
+                        nodes[neib].endNodeDistance = getDistance(neib, end);
+                        nodes[neib].parentNode = currentNode;
+                        
+                        if (it == openSet.end()) {
+                            openSet.push_front(neib);
+                        }
+                    }
                 }
-                std::cout << nodes[nextNode].fullDistance << std::endl;
             }
         }
-        currentNode = nextNode;
-        path.push_back(currentNode);
     }
-    return true;
+    
+    return false;
 }

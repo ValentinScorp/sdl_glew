@@ -312,9 +312,9 @@ void Terrain::onMessage(IMessage *message) {
         glm::fvec2 pos = message->getMousePosition();
         size_t vIdx = getVertexIntersecIdx(pos);
         if (vIdx != 0) {
-            terrainBrush->posX = (surface.vertices[vIdx].pos.x);
-            terrainBrush->posY = (surface.vertices[vIdx].pos.y);
-            terrainBrush->posZ = (surface.vertices[vIdx].pos.z + 0.1f);
+       //     terrainBrush->posX = (surface.vertices[vIdx].pos.x);
+       //    terrainBrush->posY = (surface.vertices[vIdx].pos.y);
+       //     terrainBrush->posZ = (surface.vertices[vIdx].pos.z + 0.1f);
         }
     }
     if (message->getMessage() == "Generate") {
