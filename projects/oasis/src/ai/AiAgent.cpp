@@ -178,9 +178,9 @@ void AiAgent::onMessage(IMessage *message) {
             currentPath = 0;
             movementPath.clear();
             pathfinder->getPath(position, dest, movementPath);
-           // for (auto &p: movementPath) {
-            //    std::cout << p.x << " x " << p.y << " x " << p.z << std::endl;
-            //}
+            for (auto &p: movementPath) {
+                std::cout << p.x << " x " << p.y << " x " << p.z << std::endl;
+            }
             if(movementPath.size() > 1) {
                 rotateToward(movementPath[1]);
                 adjustRotation();
