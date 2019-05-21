@@ -33,6 +33,7 @@ void AiContainer::update() {
             a->update(obstacles);
         }
     }
+    pathfinder.aiMap.update();
 }
 
 void AiContainer::render() {

@@ -127,6 +127,14 @@ int main(int argc, char **argv)
     agent->setPosition(glm::fvec3(7.0f, 5.0f, 0.0f));
     agent->setObstacleOnAiMap();
     objectTree.init(renderer, &config, "Tree", agent); 
+    
+    RenderObject objectTree2;
+    id = aiContainer.createAgent();
+    agent = aiContainer.getAgent(id);
+    agent->collisionRadius = 3;
+    agent->setPosition(glm::fvec3(9.0f, 7.0f, 0.0f));
+    agent->setObstacleOnAiMap();
+    objectTree2.init(renderer, &config, "Tree", agent); 
         
     GLenum err1;
     while ((err1 = glGetError()) != GL_NO_ERROR) {
@@ -170,6 +178,7 @@ int main(int argc, char **argv)
         Time romanRender;
         objectRoman.render();
         objectTree.render();
+        objectTree2.render();
         
         guiPanel.render();
         
@@ -187,6 +196,7 @@ int main(int argc, char **argv)
     
     guiPanel.destroy();
     objectTree.destroy();
+    objectTree2.destroy();
     objectRoman.destroy();
     terrain.destroy();
     Console::getInstance().destroy();

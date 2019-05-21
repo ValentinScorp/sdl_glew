@@ -33,12 +33,22 @@ void Pathfinder::getPath(glm::fvec3 begin, glm::fvec3 end, std::vector<glm::fvec
     auto startIdx = getNodeIndex(begin);
     auto finishIdx = getNodeIndex(end);
     
+  //  std::cout << "begin " << begin.x << " x " << begin.y << std::endl;
+  //  std::cout << "end   " << end.x << " x " << end.y << std::endl;
+  //  std::cout << "indexes  " << startIdx << " x " << finishIdx << std::endl;
+    
+  //  std::cout << "begin real " << aiMap.nodes[startIdx].selfX << " x " << aiMap.nodes[startIdx].selfY << std::endl;
+  //  std::cout << "end real " << aiMap.nodes[finishIdx].selfX << " x " << aiMap.nodes[finishIdx].selfY << std::endl;
+    
+    
     std::vector<Sint16> pathIndexes;
     aiMap.getPath(pathIndexes, startIdx, finishIdx);
     
     path.push_back(begin);
     for (auto& i: pathIndexes) {
+   //    std::cout << "node position " << aiMap.nodes[i].selfX << " x " << aiMap.nodes[i].selfY << std::endl;        
         glm::fvec3 pos = getNodePosition(i);
+    //    std::cout << "node counted pos " << pos.x << " x " << pos.y << std::endl;
         path.push_back(pos);
     }
     path.push_back(end);
@@ -49,7 +59,8 @@ glm::fvec3 Pathfinder::getNodePosition(size_t index) {
     
     Sint16 x = index - (index / nodeRows) * nodeRows;
     Sint16 y = index / nodeRows;
-    std::cout << "path nodes " << x << " x " << y << std::endl;
+   // std::cout << "index " << index << std::endl;
+   // std::cout << "path nodes " << x << " x " << y << std::endl;
     position.x = x * nodeWidth + nodeWidth / 2;
     position.y = y * nodeWidth + nodeWidth / 2;
     position.z = 0.0;
@@ -61,6 +72,7 @@ size_t Pathfinder::getNodeIndex(glm::fvec3 pos) {
     Sint16 yOffs = ((Uint16) (pos.y / nodeWidth));
     
     Sint16 index = xOffs + yOffs * nodeRows;
+    
     if (index >= 0 && index < aiMap.getNodesCount()) {
         return index;
     }
@@ -70,8 +82,12 @@ size_t Pathfinder::getNodeIndex(glm::fvec3 pos) {
 
 void Pathfinder::setStaticObstacle(glm::fvec3 position) {
     Sint16 nodeIndex = getNodeIndex(position);
-    if (nodeIndex >= 0)
+    if (nodeIndex >= 0) {
+        //std::cout << "setting obstacle at index  " << nodeIndex << std::endl;
+        //std::cout << "setting obstacle at node pos  " << aiMap.nodes[nodeIndex].selfX << " x " << aiMap.nodes[nodeIndex].selfY << std::endl;
         aiMap.setObstacle(nodeIndex);
+        
+    }
 }
 
 void Pathfinder::removeStaticObstacle(glm::fvec3 position) {

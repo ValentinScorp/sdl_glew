@@ -111,7 +111,9 @@ void AiAgent::move() {
             moving = false;
             currentPath = 0;
             movementPath.clear();
-            std::cout << "obstacle found \n";
+            std::cout << "obstacle found at " << newPosition.x << " x " << newPosition.y << std::endl;
+            auto index = pathfinder->getNodeIndex(newPosition);
+         //   std::cout << "index is " << index  << std::endl;
         }
     }
 }
@@ -179,7 +181,7 @@ void AiAgent::onMessage(IMessage *message) {
             movementPath.clear();
             pathfinder->getPath(position, dest, movementPath);
             for (auto &p: movementPath) {
-                std::cout << p.x << " x " << p.y << " x " << p.z << std::endl;
+           //     std::cout << p.x << " x " << p.y << " x " << p.z << std::endl;
             }
             if(movementPath.size() > 1) {
                 rotateToward(movementPath[1]);
