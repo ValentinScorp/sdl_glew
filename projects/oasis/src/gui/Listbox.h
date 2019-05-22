@@ -95,12 +95,11 @@ public:
     
     std::string text;
     bool hidden = false;
+    std::string id;
     
 private:
     glm::fvec2 position = {0.0f, 0.0f};
     glm::fvec2 dimension = {0.0f, 0.0f};
-    
-    std::string id;
     
     std::u16string u16text;
     

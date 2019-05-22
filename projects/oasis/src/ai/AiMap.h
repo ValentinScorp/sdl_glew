@@ -54,6 +54,7 @@ public:
     void removeIntermediate(std::vector<Sint16> &path);
     void smoothPath(std::vector<Sint16> &path);
     bool isLineOfSight(Sint16 nodeIndexA, Sint16 nodeIndexB);
+    Uint16 calcSimplifiedDistance(Sint16 pMid, Sint16 pA, Sint16 pB);
     bool isCornerNeibsWalkable(Sint16 neib1Index, Sint16 neib2Index);
     bool neibIsCornerAndHasNeibBlock(Sint16 parentIndex, Sint16 neibIndex);
     float getPathLen(std::vector<Sint16> &path);

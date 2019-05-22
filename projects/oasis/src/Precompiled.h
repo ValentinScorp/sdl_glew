@@ -25,6 +25,7 @@
 #include <map>
 #include <locale> 
 #include <codecvt>
+#include <chrono>
 
 #include "Auxiliary.h"
 #include "MessageManager.h"

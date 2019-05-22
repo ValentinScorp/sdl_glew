@@ -33,22 +33,21 @@ void Pathfinder::getPath(glm::fvec3 begin, glm::fvec3 end, std::vector<glm::fvec
     auto startIdx = getNodeIndex(begin);
     auto finishIdx = getNodeIndex(end);
     
+   // std::cout << std::endl << std::endl;
   //  std::cout << "begin " << begin.x << " x " << begin.y << std::endl;
   //  std::cout << "end   " << end.x << " x " << end.y << std::endl;
   //  std::cout << "indexes  " << startIdx << " x " << finishIdx << std::endl;
     
-  //  std::cout << "begin real " << aiMap.nodes[startIdx].selfX << " x " << aiMap.nodes[startIdx].selfY << std::endl;
-  //  std::cout << "end real " << aiMap.nodes[finishIdx].selfX << " x " << aiMap.nodes[finishIdx].selfY << std::endl;
-    
+   // std::cout << "begin real " << aiMap.nodes[startIdx].selfX << " x " << aiMap.nodes[startIdx].selfY << std::endl;
+   // std::cout << "end real " << aiMap.nodes[finishIdx].selfX << " x " << aiMap.nodes[finishIdx].selfY << std::endl;    
+   // std::cout << std::endl;
     
     std::vector<Sint16> pathIndexes;
     aiMap.getPath(pathIndexes, startIdx, finishIdx);
-    
+  //  std::cout << std::endl;
     path.push_back(begin);
-    for (auto& i: pathIndexes) {
-   //    std::cout << "node position " << aiMap.nodes[i].selfX << " x " << aiMap.nodes[i].selfY << std::endl;        
-        glm::fvec3 pos = getNodePosition(i);
-    //    std::cout << "node counted pos " << pos.x << " x " << pos.y << std::endl;
+    for (Sint16 i = 0; i < pathIndexes.size(); i++) {
+        glm::fvec3 pos = getNodePosition(pathIndexes[i]);
         path.push_back(pos);
     }
     path.push_back(end);

@@ -110,6 +110,7 @@ void ListboxItem::onMessage(IMessage *message) {
                     parent->text = text;
                     parent->hideChildren();
                     parent->hidden = false;
+                    SMessageManager::getInstance().invokeMessage(new GuiMessage(text, this->text, parent->id));
                 }
                 color = colorOver;
             } else {

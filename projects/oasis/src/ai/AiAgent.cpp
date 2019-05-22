@@ -179,10 +179,17 @@ void AiAgent::onMessage(IMessage *message) {
             
             currentPath = 0;
             movementPath.clear();
+            pathfinder->removeStaticObstacle(position);
+            auto t1 = std::chrono::high_resolution_clock::now();
             pathfinder->getPath(position, dest, movementPath);
-            for (auto &p: movementPath) {
+            auto t2 = std::chrono::high_resolution_clock::now();
+            std::cout << "delta " << std::chrono::duration_cast<std::chrono::microseconds>(t2-t1).count() << std::endl;
+            pathfinder->setStaticObstacle(position);
+          //  std::cout << std::endl;
+          //  std::cout << "Path found " << std::endl;
+           // for (auto &p: movementPath) {
            //     std::cout << p.x << " x " << p.y << " x " << p.z << std::endl;
-            }
+           // }
             if(movementPath.size() > 1) {
                 rotateToward(movementPath[1]);
                 adjustRotation();
