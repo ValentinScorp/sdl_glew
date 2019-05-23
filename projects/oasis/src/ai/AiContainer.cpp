@@ -7,7 +7,7 @@ AiContainer::AiContainer() {
 AiContainer::~AiContainer() {
 }
 
-void AiContainer::init(std::shared_ptr<Renderer> renderer, Camera *cam, Configuration *cfg) {
+void AiContainer::init(std::shared_ptr<Renderer> renderer, Camera *cam, std::shared_ptr<IniFile> cfg) {
     camera = cam;
     
     Uint16 wPatchesNum = cfg->getParameter("Terrain", "wPatchesNum").toInt();

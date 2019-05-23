@@ -1,7 +1,8 @@
 #pragma once
 
 class Renderer;
-class Configuration;
+class IniFile;
+class TerrainBrush;
 
 class Terrain : public IMessageRecipient {
     class Vertex {
@@ -76,7 +77,7 @@ public:
     Terrain();
     virtual ~Terrain();
     
-    void init(std::shared_ptr<Renderer> renderer, Configuration *cfg);
+    void init(std::shared_ptr<Renderer> renderer);
     void destroy();
     void update();
     void render();
@@ -96,11 +97,11 @@ public:
     size_t getVertexIntersecIdx(glm::fvec2 mousePos);
     
     void updateRenderData();
-    void createCanvasMesh(Configuration* cfg);
+    void createCanvasMesh(std::shared_ptr<IniFile> cfg);
     void getDataFromSurface();
     void genCircle(glm::fvec2 center, float radius, float height);
     virtual void onMessage(IMessage *message);
-
+    glm::fvec3 getTerrainPoint(glm::fvec2 mousePos);
 private:
     void toggleGridView();
     

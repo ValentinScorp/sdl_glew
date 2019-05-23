@@ -8,6 +8,14 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
+    <File Name="../src/IniFile.cpp"/>
+    <File Name="../src/IniFile.h"/>
+    <VirtualDirectory Name="world">
+      <File Name="../src/world/Terrain.h"/>
+      <File Name="../src/world/Terrain.cpp"/>
+      <File Name="../src/world/World.h"/>
+      <File Name="../src/world/World.cpp"/>
+    </VirtualDirectory>
     <VirtualDirectory Name="ai">
       <File Name="../src/ai/AiMap.h"/>
       <File Name="../src/ai/AiMap.cpp"/>
@@ -28,8 +36,6 @@
       <File Name="../src/gui/GuiPanel.h"/>
       <File Name="../src/gui/GuiPanel.cpp"/>
     </VirtualDirectory>
-    <File Name="../src/Terrain.cpp"/>
-    <File Name="../src/Terrain.h"/>
     <File Name="../src/MessageManager.cpp"/>
     <File Name="../src/MessageManager.h"/>
     <VirtualDirectory Name="graphics">
@@ -50,8 +56,6 @@
       <File Name="../src/graphics/Mesh.h"/>
       <File Name="../src/graphics/Mesh.cpp"/>
     </VirtualDirectory>
-    <File Name="../src/Configuration.cpp"/>
-    <File Name="../src/Configuration.h"/>
     <File Name="../src/Precompiled.h"/>
     <File Name="../src/main.cpp"/>
   </VirtualDirectory>

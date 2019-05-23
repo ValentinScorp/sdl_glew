@@ -1,6 +1,6 @@
 #pragma once
 
-class Configuration;
+class IniFile;
 
 class RayVector {
 public:
@@ -24,7 +24,7 @@ public:
     
     virtual void onMessage(IMessage *message);
     
-    void init(Configuration *cfg);
+    void init(std::shared_ptr<IniFile> cfg);
     
     glm::mat4 getViewMatrix();
     glm::mat4 getCamMatrix();

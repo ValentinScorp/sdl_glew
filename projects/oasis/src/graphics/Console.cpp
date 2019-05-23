@@ -28,7 +28,7 @@ void coutUtf8(std::string &txt) {
     std::cout << std::dec;
 }
 
-void Console::init(std::shared_ptr<Renderer> renderer, Configuration *cfg) {
+void Console::init(std::shared_ptr<Renderer> renderer, std::shared_ptr<IniFile> cfg) {
     mRenderer = renderer;
     screenWidth = cfg->getParameter("Window", "width").toFloat();
     screenHeight = cfg->getParameter("Window", "height").toFloat();

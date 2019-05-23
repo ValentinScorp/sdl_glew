@@ -1,6 +1,7 @@
 #pragma once
 
 class Renderer;
+class RenderObject;
 class Mesh;
 class IMessage;
 
@@ -10,7 +11,7 @@ public:
     RenderObject();
     virtual ~RenderObject();
     
-    void init(std::shared_ptr<Renderer> renderer, Configuration *cfg, std::string name, AiAgent *agent);
+    void init(std::shared_ptr<Renderer> renderer, std::shared_ptr<IniFile> cfg, std::string name, AiAgent *agent);
     void update(float time);
     void render();
     void destroy();

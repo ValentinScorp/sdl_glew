@@ -9,7 +9,7 @@ Renderer::~Renderer() {
         delete camera;
 }
 
-void Renderer::init(Configuration *config) {
+void Renderer::init(std::shared_ptr<IniFile> config) {
     camera = new Camera(shared_from_this());
     camera->init(config);
     

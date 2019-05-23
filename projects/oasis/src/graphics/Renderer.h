@@ -1,7 +1,7 @@
 #pragma once
 
 class Camera;
-class Configuration;
+class IniFile;
 class Terrain;
 
 class Renderer : public std::enable_shared_from_this<Renderer>
@@ -10,7 +10,7 @@ public:
     Renderer();
     virtual ~Renderer();
     
-    void init(Configuration *config);
+    void init(std::shared_ptr<IniFile> config);
     
     GLuint createTexture(GLsizei width, GLsizei height, GLenum internalFormat, GLenum format, GLvoid *data);
     GLuint loadTexture(std::string fileName, bool flipVertical = false);

@@ -29,7 +29,9 @@
 
 #include "Auxiliary.h"
 #include "MessageManager.h"
-#include "Configuration.h"
+
+#include "world/Terrain.h"
+#include "world/World.h"
 
 #include "gui/Button.h"
 #include "gui/Listbox.h"
@@ -49,5 +51,6 @@
 #include "graphics/RenderObject.h"
 #include "graphics/Renderer.h"
 
-#include "Terrain.h"
+#include "IniFile.h"
+
 

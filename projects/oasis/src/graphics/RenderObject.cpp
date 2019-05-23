@@ -8,7 +8,7 @@ RenderObject::~RenderObject() {
     delete mesh;
 }
 
-void RenderObject::init(std::shared_ptr<Renderer> renderer, Configuration *cfg, std::string objectName, AiAgent *agent) {
+void RenderObject::init(std::shared_ptr<Renderer> renderer, std::shared_ptr<IniFile> cfg, std::string objectName, AiAgent *agent) {
     mRenderer = renderer;
     aiAgent = agent;
     mesh = new Mesh();

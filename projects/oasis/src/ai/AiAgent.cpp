@@ -183,7 +183,7 @@ void AiAgent::onMessage(IMessage *message) {
             auto t1 = std::chrono::high_resolution_clock::now();
             pathfinder->getPath(position, dest, movementPath);
             auto t2 = std::chrono::high_resolution_clock::now();
-            std::cout << "delta " << std::chrono::duration_cast<std::chrono::microseconds>(t2-t1).count() << std::endl;
+           // std::cout << "delta " << std::chrono::duration_cast<std::chrono::microseconds>(t2-t1).count() << std::endl;
             pathfinder->setStaticObstacle(position);
           //  std::cout << std::endl;
           //  std::cout << "Path found " << std::endl;

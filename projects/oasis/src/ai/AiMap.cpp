@@ -234,26 +234,18 @@ bool AiMap::getPath(std::vector<Sint16> &path, Sint16 start, Sint16 end) {
             reversePath.push_back(itNode);
             
             if (reversePath.size() == 0) {
-             //   std::cout << "path error: start == end" << std::endl;
                 return false;
             }
-           // std::cout << " reverse path size : "  << reversePath.size() << std::endl;
             for (Sint16 i = (reversePath.size() - 1); i >= 0; i--) {
-            //    std::cout << " i  " << i << std::endl;
                 path.push_back(reversePath[i]);
             }
-         //   std::cout << " reversed path size : "  << path.size() << std::endl;
-         //   std::cout << "init intermediate " << std::endl;
-        //    std::cout << "path found " << std::endl;
-          //  for (Sint16 i = 0; i < path.size(); i++) {
-          //      std::cout << nodes[path[i]].selfX << " x " << nodes[path[i]].selfY << std::endl;
-          //  }
-           // std::cout << "removing intermediate " << std::endl;
-        //    removeIntermediate(path);
-           // for (Sint16 i = 0; i < path.size(); i++) {
-            //    std::cout << nodes[path[i]].selfX << " x " << nodes[path[i]].selfY << std::endl;
-          //  }
-          //  std::cout << "smoothing path " << std::endl;
+
+ //           std::cout << "path found " << std::endl;
+  //          for (Sint16 i = 0; i < path.size(); i++) {
+  //              std::cout << nodes[path[i]].selfX << " x " << nodes[path[i]].selfY << std::endl;
+  //          }
+
+ //           std::cout << "smoothing path " << std::endl;
             std::vector<Sint16> tmpPath;
             for (Sint16 i = 1; i < path.size() - 1; i++) {
                 tmpPath.push_back(path[i]);
@@ -261,14 +253,10 @@ bool AiMap::getPath(std::vector<Sint16> &path, Sint16 start, Sint16 end) {
             smoothPath(tmpPath);
             path.clear();
             path = tmpPath;
-          //  smoothPath(tmpPath);
-            //std::cout << "path len -> " << getPathLen(path) << std::endl;
-            //std::cout << "path reverted len -> " << getPathLen(tmpPath) << std::endl;
-          //  std::cout << "path smoothed " << std::endl;
-          //  std::cout << "path size -> " << path.size() << std::endl;
-          //  for (Sint16 i = 0; i < path.size(); i++) {
-          //      std::cout << nodes[path[i]].selfX << " x " << nodes[path[i]].selfY << std::endl;
-          //  }
+
+ //           for (Sint16 i = 0; i < path.size(); i++) {
+      //          std::cout << nodes[path[i]].selfX << " x " << nodes[path[i]].selfY << std::endl;
+    //        }
           //  std::cout << std::endl;
             return true;
         }
@@ -343,14 +331,21 @@ void AiMap::removeIntermediate(std::vector<Sint16> &path) {
     path = newPath;
 }
 
+Uint16 AiMap::calcSimplifiedDistance(Sint16 pA, Sint16 pB) {
+    if (pA == -1 || pB == -1) {
+        return 0;
+    }
+    return 1000 * glm::sqrt((glm::pow((float)(nodes[pA].selfPos.x - nodes[pB].selfPos.x), 2) + glm::pow((float)(nodes[pA].selfPos.y - nodes[pB].selfPos.y), 2)));
+}
+
 Uint16 AiMap::calcSimplifiedDistance(Sint16 pMid, Sint16 pA, Sint16 pB) {
     if (pMid == -1 || pA == -1 || pB == -1) {
         return 0;
     }
-    return glm::abs(nodes[pMid].selfPos.x - nodes[pA].selfPos.x) + glm::abs(nodes[pMid].selfPos.y - nodes[pA].selfPos.y) +
-           glm::abs(nodes[pMid].selfPos.x - nodes[pB].selfPos.x) + glm::abs(nodes[pMid].selfPos.y - nodes[pB].selfPos.y);
-    return glm::sqrt(glm::pow((nodes[pMid].selfPos.x - nodes[pA].selfPos.x), 2) + glm::pow((nodes[pMid].selfPos.y - nodes[pA].selfPos.y), 2)) +
-           glm::sqrt(glm::pow((nodes[pMid].selfPos.x - nodes[pB].selfPos.x), 2) + glm::pow((nodes[pMid].selfPos.y - nodes[pB].selfPos.y), 2));
+    return glm::pow((nodes[pMid].selfPos.x - nodes[pA].selfPos.x), 2) + glm::pow((nodes[pMid].selfPos.y - nodes[pA].selfPos.y), 2) +
+           glm::pow((nodes[pMid].selfPos.x - nodes[pB].selfPos.x), 2) + glm::pow((nodes[pMid].selfPos.y - nodes[pB].selfPos.y), 2);
+   // return glm::sqrt(glm::pow((nodes[pMid].selfPos.x - nodes[pA].selfPos.x), 2) + glm::pow((nodes[pMid].selfPos.y - nodes[pA].selfPos.y), 2)) +
+   //        glm::sqrt(glm::pow((nodes[pMid].selfPos.x - nodes[pB].selfPos.x), 2) + glm::pow((nodes[pMid].selfPos.y - nodes[pB].selfPos.y), 2));
 }
 
 bool AiMap::isLineOfSight(Sint16 nodeIndexA, Sint16 nodeIndexB) {
@@ -363,39 +358,52 @@ bool AiMap::isLineOfSight(Sint16 nodeIndexA, Sint16 nodeIndexB) {
     for (Sint16 i = 0; i < width * height; i++) {
         nodes[i].resetWatch();
     }
-   // std::cout << "watch sight from " << nodes[nodeIndexA].selfX << " x " << nodes[nodeIndexA].selfY << std::endl;
-  //  std::cout << "            to   " << nodes[nodeIndexB].selfX << " x " << nodes[nodeIndexB].selfY << std::endl;
+//    std::cout << "watch sight from " << nodes[nodeIndexA].selfX << " x " << nodes[nodeIndexA].selfY << std::endl;
+ //   std::cout << "            to   " << nodes[nodeIndexB].selfX << " x " << nodes[nodeIndexB].selfY << std::endl;
     Sint16 currentNodeIndex = nodeIndexA;
     while (currentNodeIndex != nodeIndexB) {
         Sint16 minNeibIndex = -1;
         Sint16 minNeibIndexSecond = -1;
         Uint16 minDistance = 0;
-      //  std::cout << std::endl << std::endl;
-      //  std::cout << "checking node pos " << nodes[currentNodeIndex].selfX << " x " << nodes[currentNodeIndex].selfY << std::endl;
+        Uint16 minDistanceB = 0;
+//        std::cout << std::endl << std::endl;
+//       std::cout << "checking node pos " << nodes[currentNodeIndex].selfX << " x " << nodes[currentNodeIndex].selfY << std::endl;
         for (Sint16 i = 1; i < AiMapNode::NEIB_MAX; i+=2) {
             Sint16 neibIndex = nodes[currentNodeIndex].neibours[i];
-           // std::cout << std::endl;
-          //  std::cout << "neib " << i << "   index " << neibIndex << std::endl;
+//            std::cout << std::endl;
+//            std::cout << "neib " << i << "   index " << neibIndex << std::endl;
             if (neibIndex != -1) {
-              //  std::cout << "neib was watched " << nodes[neibIndex].viewSightWatched << std::endl;
+           //     std::cout << "neib was watched " << nodes[neibIndex].viewSightWatched << std::endl;
                 if (neibIndex == nodeIndexB) {
                     return true;
                 }
                 if (nodes[neibIndex].viewSightWatched == false) {
-                   // std::cout << "neib node pos " << nodes[neibIndex].selfX << " x " << nodes[neibIndex].selfY << std::endl;
-                 //   std::cout << "start  " << nodes[nodeIndexA].selfX << " x " << nodes[nodeIndexA].selfY << std::endl;
-                   // std::cout << "end    " << nodes[nodeIndexB].selfX << " x " << nodes[nodeIndexB].selfY << std::endl;
-                    Uint16 newDistance = calcSimplifiedDistance(neibIndex, nodeIndexA, nodeIndexB);
-                   // std::cout << "newDistance " << newDistance << " minDistance " << minDistance << std::endl;
+ //                   std::cout << "neib node pos " << nodes[neibIndex].selfX << " x " << nodes[neibIndex].selfY << std::endl;
+//                    std::cout << "neib node pos " << nodes[neibIndex].selfPos.x << " x " << nodes[neibIndex].selfPos.y << std::endl;
+ //                   std::cout << "start  " << nodes[nodeIndexA].selfX << " x " << nodes[nodeIndexA].selfY << std::endl;
+//                    std::cout << "end    " << nodes[nodeIndexB].selfX << " x " << nodes[nodeIndexB].selfY << std::endl;
+                    Uint16 newDistanceA = calcSimplifiedDistance(neibIndex, nodeIndexA);
+                    Uint16 newDistanceB = calcSimplifiedDistance(neibIndex, nodeIndexB);
+                    Uint16 newDistance = newDistanceA + newDistanceB;
+                  //  std::cout << "newDistance " << newDistance << " minDistance " << minDistance << std::endl;
                     if (minDistance == 0 || newDistance < minDistance) {
                         minDistance = newDistance;
+                        minDistanceB = newDistanceB;
                         minNeibIndex = neibIndex;
                         minNeibIndexSecond = -1;
-                       // std::cout << "new min dist " << minDistance << " index " << minNeibIndex << std::endl;
+                      //  std::cout << "new min dist " << minDistance << " index " << minNeibIndex << std::endl;
                     } else {
                         if (newDistance == minDistance) {
-                           // std::cout << "second found " << neibIndex << std::endl;
-                            minNeibIndexSecond = neibIndex;
+                            if (newDistanceB < minDistanceB) {
+                            ///   std::cout << "distances equal but new distance to B is less " << neibIndex << std::endl;
+                                minDistance = newDistance;
+                                minDistanceB = newDistanceB;
+                                minNeibIndex = neibIndex;
+                                minNeibIndexSecond = -1;
+                            } else {
+                             //   std::cout << "second found " << neibIndex << std::endl;
+                                minNeibIndexSecond = neibIndex;
+                            }
                         }
                     }
                 }
@@ -438,12 +446,12 @@ void AiMap::smoothPath(std::vector<Sint16> &path) {
             if (isLineOfSight(firstNodeIndex, lastNodeIndex)) {
                 lastPathIndex = i;
             } else {
-                lastPathIndex = i - 1;
+                lastPathIndex = i;
                 break;
             }
         }
-        firstPathIndex = lastPathIndex;
-        lastPathIndex += 2;
+        firstPathIndex = lastPathIndex - 1;
+        lastPathIndex += 1;
         if (lastPathIndex == (path.size() - 1)) {
             newPath.push_back(path[firstPathIndex]);
             newPath.push_back(path[lastPathIndex]);

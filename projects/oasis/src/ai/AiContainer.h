@@ -6,7 +6,7 @@ public:
     AiContainer();
     virtual ~AiContainer();
     
-    void init(std::shared_ptr<Renderer> renderer, Camera *cam, Configuration *cfg);
+    void init(std::shared_ptr<Renderer> renderer, Camera *cam, std::shared_ptr<IniFile> cfg);
     void destroy();
     void update();
     void render();

@@ -19,7 +19,7 @@ public:
         static Console instance;
         return instance;
     }
-    void init(std::shared_ptr<Renderer> renderer, Configuration *cfg);
+    void init(std::shared_ptr<Renderer> renderer, std::shared_ptr<IniFile> cfg);
     void loadFont(std::string path);
     
     void render();

@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+#include "../Precompiled.h"
 
 Terrain::Terrain() {
 }
@@ -6,7 +6,7 @@ Terrain::Terrain() {
 Terrain::~Terrain() {
 }
 
-void Terrain::createCanvasMesh(Configuration* cfg) {
+void Terrain::createCanvasMesh(std::shared_ptr<IniFile> cfg) {
     Uint16 wPatchesNum = cfg->getParameter("Terrain", "wPatchesNum").toInt();
     Uint16 hPatchesNum = cfg->getParameter("Terrain", "hPatchesNum").toInt();
     Uint16 wTilesInPatch = cfg->getParameter("Terrain", "wTilesInPatch").toInt();
@@ -33,7 +33,7 @@ void Terrain::getDataFromSurface() {
     }
 }
 
-void Terrain::init(std::shared_ptr<Renderer> renderer, Configuration *cfg) {
+void Terrain::init(std::shared_ptr<Renderer> renderer) {
     mRenderer = renderer;
     renderer->terrain = this;
     
@@ -45,6 +45,8 @@ void Terrain::init(std::shared_ptr<Renderer> renderer, Configuration *cfg) {
     glAlphaCornerNew = renderer->loadTexture("img/alphaCornerNew.png");
     glAlphaFull = renderer->loadTexture("img/alphaFull.png");
     glAlphaDiag = renderer->loadTexture("img/alphaDiag.png");
+    
+    auto cfg = std::make_shared<IniFile>("data/config.ini");
     
     glProgram = renderer->createProgram("data/" + cfg->getParameter("Terrain", "vertexShader").value, 
                                         "data/" + cfg->getParameter("Terrain", "fragmentShader").value);
@@ -289,6 +291,22 @@ void Terrain::genCircle(glm::fvec2 center, float radius, float height) {
 
 void Terrain::toggleGridView() {
     gridView = !gridView;
+}
+
+glm::fvec3 Terrain::getTerrainPoint(glm::fvec2 mousePos) {
+    RayVector camRay = mRenderer->camera->getVectorRay(mousePos.x, mousePos.y);
+    
+    for (auto &triangle: surface.triangles) {
+        aux::ray ray;
+        ray.begin = camRay.begin;
+        ray.end = camRay.end;
+        glm::fvec3 intersection;
+        auto t = &triangle - &surface.triangles[0];
+        if (surface.intersectRayTriangle(ray, t, intersection)) {
+            return intersection;
+        }
+    }
+    return glm::fvec3(0.0f);
 }
 
 void Terrain::onMessage(IMessage *message) {

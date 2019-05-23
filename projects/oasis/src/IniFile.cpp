@@ -1,6 +1,6 @@
 #include "Precompiled.h"
 
-Configuration::Configuration(std::string fileName) {
+IniFile::IniFile(std::string fileName) {
     std::ifstream file(fileName);
     std::vector<std::string> fileContent;
     if (file.is_open()) {
@@ -43,11 +43,11 @@ Configuration::Configuration(std::string fileName) {
     sections.push_back(sect);
 }
 
-Configuration::~Configuration()
+IniFile::~IniFile()
 {
 }
 
-void Configuration::print() {
+void IniFile::print() {
     for (auto s: sections) {
         std::cout << "[" << s.name << "]" << std::endl;
         for (auto p: s.parameters) {
@@ -56,7 +56,7 @@ void Configuration::print() {
     }
 }
 
-void Configuration::convertStrToFloat(std::string paramName, std::string paramValue, float *var) {
+void IniFile::convertStrToFloat(std::string paramName, std::string paramValue, float *var) {
     try {
         (*var) = std::stof(paramValue);
     } catch (std::exception &e) {
@@ -64,7 +64,7 @@ void Configuration::convertStrToFloat(std::string paramName, std::string paramVa
     }
 }
 
-void Configuration::convertStrToVec3(std::string paramName, std::string paramValue, glm::vec3 *vec) {
+void IniFile::convertStrToVec3(std::string paramName, std::string paramValue, glm::vec3 *vec) {
     try {
         std::string::size_type firstComaPos = paramValue.find(',');
         std::string::size_type secondComaPos = paramValue.find(',', firstComaPos + 1);
@@ -82,17 +82,17 @@ void Configuration::convertStrToVec3(std::string paramName, std::string paramVal
     }
 }
 
-float Configuration::getScreenAspectRatio() {
+float IniFile::getScreenAspectRatio() {
     float w = getParameter("Window", "width").toFloat();
     float h = getParameter("Window", "height").toFloat();
     if (w != 0 && h != 0) {
         return w / h;
     }
-    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error in Configuration::getScreenAspectRatio()\n");
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error in IniFile::getScreenAspectRatio()\n");
     return 1;
 }
 
-Configuration::Parameter Configuration::getParameter(std::string sectionName, std::string parameter) {
+IniFile::Parameter IniFile::getParameter(std::string sectionName, std::string parameter) {
     for (auto s: sections) {
         if (s.name == sectionName) {
             for (auto p: s.parameters) {

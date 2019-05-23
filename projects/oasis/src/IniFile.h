@@ -1,10 +1,9 @@
 #pragma once
 
-class Configuration
+class IniFile
 {
     class Parameter {
     private:
-        
         void errorDescr() {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Configuraion file error! Parameter -> %s ... using default value!\n", value.c_str());
         }
@@ -64,8 +63,9 @@ class Configuration
     };
     
 public:
-    Configuration(std::string fileName);
-    virtual ~Configuration();
+   
+    IniFile(std::string fileName);
+    virtual ~IniFile();
     
     void print();
     void convertStrToVec3(std::string paramName, std::string paramValue, glm::vec3 *vec);
@@ -76,5 +76,6 @@ public:
     Parameter getParameter(std::string sectionName, std::string parameter);
                 
     std::vector<Section> sections;
+
 };
 

@@ -36,7 +36,7 @@ int main(int argc, char **argv)
     SDL_LogSetAllPriority(SDL_LOG_PRIORITY_ERROR);
     SDL_LogSetPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO);
     
-    Configuration config("data/config.ini");
+    auto config = std::make_shared<IniFile>("data/config.ini");
     
     SDL_version compiledVer;
     SDL_version linkedVer;
@@ -62,8 +62,8 @@ int main(int argc, char **argv)
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     
-    float w = config.getParameter("Window", "width").toFloat();
-    float h = config.getParameter("Window", "height").toFloat();
+    float w = config->getParameter("Window", "width").toFloat();
+    float h = config->getParameter("Window", "height").toFloat();
     SDL_Window *window = SDL_CreateWindow("Window title", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, SDL_WINDOW_OPENGL);
     
     if (window == NULL) {
@@ -97,44 +97,33 @@ int main(int argc, char **argv)
     System system;
     
     auto renderer = std::make_shared<Renderer>();
-    renderer->init(&config);
+    renderer->init(config);
 
-    AiContainer aiContainer;
-    Camera *cam = renderer->camera;
-    aiContainer.init(renderer, cam, &config);
+    auto aiContainer = std::make_shared<AiContainer>();
     
-    Console::getInstance().init(renderer, &config);
+    Camera *cam = renderer->camera;
+    aiContainer->init(renderer, cam, config);
+    
+    Console::getInstance().init(renderer, config);
     
     GuiPanel guiPanel;
     guiPanel.init(renderer);
     
-    Terrain terrain;
-    terrain.init(renderer, &config);
+    World world;
+    world.init(renderer, aiContainer);
+    world.addObject("Tree", glm::fvec3(7.0f, 5.0f, 0.0f));
+    world.addObject("Tree", glm::fvec3(17.0f, 5.0f, 0.0f));
+    world.addObject("Tree", glm::fvec3(9.0f, 7.0f, 0.0f));
     
     RenderObject objectRoman;
-    auto id = aiContainer.createAgent();
-    auto agent = aiContainer.getAgent(id);
+    auto id = aiContainer->createAgent();
+    auto agent = aiContainer->getAgent(id);
     agent->selectable = true;
     agent->dynamic = true;
-    objectRoman.init(renderer, &config, "Roman", agent);
+    objectRoman.init(renderer, config, "Roman", agent);
         
     objectRoman.mesh->beginAnimation("Walk");
     
-    RenderObject objectTree;
-    id = aiContainer.createAgent();
-    agent = aiContainer.getAgent(id);
-    agent->collisionRadius = 3;
-    agent->setPosition(glm::fvec3(7.0f, 5.0f, 0.0f));
-    agent->setObstacleOnAiMap();
-    objectTree.init(renderer, &config, "Tree", agent); 
-    
-    RenderObject objectTree2;
-    id = aiContainer.createAgent();
-    agent = aiContainer.getAgent(id);
-    agent->collisionRadius = 3;
-    agent->setPosition(glm::fvec3(9.0f, 7.0f, 0.0f));
-    agent->setObstacleOnAiMap();
-    objectTree2.init(renderer, &config, "Tree", agent); 
         
     GLenum err1;
     while ((err1 = glGetError()) != GL_NO_ERROR) {
@@ -160,32 +149,18 @@ int main(int argc, char **argv)
 
         glClearColor(0.0f, 0.8f, 0.8f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
-        Time renderTime;
-        terrain.update();
-        terrain.render();
-        
-        aiContainer.update();
-        aiContainer.render();
-                
-        GLfloat rotationAngle = 0;
-        Time romanUpdate;
-        objectRoman.update(rotationAngle);
-       
-        //objectTree.rotateToward(glm::fvec3(0.0f, 0.0f, 0.0f));
-        //objectTree.makeFinalMatrix();
-        
-        Time romanRender;
+                       
+        aiContainer->update();
+        world.update();
+        objectRoman.update(1.0f);
+         
+        world.render();
+        aiContainer->render();
         objectRoman.render();
-        objectTree.render();
-        objectTree2.render();
-        
         guiPanel.render();
-        
         Console::getInstance().render();
         
         SDL_GL_SwapWindow(window);
-
        // SDL_Delay(2);
         
         GLenum err2;
@@ -195,13 +170,10 @@ int main(int argc, char **argv)
     }
     
     guiPanel.destroy();
-    objectTree.destroy();
-    objectTree2.destroy();
     objectRoman.destroy();
-    terrain.destroy();
+    world.destroy();
     Console::getInstance().destroy();
-    
-    aiContainer.destroy();
+    aiContainer->destroy();
         
     GLenum errDelete;
     while ((errDelete = glGetError()) != GL_NO_ERROR) {

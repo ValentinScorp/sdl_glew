@@ -56,7 +56,7 @@ void Camera::moveRight() {
     lookTarget.x += moveSpeed;
 }
 
-void Camera::init(Configuration* cfg) {
+void Camera::init(std::shared_ptr<IniFile> cfg) {
     Uint16 wPatchesNum = cfg->getParameter("Terrain", "wPatchesNum").toInt();
     Uint16 hPatchesNum = cfg->getParameter("Terrain", "hPatchesNum").toInt();
     Uint16 wTilesInPatch = cfg->getParameter("Terrain", "wTilesInPatch").toInt();
