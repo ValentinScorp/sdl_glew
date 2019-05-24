@@ -11,7 +11,8 @@ public:
     virtual ~Renderer();
     
     void init(std::shared_ptr<IniFile> config);
-    
+    void loadObjects(std::string iniFile);
+    std::shared_ptr<RenderObject> getRenderObject(std::string name);
     GLuint createTexture(GLsizei width, GLsizei height, GLenum internalFormat, GLenum format, GLvoid *data);
     GLuint loadTexture(std::string fileName, bool flipVertical = false);
     void unloadTexture(GLuint texture);
@@ -30,15 +31,16 @@ public:
     void undindTexture(Uint16 texNum);
     
     void destroyVertexArrays(GLuint vertexArray);
-    
-    
     void updateView(GLuint glUboMatricesInShader);
-    
     
     Camera *camera = nullptr;
     Terrain *terrain = nullptr;
+    
+    
 private:
     GLuint createProgram(GLuint vertexShader, GLuint fragmentShader);
     GLuint uniformBlockBindingCounter = 0;
+    
+    std::vector<std::shared_ptr<RenderObject>> renderObjects;
 };
 

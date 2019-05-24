@@ -29,6 +29,27 @@ void Renderer::init(std::shared_ptr<IniFile> config) {
     glDepthMask(GL_TRUE);
     glDepthFunc(GL_LESS);
     glDepthRange(camera->nearPlane, camera->farPlane);
+    
+    loadObjects("data/worldObjects.ini");
+}
+
+void Renderer::loadObjects(std::string iniFile) {
+    IniFile worldObjectsIniFile(iniFile);
+    
+    for (Sint16 i = 0; i < worldObjectsIniFile.getSectionsMax(); i++) {
+        auto object = std::make_shared<RenderObject>();
+        object->init(shared_from_this(), std::make_shared<IniFile>(std::move(worldObjectsIniFile)), worldObjectsIniFile.getSectionName(i));
+        renderObjects.push_back(object);
+    }
+}
+
+std::shared_ptr<RenderObject> Renderer::getRenderObject(std::string name) {
+    for (auto &object: renderObjects) {
+        if (object->name == name) {
+            return object;
+        }
+    }
+    return nullptr;
 }
 
 SDL_Surface* flipSdlSurfaceVertical(SDL_Surface* sfc) {

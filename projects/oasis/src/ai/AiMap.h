@@ -52,7 +52,9 @@ public:
     
     bool getPath(std::vector<Sint16> &path, Sint16 start, Sint16 end);
     void removeIntermediate(std::vector<Sint16> &path);
+    Sint16 findClosestVisible(std::vector<Sint16> &path, Sint16 startIndex);
     void smoothPath(std::vector<Sint16> &path);
+    void reverseAndSmoothPath(std::vector<Sint16> &path);
     bool isLineOfSight(Sint16 nodeIndexA, Sint16 nodeIndexB);
     Uint16 calcSimplifiedDistance(Sint16 pA, Sint16 pB);
     Uint16 calcSimplifiedDistance(Sint16 pMid, Sint16 pA, Sint16 pB);

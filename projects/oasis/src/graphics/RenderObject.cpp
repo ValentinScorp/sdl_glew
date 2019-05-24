@@ -8,11 +8,11 @@ RenderObject::~RenderObject() {
     delete mesh;
 }
 
-void RenderObject::init(std::shared_ptr<Renderer> renderer, std::shared_ptr<IniFile> cfg, std::string objectName, AiAgent *agent) {
+void RenderObject::init(std::shared_ptr<Renderer> renderer, std::shared_ptr<IniFile> cfg, std::string objectName) {
     mRenderer = renderer;
-    aiAgent = agent;
     mesh = new Mesh();
     
+    name = objectName;
     std::string fileFormat = cfg->getParameter(objectName, "fileFormat").value;
     if (fileFormat == "sma") {
         glTexture = renderer->loadTexture("img/" + cfg->getParameter(objectName, "texture").value);
@@ -33,21 +33,9 @@ void RenderObject::init(std::shared_ptr<Renderer> renderer, std::shared_ptr<IniF
     glVao = renderer->createVao(glVbo, 3, 3, 2, 0, 0, sizeof(float));
     
     renderer->updateView(glCameraMatricesUbo);
-    
-    float unitWidth = 4.0;
-    float unitHeight = 12.0;
-    
-    unitSelection = new UnitSelection();
-    unitSelection->init(renderer, unitWidth);
-    unitSelection->position = aiAgent->position;
-    unitSelection->position.z += 0.1;
-        
-    aiAgent->createSelectionBox(unitWidth, unitHeight);
 }
 
 void RenderObject::destroy() {
-    unitSelection->destroy();
-    
     mRenderer->unloadTexture(glTexture);
     mRenderer->destroyBuffer(glCameraMatricesUbo);
     mRenderer->destroyProgram(glProgram);
@@ -55,19 +43,15 @@ void RenderObject::destroy() {
     mRenderer->destroyBuffer(glVbo);
 }
 
-void RenderObject::update(float time) {
-    mesh->update(time);
-    unitSelection->position = aiAgent->position;
-    unitSelection->position.z += 0.1;
+void RenderObject::update(Mesh::Animation *currentAnimation, size_t currentFrame, size_t animCounter, float time) {
+    mesh->update(currentAnimation, currentFrame, animCounter, time);
 }
 
-void RenderObject::render() {
-    aiAgent->makeFinalMatrix();
-    
+void RenderObject::render(glm::fmat4 orientationMatrix) {
     glUseProgram(glProgram);
     
     mRenderer->updateView(glCameraMatricesUbo);
-    glUniformMatrix4fv(glModelMatrixUniform, 1, GL_FALSE, glm::value_ptr(aiAgent->orientationMatrix));
+    glUniformMatrix4fv(glModelMatrixUniform, 1, GL_FALSE, glm::value_ptr(orientationMatrix));
     glBindBuffer(GL_ARRAY_BUFFER, glVbo);
     glBufferSubData(GL_ARRAY_BUFFER, 0, mesh->getVertexBufferSize(), mesh->getVertexBufferAnimData());
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -90,9 +74,14 @@ void RenderObject::render() {
     glDisableVertexAttribArray(2);
     glBindVertexArray(0);
     glUseProgram(0);
-        
-    if (aiAgent->selected) {
-        unitSelection->render();
-    }
+    
+    mesh->initilizeMesh();
 }
 
+Mesh::Animation* RenderObject::getAnimation(std::string animName) {
+    return mesh->getAnimation(animName);
+}
+
+void RenderObject::updateInitialMesh() {
+    mesh->initilizeMesh();
+}

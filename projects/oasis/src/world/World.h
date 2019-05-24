@@ -4,6 +4,7 @@ class Renderer;
 class AiContainer;
 class IniFile;
 class RenderObject;
+class WorldObject;
 
 class World : public IMessageRecipient {
 public:
@@ -25,7 +26,7 @@ private:
     std::shared_ptr<IniFile> worldObjectsDescription = nullptr;
     std::shared_ptr<Terrain> terrain = nullptr;
     
-    std::vector<std::shared_ptr<RenderObject>> worldObjects;
+    std::vector<std::shared_ptr<WorldObject>> worldObjects;
     
     std::string currentObjectSelected;
 };

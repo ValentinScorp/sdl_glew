@@ -3,7 +3,7 @@
 class Camera;
 class Pathfinder;
 
-class AiAgent: public IMessageRecipient {
+class AiAgent : public IMessageRecipient {
 public:
     AiAgent();
     virtual ~AiAgent();
@@ -21,7 +21,7 @@ public:
     void makeFinalMatrix();
     bool lineIntersetsCircle(glm::fvec3 p1, glm::fvec3 p2, glm::fvec3 center, float radius);
     
-    virtual void onMessage(IMessage *message);
+    void onMessage(IMessage *message);
     
     Camera* camera = nullptr;
         

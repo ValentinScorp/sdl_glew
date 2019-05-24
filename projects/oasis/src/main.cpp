@@ -114,15 +114,19 @@ int main(int argc, char **argv)
     world.addObject("Tree", glm::fvec3(7.0f, 5.0f, 0.0f));
     world.addObject("Tree", glm::fvec3(17.0f, 5.0f, 0.0f));
     world.addObject("Tree", glm::fvec3(9.0f, 7.0f, 0.0f));
+    world.addObject("Tree", glm::fvec3(11.0f, 7.0f, 0.0f));
+    world.addObject("Tree", glm::fvec3(13.0f, 7.0f, 0.0f));
+    world.addObject("Tree", glm::fvec3(15.0f, 7.0f, 0.0f));
+    world.addObject("Tree", glm::fvec3(17.0f, 7.0f, 0.0f));
     
-    RenderObject objectRoman;
-    auto id = aiContainer->createAgent();
-    auto agent = aiContainer->getAgent(id);
-    agent->selectable = true;
-    agent->dynamic = true;
-    objectRoman.init(renderer, config, "Roman", agent);
+    //RenderObject objectRoman;
+    //auto id = aiContainer->createAgent();
+    //auto agent = aiContainer->getAgent(id);
+    //agent->selectable = true;
+    //agent->dynamic = true;
+    //objectRoman.init(renderer, config, "Roman", agent);
         
-    objectRoman.mesh->beginAnimation("Walk");
+    //objectRoman.mesh->beginAnimation("Walk");
     
         
     GLenum err1;
@@ -152,11 +156,11 @@ int main(int argc, char **argv)
                        
         aiContainer->update();
         world.update();
-        objectRoman.update(1.0f);
+      //  objectRoman.update(1.0f);
          
         world.render();
         aiContainer->render();
-        objectRoman.render();
+       // objectRoman.render();
         guiPanel.render();
         Console::getInstance().render();
         
@@ -170,7 +174,7 @@ int main(int argc, char **argv)
     }
     
     guiPanel.destroy();
-    objectRoman.destroy();
+    //objectRoman.destroy();
     world.destroy();
     Console::getInstance().destroy();
     aiContainer->destroy();

@@ -74,6 +74,9 @@ public:
     float getScreenAspectRatio();
     
     Parameter getParameter(std::string sectionName, std::string parameter);
+    bool isSectionExist(std::string sectionName);
+    std::string getSectionName(Sint16 index);
+    Sint16 getSectionsMax();
                 
     std::vector<Section> sections;
 

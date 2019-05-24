@@ -27,7 +27,7 @@ void World::destroy() {
 void World::update() {
     terrain->update();
     for (auto &obj: worldObjects) {
-        obj->update(1.0f);
+        obj->update();
     }
 }
 
@@ -39,26 +39,25 @@ void World::render() {
 }
 
 void World::addObject(std::string objectName, glm::fvec3 position) {
-    auto worldObject = std::make_shared<RenderObject>();
-    auto id = aiContainer->createAgent();
-    auto agent = aiContainer->getAgent(id);
-    agent->collisionRadius = worldObjectsDescription->getParameter(objectName, "collisionRadius").toFloat();
-    
-    agent->setPosition(position);
-    if (worldObjectsDescription->getParameter(objectName, "staticPosition").toInt()) {
-        agent->setObstacleOnAiMap();
+    if (!worldObjectsDescription->isSectionExist(objectName)) {
+        return;
     }
-    worldObject->init(renderer, worldObjectsDescription, objectName, agent);
-    worldObjects.push_back(std::move(worldObject));
+    
+    if (!aiContainer->pathfinder.isObstacle(position)) {
+        glm::fvec3 adjusedPosition = aiContainer->pathfinder.getObstaclePosition(position);
+        auto worldObject = std::make_shared<WorldObject>();
+        if (worldObject->init("Tree", renderer, aiContainer, worldObjectsDescription, adjusedPosition)) {
+            worldObjects.push_back(std::move(worldObject));
+        }
+    }
 }
 
 void World::onMessage(IMessage *message) {
-    if (message->getKeyPressed() == "left_mouse_button_pressed") {
-
-        if (currentObjectSelected == "Tree") {
-//            addObject(currentObjectSelected, )
-        }
+    if (message->getMessage() == "List box item changed") {
+        currentObjectSelected = message->getSenderId();
     }
-    
-    
+    if (message->getKeyPressed() == "left_mouse_button_pressed") {
+        auto mousePos = message->getMousePosition();
+        addObject(currentObjectSelected, terrain->getTerrainPoint(mousePos));
+    }
 }

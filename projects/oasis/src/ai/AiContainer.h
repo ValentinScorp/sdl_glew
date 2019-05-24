@@ -15,10 +15,11 @@ public:
     AiAgent* getAgent(size_t id);
     void destroyAgent(size_t id);
     
+    Pathfinder pathfinder;
 private:
     std::vector<AiAgent*> agents;
     Camera *camera = nullptr;
     
-    Pathfinder pathfinder;
+    
 };
 

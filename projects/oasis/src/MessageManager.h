@@ -34,6 +34,7 @@ public:
     }
     
     void registerRecipient(IMessageRecipient *recipient) {
+        std::cout << "registering recip" << std::endl;
         recipients.push_back(recipient);
     }
     void unregisterRecipient(IMessageRecipient *recipient) {
@@ -132,10 +133,7 @@ class GuiMessage : public IMessage {
 public:
     GuiMessage() {}
     GuiMessage(std::string m, std::string s_id, std::string p_id) 
-        : message(m), 
-          senderId(s_id), 
-          parentId(p_id) {
-    }
+        : message(m), senderId(s_id), parentId(p_id) {}
     ~GuiMessage() {}
     
     std::string getMessage() { return message; }

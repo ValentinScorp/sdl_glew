@@ -250,9 +250,12 @@ bool AiMap::getPath(std::vector<Sint16> &path, Sint16 start, Sint16 end) {
             for (Sint16 i = 1; i < path.size() - 1; i++) {
                 tmpPath.push_back(path[i]);
             }
-            smoothPath(tmpPath);
-            path.clear();
-            path = tmpPath;
+            //smoothPath(reversePath);
+            reverseAndSmoothPath(reversePath);
+            //smoothPath(tmpPath);
+            //path.clear();
+            //path = tmpPath;
+            path = reversePath;
 
  //           for (Sint16 i = 0; i < path.size(); i++) {
       //          std::cout << nodes[path[i]].selfX << " x " << nodes[path[i]].selfY << std::endl;
@@ -426,6 +429,67 @@ bool AiMap::isLineOfSight(Sint16 nodeIndexA, Sint16 nodeIndexB) {
         currentNodeIndex = minNeibIndex;
     }
     return false;
+}
+
+Sint16 AiMap::findClosestVisible(std::vector<Sint16> &path, Sint16 startIndex) {
+    if (startIndex >= path.size()) {
+        return -1;
+    }
+    if (startIndex >= (path.size() - 2)) {
+        return path.size() - 1;
+    }
+    Sint16 nextIndex = startIndex + 2;
+    while (nextIndex < path.size()) {
+        if (!isLineOfSight(path[startIndex], path[nextIndex])) {
+            return nextIndex - 1;
+        } else {
+            nextIndex++;
+        }
+    }
+    return nextIndex - 1;
+}
+
+void AiMap::reverseAndSmoothPath(std::vector<Sint16> &revPath) {
+    if (revPath.size() <= 2) {
+        return;
+    }
+    std::vector<Sint16> newPath;
+    
+    // smooth from end
+    Sint16 closestToEnd = findClosestVisible(revPath, 0);
+    if (closestToEnd == -1) {
+        std::cout << "Unable to smooth path 1 - iteration" << std::endl;
+        return;
+    }
+    newPath.push_back(revPath[0]);
+    for (Sint16 i = closestToEnd; i < revPath.size(); i++) {
+        newPath.push_back(revPath[i]);
+    }
+    //
+    // reverse path to make it in right order
+    revPath.clear();
+    for (Sint16 i = (newPath.size() - 1); i >= 0; i--) {
+        revPath.push_back(newPath[i]);
+    }
+    if (revPath.size() <= 2) {
+        return;
+    }
+    
+    Sint16 closestToStart = findClosestVisible(revPath, 0);
+    if (closestToStart == -1) {
+        std::cout << "Unable to smooth path 2 - iteration" << std::endl;
+        return;
+    }
+    std::vector<Sint16> path;
+    path.push_back(revPath[0]);
+    path.push_back(revPath[closestToStart]);
+    for (Sint16 i = closestToStart; i < revPath.size(); i++) {
+        path.push_back(revPath[i]);
+    }
+    // smooth the rest - todo need optimize to not include first and last points
+    smoothPath(path);
+    revPath.clear();
+    revPath = path;
 }
 
 void AiMap::smoothPath(std::vector<Sint16> &path) {

@@ -92,6 +92,26 @@ float IniFile::getScreenAspectRatio() {
     return 1;
 }
 
+bool IniFile::isSectionExist(std::string sectionName) {
+    for (auto s: sections) {
+        if (s.name == sectionName) {
+            return true;
+        }
+    }
+    return false;
+}
+
+std::string IniFile::getSectionName(Sint16 index) {
+    if (index >= sections.size() || index < 0) {
+        return "Error";
+    }
+    return sections[index].name;
+}
+
+Sint16 IniFile::getSectionsMax() {
+    return sections.size();
+}
+
 IniFile::Parameter IniFile::getParameter(std::string sectionName, std::string parameter) {
     for (auto s: sections) {
         if (s.name == sectionName) {
@@ -104,3 +124,5 @@ IniFile::Parameter IniFile::getParameter(std::string sectionName, std::string pa
     }
     return Parameter("Error");
 }
+
+

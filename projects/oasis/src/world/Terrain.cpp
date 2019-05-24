@@ -346,6 +346,8 @@ void Terrain::onMessage(IMessage *message) {
     }
     
     if (message->getKeyPressed() == "right_mouse_button_pressed") {
+        SMessageManager::getInstance().invokeMessage(new UnitMessage("unit_walk", getTerrainPoint(message->getMousePosition())));
+        /*
         glm::fvec2 pos = message->getMousePosition();
         RayVector camRay = mRenderer->camera->getVectorRay(pos.x, pos.y);
     
@@ -358,7 +360,7 @@ void Terrain::onMessage(IMessage *message) {
             if (surface.intersectRayTriangle(ray, t, intersection)) {
                 SMessageManager::getInstance().invokeMessage(new UnitMessage("unit_walk", intersection));
             }
-        }
+        }*/
     }
 }
 

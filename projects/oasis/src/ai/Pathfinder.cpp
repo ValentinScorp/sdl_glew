@@ -46,6 +46,7 @@ void Pathfinder::getPath(glm::fvec3 begin, glm::fvec3 end, std::vector<glm::fvec
     aiMap.getPath(pathIndexes, startIdx, finishIdx);
   //  std::cout << std::endl;
     path.push_back(begin);
+    //for (Sint16 i = 1; i < pathIndexes.size() - 1; i++) {
     for (Sint16 i = 0; i < pathIndexes.size(); i++) {
         glm::fvec3 pos = getNodePosition(pathIndexes[i]);
         path.push_back(pos);
@@ -54,16 +55,21 @@ void Pathfinder::getPath(glm::fvec3 begin, glm::fvec3 end, std::vector<glm::fvec
 }
 
 glm::fvec3 Pathfinder::getNodePosition(size_t index) {
-    glm::fvec3 position;
+    glm::fvec3 position(0.0f);
+    if (index != -1) {
     
-    Sint16 x = index - (index / nodeRows) * nodeRows;
-    Sint16 y = index / nodeRows;
-   // std::cout << "index " << index << std::endl;
-   // std::cout << "path nodes " << x << " x " << y << std::endl;
-    position.x = x * nodeWidth + nodeWidth / 2;
-    position.y = y * nodeWidth + nodeWidth / 2;
-    position.z = 0.0;
+        Sint16 x = index - (index / nodeRows) * nodeRows;
+        Sint16 y = index / nodeRows;
+       // std::cout << "index " << index << std::endl;
+       // std::cout << "path nodes " << x << " x " << y << std::endl;
+        position.x = x * nodeWidth + nodeWidth / 2;
+        position.y = y * nodeWidth + nodeWidth / 2;
+        position.z = 0.0; // todo terrain height
+    }
     return position;
+}
+glm::fvec3 Pathfinder::getObstaclePosition(glm::fvec3 pos) {
+    return getNodePosition(getNodeIndex(pos));
 }
 
 size_t Pathfinder::getNodeIndex(glm::fvec3 pos) {

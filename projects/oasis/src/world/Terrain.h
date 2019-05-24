@@ -100,8 +100,10 @@ public:
     void createCanvasMesh(std::shared_ptr<IniFile> cfg);
     void getDataFromSurface();
     void genCircle(glm::fvec2 center, float radius, float height);
-    virtual void onMessage(IMessage *message);
     glm::fvec3 getTerrainPoint(glm::fvec2 mousePos);
+    
+    virtual void onMessage(IMessage *message);
+    
 private:
     void toggleGridView();
     

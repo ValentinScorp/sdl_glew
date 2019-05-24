@@ -11,6 +11,8 @@
     <File Name="../src/IniFile.cpp"/>
     <File Name="../src/IniFile.h"/>
     <VirtualDirectory Name="world">
+      <File Name="../src/world/WorldObject.h"/>
+      <File Name="../src/world/WorldObject.cpp"/>
       <File Name="../src/world/Terrain.h"/>
       <File Name="../src/world/Terrain.cpp"/>
       <File Name="../src/world/World.h"/>

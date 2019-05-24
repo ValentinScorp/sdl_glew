@@ -80,13 +80,12 @@ private:
 
     };
     
+public:
     class Animation {
     public:
         Animation(std::string n) : name(n) {}
         ~Animation() {}
-            
-        std::string name;
-        std::vector<KeyFrame> keyFrames;
+                
         void AddKeyframe(KeyFrame kf) {
 			keyFrames.push_back(kf);
 		}
@@ -100,13 +99,13 @@ private:
 		size_t GetKeyframesNum() {
 			return keyFrames.size();
 		}
+        
+        std::string name;
+        std::vector<KeyFrame> keyFrames;
     };
     
 public:
     Mesh() {
-        currentAnimation = nullptr;
-        animCounter = 0;
-        currentFrame = 0;
     }
     virtual ~Mesh();
 
@@ -121,8 +120,8 @@ public:
     
     void loadObjMesh(std::string fileName);
     void loadSmaMesh(std::string fileName);
-    
-    void update(float time);
+
+    void update(Animation *currentAnimation, size_t currentFrame, size_t animCounter, float time);
     
     GLsizeiptr getVertexBufferSize();
     GLvoid* getVertexBufferData();
@@ -137,9 +136,8 @@ public:
 	
 	virtual void addVertex(glm::fvec3 pos, glm::fvec3 nor, glm::fvec2 uv);
 	virtual void addVertex(Vertex ver);
-	void UpdateAnimation(float dt, std::vector<Vertex> &smaVerts);
-	void beginAnimation(std::string aname);
-	void stopAnimation();
+	void UpdateAnimation(Animation *currentAnimation, size_t currentFrame, size_t animCounter, float dt, std::vector<Vertex> &smaVerts);	
+	void initilizeMesh();
 
 	size_t GetVertexesNum();
 	size_t GetVertexSize();
@@ -153,10 +151,10 @@ public:
     std::vector<std::vector<Weight>> weights;
     
     std::vector<Animation*> animations;
-    Animation *currentAnimation;
     
-    size_t currentFrame;
-    size_t animCounter;
+   // Animation *currentAnimation;
+   // size_t currentFrame;
+   // size_t animCounter;
     
     std::string name;
 };

@@ -31,7 +31,7 @@ public:
     void render();
     bool isPointOver(glm::fvec2 point);
     
-    void onMessage(IMessage *message);
+    virtual void onMessage(IMessage *message);
     
     bool opened = false;
     Listbox* parent;
@@ -39,6 +39,7 @@ public:
  private:   
     glm::fvec2 position = {0.0f, 0.0f};
     glm::fvec2 dimension = {0.0f, 0.0f};
+    std::string id;
     std::string text;
     std::u16string u16text;
     

@@ -14,6 +14,7 @@ public:
     void getPath(glm::fvec3 begin, glm::fvec3 end, std::vector<glm::fvec3> &path);
     size_t getNodeIndex(glm::fvec3 pos);
     glm::fvec3 getNodePosition(size_t index);
+    glm::fvec3 getObstaclePosition(glm::fvec3 pos);
     
     void setStaticObstacle(glm::fvec3 position);
     void removeStaticObstacle(glm::fvec3 position);

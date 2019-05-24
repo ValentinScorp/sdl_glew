@@ -168,7 +168,7 @@ void Mesh::loadSmaMesh(std::string fileName) {
 	data_iterator += sizeof(unsigned short);
 	std::vector<glm::vec3> positions;
 	if (posTotal) {
-		for (int i = 0; i < (posTotal / 3); i++) {
+		for (Sint16 i = 0; i < (posTotal / 3); i++) {
 
 			float *x = (float*)data_iterator; data_iterator += sizeof(float);
 			float *y = (float*)data_iterator; data_iterator += sizeof(float);
@@ -185,7 +185,7 @@ void Mesh::loadSmaMesh(std::string fileName) {
 	data_iterator += sizeof(unsigned short);
 	std::vector<glm::vec3> normals;
 	if (normalsTotal) {
-		for (int i = 0; i < (normalsTotal / 3); i++) {
+		for (Sint16 i = 0; i < (normalsTotal / 3); i++) {
 
 			float *x = (float*)data_iterator; data_iterator += sizeof(float);
 			float *y = (float*)data_iterator; data_iterator += sizeof(float);
@@ -201,7 +201,7 @@ void Mesh::loadSmaMesh(std::string fileName) {
 	data_iterator += sizeof(unsigned short);
 	std::vector<glm::vec2> texcoords;
 	if (uvTotal > 0 && uvTotal == (posTotal / 3) * 2) {
-		for (int i = 0; i < (uvTotal / 2); i++) {
+		for (Sint16 i = 0; i < (uvTotal / 2); i++) {
 
 			float *s = (float*)data_iterator; data_iterator += sizeof(float);
 			float *t = (float*)data_iterator; data_iterator += sizeof(float);
@@ -217,7 +217,7 @@ void Mesh::loadSmaMesh(std::string fileName) {
 	unsigned short numTextures = *(unsigned short*)data_iterator;
 	data_iterator += sizeof(unsigned short);
 		
-	for (int i = 0; i < numTextures; i++) {
+	for (Sint16 i = 0; i < numTextures; i++) {
 		char textureName[64] = "img/default.png";
 		memcpy(textureName, data_iterator, sizeof(char) * 64);
 		data_iterator += sizeof(char) * 64;
@@ -227,7 +227,7 @@ void Mesh::loadSmaMesh(std::string fileName) {
 		unsigned short numTriangleIndexes = *(unsigned short*)data_iterator;
 		data_iterator += sizeof(unsigned short);
 
-		for (int j = 0; j < numTriangleIndexes; j++) {
+		for (Sint16 j = 0; j < numTriangleIndexes; j++) {
 			unsigned short index = *(unsigned short*)data_iterator;
 			// todo save indexes
 			data_iterator += sizeof(unsigned short);
@@ -240,7 +240,7 @@ void Mesh::loadSmaMesh(std::string fileName) {
 	unsigned short numBones = *(unsigned short*)data_iterator;
 	data_iterator += sizeof(unsigned short);
 	
-	for (int i = 0; i < numBones; i++) {
+	for (Sint16 i = 0; i < numBones; i++) {
 
 		short parentIdx = *(unsigned short*)data_iterator;
 		data_iterator += sizeof(unsigned short);
@@ -261,12 +261,12 @@ void Mesh::loadSmaMesh(std::string fileName) {
 	unsigned short numVertWeights = *(unsigned short*)data_iterator;
 	data_iterator += sizeof(unsigned short);
 
-	for (int i = 0; i < numVertWeights; i++) {
+	for (Sint16 i = 0; i < numVertWeights; i++) {
 		unsigned short numWeights = *(unsigned short*)data_iterator;
 		data_iterator += sizeof(unsigned short);
 
 		std::vector<Weight> vertexWeights;
-		for (int j = 0; j < numWeights; j++) {
+		for (Sint16 j = 0; j < numWeights; j++) {
 			short boneIndex = *(unsigned short*)data_iterator;
 			data_iterator += sizeof(unsigned short);
 
@@ -286,7 +286,7 @@ void Mesh::loadSmaMesh(std::string fileName) {
 	// animations
 	unsigned short numAnimations = *(unsigned short*)data_iterator;
 	data_iterator += sizeof(unsigned short);
-	for (int i = 0; i < numAnimations; i++) {
+	for (Sint16 i = 0; i < numAnimations; i++) {
 		
 		char animName[64] = "None";
 		memcpy(animName, data_iterator, sizeof(char) * 64);
@@ -297,13 +297,13 @@ void Mesh::loadSmaMesh(std::string fileName) {
 		unsigned short numKeyframes = *(unsigned short*)data_iterator;
 		data_iterator += sizeof(unsigned short);
 		
-		for (int j = 0; j < numKeyframes; j++) {
+		for (Sint16 j = 0; j < numKeyframes; j++) {
 			KeyFrame kf;
 			unsigned short keyframeIndex = *(unsigned short*)data_iterator;
 			data_iterator += sizeof(unsigned short);
 
 			kf.index = keyframeIndex;
-			for (int k = 0; k < numBones; k++) {
+			for (Sint16 k = 0; k < numBones; k++) {
 				glm::fvec3 rotation;
 				glm::fvec3 position;
 
@@ -326,15 +326,16 @@ void Mesh::loadSmaMesh(std::string fileName) {
 	delete[] data;
 	data_iterator = nullptr;
     
-    for (int i = 0; i < positions.size(); i++) {
+    for (Sint16 i = 0; i < positions.size(); i++) {
         Vertex vert(positions[i], normals[i], texcoords[i]);
         vertexes.push_back(vert);
         animVertexes.push_back(vert);
     }
 }
 
-void Mesh::update(float time) {
-    UpdateAnimation(time, vertexes);
+void Mesh::update(Animation *currentAnimation, size_t currentFrame, size_t animCounter, float time) {
+    if (currentAnimation != nullptr)
+        UpdateAnimation(currentAnimation, currentFrame, animCounter, time, vertexes);
 }
 
 void Mesh::AddBone(glm::fvec3 p, glm::fvec3 r) {
@@ -374,7 +375,7 @@ void Mesh::addVertex(Vertex ver) {
 	vertexes.push_back(ver);
 }
 
-void Mesh::UpdateAnimation(float dt, std::vector<Vertex> &smaVerts) {
+void Mesh::UpdateAnimation(Animation *currentAnimation, size_t currentFrame, size_t animCounter, float dt, std::vector<Vertex> &smaVerts) {
 	if (currentAnimation == nullptr) {
 		return;
 	}
@@ -390,10 +391,10 @@ void Mesh::UpdateAnimation(float dt, std::vector<Vertex> &smaVerts) {
 	if (currentFrame >= currentAnimation->GetKeyframesNum()) {
 		currentFrame = 0;
 	}
-	for (int i = 0; i < vertexes.size(); i++) {
+	for (Sint16 i = 0; i < vertexes.size(); i++) {
 		glm::fvec3 finalVecPositin(0.0f, 0.0f, 0.0f);
 
-		for (int j = 0; j < weights[i].size(); j++) {
+		for (Sint16 j = 0; j < weights[i].size(); j++) {
 			Bone* init_bone = weights[i][j].bone;
 			float weight = weights[i][j].weight;
 
@@ -417,19 +418,13 @@ void Mesh::UpdateAnimation(float dt, std::vector<Vertex> &smaVerts) {
 	}
 }
 
-void Mesh::beginAnimation(std::string aname) {
-	for (auto a : animations) {
-		if (a->GetName() == aname) {
-			currentAnimation = a;
-		}
-	}
-}
-
-void Mesh::stopAnimation() {
-	for (int i = 0; i < vertexes.size(); i++) {
+void Mesh::initilizeMesh() {
+    if (animVertexes.size() != vertexes.size()) {
+        return;
+    }
+	for (Sint16 i = 0; i < vertexes.size(); i++) {
 		animVertexes[i] = vertexes[i];
 	}
-	currentAnimation = nullptr;
 }
 
 Mesh::Animation * Mesh::getAnimation(std::string aname) {

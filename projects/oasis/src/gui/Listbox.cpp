@@ -49,6 +49,7 @@ void ListboxItem::init(std::shared_ptr<Renderer> renderer, glm::fvec2 position, 
     glVbo = renderer->createVbo(vertices.data(), vertices.size() * sizeof(Vertex));
     glVao = renderer->createVao(glVbo, 2, 0, 0, 0, 0, sizeof(float));
     
+    this->id = text;
     this->text = text;
     Console::getInstance().convertUtf8ToUtf16(text, u16text);
 }
@@ -110,7 +111,7 @@ void ListboxItem::onMessage(IMessage *message) {
                     parent->text = text;
                     parent->hideChildren();
                     parent->hidden = false;
-                    SMessageManager::getInstance().invokeMessage(new GuiMessage(text, this->text, parent->id));
+                    SMessageManager::getInstance().invokeMessage(new GuiMessage("List box item changed", this->id, parent->id));
                 }
                 color = colorOver;
             } else {
