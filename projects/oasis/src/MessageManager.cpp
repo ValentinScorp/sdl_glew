@@ -2,22 +2,15 @@
 
 void SMessageManager::distributeMessages() {
     for (auto m: messages) {
-        for (auto r: recipients) {
-            if (r) {
-                r->onMessage(m);
-            }
-        }
-    }
-    for (auto m: messages) {
-        delete m;
+        invokeMessage(m);
     }
     messages.clear();
 }
 
 void SMessageManager::invokeMessage(IMessage *message) {
-    for (auto r: recipients) {
-        if (r) {
-            r->onMessage(message);
+    for (size_t i = 0; i < recipients.size(); i++) {
+        if (recipients[i]) {
+            recipients[i]->onMessage(message);
         }
     }
     delete message;

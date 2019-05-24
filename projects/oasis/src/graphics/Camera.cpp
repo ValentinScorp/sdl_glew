@@ -8,6 +8,9 @@ Camera::~Camera() {
 }
 
 void Camera::onMessage(IMessage *message) {
+    if (message == nullptr) {
+        return;
+    }
     if (message->getKeyPressed() == "wheel") {
         glm::fvec2 pos = message->getWheelDirection();
         glm::fvec3 camViewVector = position - lookTarget;

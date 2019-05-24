@@ -89,6 +89,9 @@ void ListboxItem::render() {
 }
 
 void ListboxItem::onMessage(IMessage *message) {
+    if (message == nullptr) {
+        return;
+    }
     if (opened) {
         if (message->getKeyPressed() == "motion") {
             glm::fvec2 pos = renderer->camera->convertMouseToScreen(message->getMousePosition());
@@ -248,7 +251,18 @@ void Listbox::hideChildren() {
     }
 }
 
+bool Listbox::isPointOver(glm::fvec2 point) {
+    if (point.x > position.x && point.x < position.x + dimension.x &&
+        point.y > position.y && point.y < position.y + dimension.y) {
+            return true;
+        }
+    return false;
+}
+
 void Listbox::onMessage(IMessage *message) {
+    if (message == nullptr) {
+        return;
+    }
     if (hidden == false) {
         if (message->getKeyPressed() == "motion") {
             glm::fvec2 pos = renderer->camera->convertMouseToScreen(message->getMousePosition());
@@ -284,12 +298,4 @@ void Listbox::onMessage(IMessage *message) {
             hidden = false;
         }
     }
-}
-
-bool Listbox::isPointOver(glm::fvec2 point) {
-    if (point.x > position.x && point.x < position.x + dimension.x &&
-        point.y > position.y && point.y < position.y + dimension.y) {
-            return true;
-        }
-    return false;
 }

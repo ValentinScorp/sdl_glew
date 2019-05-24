@@ -22,6 +22,7 @@ bool WorldObject::init( std::string name,
         auto id = aiContainer->createAgent();
         auto agent = aiContainer->getAgent(id);
         agent->collisionRadius = iniFile->getParameter(name, "collisionRadius").toFloat();
+        agent->selectable = iniFile->getParameter(name, "selectable").toInt();
         agent->setPosition(position);
         if (iniFile->getParameter(name, "staticPosition").toInt()) {
             agent->setObstacleOnAiMap();
@@ -76,5 +77,9 @@ void WorldObject::startAnimation(std::string animName) {
 
 void WorldObject::stopAnimation() {
     currentAnimation = 0;
+}
+
+void WorldObject::onMessage(IMessage *message) {
+    
 }
 

@@ -49,7 +49,11 @@ void TerrainBrush::render() {
 }
 
 void TerrainBrush::onMessage(IMessage *message) {
+    if (message == nullptr) {
+        return;
+    }
     if (message->getKeyPressed() == "motion") {
+        
     }
     if (message->getKeyPressed() == "a") {
     }

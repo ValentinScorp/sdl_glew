@@ -85,7 +85,9 @@ void AiAgent::avoidObstacle(AiAgent *obstacle) {
 
 void AiAgent::move() {
     if (currentPath < (movementPath.size() - 1)) {
-        movementDirection = glm::normalize(movementPath[currentPath + 1] - position);
+        //std::cout << movementDirection.x << " x " << movementDirection.y << " x " << movementDirection.z << std::endl;
+        if (position != movementPath[currentPath + 1])
+            movementDirection = glm::normalize(movementPath[currentPath + 1] - position);
         //std::cout << movementDirection.x << " x " << movementDirection.y << " x " << movementDirection.z << std::endl;
         glm::fvec3 newPosition = position + movementDirection * movementSpeed;
         pathfinder->removeStaticObstacle(position);
@@ -155,6 +157,9 @@ void AiAgent::makeFinalMatrix() {
 }
 
 void AiAgent::onMessage(IMessage *message) {
+    if (message == nullptr) {
+        return;
+    }
     if (message->getKeyPressed() == "e") {
     }
     if (message->getKeyPressed() == "a") {
@@ -198,7 +203,8 @@ void AiAgent::onMessage(IMessage *message) {
                 currentPath = 0;
                 movementTarget = movementPath[1];
                 moving = true;
-                movementDirection = glm::normalize(movementTarget - position);
+                if (movementTarget != position)
+                    movementDirection = glm::normalize(movementTarget - position);
             }
         }
     }

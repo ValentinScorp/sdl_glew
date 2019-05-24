@@ -7,7 +7,9 @@ public:
     ~System() {}
     
     void onMessage(IMessage *message) {
-        quit = message->isQuit();
+        if (message) {
+            quit = message->isQuit();
+        }
     }
     bool isQuit() {
         return quit;
@@ -95,9 +97,12 @@ int main(int argc, char **argv)
     SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "Using GLEW version -> %s\n", glewGetString(GLEW_VERSION));
      
     System system;
-    
+        
     auto renderer = std::make_shared<Renderer>();
     renderer->init(config);
+    
+    GuiPanel guiPanel;
+    guiPanel.init(renderer);
 
     auto aiContainer = std::make_shared<AiContainer>();
     
@@ -106,8 +111,6 @@ int main(int argc, char **argv)
     
     Console::getInstance().init(renderer, config);
     
-    GuiPanel guiPanel;
-    guiPanel.init(renderer);
     
     World world;
     world.init(renderer, aiContainer);
@@ -145,9 +148,11 @@ int main(int argc, char **argv)
         (*frameTime) = (elapsedTime);
         
         sendEvents();
+                
         if (system.isQuit() == true) {
             runMainLoop = false;
         }
+        
         
         SDL_GL_MakeCurrent(window, gl_context);
 

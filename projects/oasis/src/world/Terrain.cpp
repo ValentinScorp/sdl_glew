@@ -310,6 +310,9 @@ glm::fvec3 Terrain::getTerrainPoint(glm::fvec2 mousePos) {
 }
 
 void Terrain::onMessage(IMessage *message) {
+    if (message == nullptr) {
+        return;
+    }
     if (message->getKeyPressed() == "left_mouse_button_pressed") {
         glm::fvec2 pos = message->getMousePosition();
      //   setSurfaceVertexTexure(pos, "sand");

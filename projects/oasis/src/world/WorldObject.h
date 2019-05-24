@@ -5,7 +5,7 @@ class AiAgent;
 class Mesh::Animation;
 class RenderObject;
 
-class WorldObject {
+class WorldObject : private IMessageRecipient {
 
 public:
     WorldObject();
@@ -21,6 +21,7 @@ public:
     void destroy();
     void startAnimation(std::string animName);
     void stopAnimation();
+    void onMessage(IMessage *message);
     
     std::string name;
     std::shared_ptr<RenderObject> renderObject = nullptr;

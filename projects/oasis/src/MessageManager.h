@@ -4,6 +4,7 @@ class IMessage {
 public:
     IMessage() {}
     virtual ~IMessage() {}
+    
     virtual std::string getKeyPressed() { return std::string(""); }
     virtual glm::fvec2 getMousePosition() {return glm::fvec2(0.0); }
     virtual glm::fvec2 getWheelDirection() { return glm::fvec2(0.0); }

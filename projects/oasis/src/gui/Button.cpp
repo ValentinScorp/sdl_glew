@@ -70,7 +70,18 @@ void Button::render() {
     Console::getInstance().renderAt(position.x + 5, position.y + dimension.y / 4, scale, u16text);
 }
 
+bool Button::isPointOver(glm::fvec2 point) {
+    if (point.x > position.x && point.x < position.x + dimension.x &&
+        point.y > position.y && point.y < position.y + dimension.y) {
+            return true;
+        }
+    return false;
+}
+
 void Button::onMessage(IMessage *message) {
+    if (message == nullptr) {
+        return;
+    }
     if (message->getKeyPressed() == "motion") {
         glm::fvec2 pos = renderer->camera->convertMouseToScreen(message->getMousePosition());
         if (isPointOver(pos)) {
@@ -94,12 +105,4 @@ void Button::onMessage(IMessage *message) {
             color = colorBase;
         }
     }
-}
-
-bool Button::isPointOver(glm::fvec2 point) {
-    if (point.x > position.x && point.x < position.x + dimension.x &&
-        point.y > position.y && point.y < position.y + dimension.y) {
-            return true;
-        }
-    return false;
 }

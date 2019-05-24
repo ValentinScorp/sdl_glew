@@ -3,6 +3,7 @@
 class Camera;
 class Pathfinder;
 
+// todo when agents removed messeges sending error occured
 class AiAgent : public IMessageRecipient {
 public:
     AiAgent();
@@ -34,7 +35,7 @@ public:
     bool selected = false;
     bool moving = false;
     
-    glm::fvec3 movementDirection = { 0.0f, 0.0f, 0.0f };
+    glm::fvec3 movementDirection = { 0.0f, -1.0f, 0.0f };
     float movementSpeed = 0.3;
     glm::fvec3 movementTarget = { 0.0f, 0.0f, 0.0f };
     
