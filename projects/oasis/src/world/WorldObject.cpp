@@ -21,6 +21,7 @@ bool WorldObject::init( std::string name,
         }
         auto id = aiContainer->createAgent();
         auto agent = aiContainer->getAgent(id);
+        agent->mesh = renderObject->mesh;
         agent->collisionRadius = iniFile->getParameter(name, "collisionRadius").toFloat();
         agent->selectable = iniFile->getParameter(name, "selectable").toInt();
         agent->setPosition(position);
@@ -54,8 +55,6 @@ void WorldObject::destroy() {
 }
 
 void WorldObject::update() {
-    if (renderObject)
-        renderObject->update(currentAnimation, currentFrame, animCounter, 1.0f);
     if (unitSelection) {
         unitSelection->position = aiAgent->position;
         unitSelection->position.z += 0.1;
@@ -69,14 +68,6 @@ void WorldObject::render() {
     if (aiAgent->selected) {
         unitSelection->render();
     }
-}
-
-void WorldObject::startAnimation(std::string animName) {
-    currentAnimation = renderObject->getAnimation(animName);
-}
-
-void WorldObject::stopAnimation() {
-    currentAnimation = 0;
 }
 
 void WorldObject::onMessage(IMessage *message) {

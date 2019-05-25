@@ -122,16 +122,7 @@ int main(int argc, char **argv)
     world.addObject("Tree", glm::fvec3(15.0f, 7.0f, 0.0f));
     world.addObject("Tree", glm::fvec3(17.0f, 7.0f, 0.0f));
     
-    //RenderObject objectRoman;
-    //auto id = aiContainer->createAgent();
-    //auto agent = aiContainer->getAgent(id);
-    //agent->selectable = true;
-    //agent->dynamic = true;
-    //objectRoman.init(renderer, config, "Roman", agent);
-        
-    //objectRoman.mesh->beginAnimation("Walk");
     
-        
     GLenum err1;
     while ((err1 = glGetError()) != GL_NO_ERROR) {
         std::cerr << "OpenGL init error -> " << err1 << std::endl;
@@ -160,7 +151,10 @@ int main(int argc, char **argv)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                        
         aiContainer->update();
+//std::cout << "updatein world start" << std::endl;
+        
         world.update();
+        //std::cout << "updatein world end" << std::endl;
       //  objectRoman.update(1.0f);
          
         world.render();

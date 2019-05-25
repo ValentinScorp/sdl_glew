@@ -1,11 +1,14 @@
 #include "../Precompiled.h"
 
 glm::mat4 Mesh::Bone::GetLocalToWorldMatrix() {
-	glm::mat4 FinalMat = glm::mat4(1.0f);
+    if (matrixCalculated) {
+        return finalMatrix;
+    }
+	finalMatrix = glm::mat4(1.0f);
 	glm::mat4 MatTemp = glm::mat4(1.0f);
 	glm::mat4 MatRot = glm::mat4(1.0f);
 
-    FinalMat = glm::translate(FinalMat, glm::fvec3(position.x, position.y, position.z));
+    finalMatrix = glm::translate(finalMatrix, glm::fvec3(position.x, position.y, position.z));
     
     MatTemp = glm::rotate(MatTemp, rotation.x, glm::fvec3(1.0f, 0.0f, 0.0f));
     MatRot =  MatTemp * MatRot;
@@ -16,9 +19,13 @@ glm::mat4 Mesh::Bone::GetLocalToWorldMatrix() {
     MatTemp = glm::rotate(MatTemp, rotation.z, glm::fvec3(0.0f, 0.0f, 1.0f));
     MatRot =  MatTemp * MatRot;
     
-	FinalMat = FinalMat * MatRot;
+	finalMatrix = finalMatrix * MatRot;
 
-	return FinalMat;
+	return finalMatrix;
+}
+
+Mesh::Mesh() {
+    
 }
 
 Mesh::~Mesh() {
@@ -113,20 +120,6 @@ void Mesh::loadObjMesh(std::string fileName) {
         Vertex v(pos[i.x], nor[i.z], tex[i.y]);
         vertexes.push_back(v);
     }
-}
-GLsizeiptr Mesh::getVertexBufferSize() {
-    return (vertexes.size() * sizeof(Vertex));
-}
-GLvoid* Mesh::getVertexBufferData() {
-    return vertexes.data();
-}
-
-GLvoid* Mesh::getVertexBufferAnimData() {
-    return animVertexes.data();
-}
-
-GLsizei Mesh::getVertexLen() {
-    return vertexes.size();
 }
 
 void Mesh::loadSmaMesh(std::string fileName) {
@@ -333,10 +326,22 @@ void Mesh::loadSmaMesh(std::string fileName) {
     }
 }
 
-void Mesh::update(Animation *currentAnimation, size_t currentFrame, size_t animCounter, float time) {
-    if (currentAnimation != nullptr)
-        UpdateAnimation(currentAnimation, currentFrame, animCounter, time, vertexes);
+GLsizeiptr Mesh::getVertexBufferSize() {
+    return (vertexes.size() * sizeof(Vertex));
 }
+
+GLvoid* Mesh::getVertexBufferData() {
+    return vertexes.data();
+}
+
+GLvoid* Mesh::getVertexBufferAnimData() {
+    return animVertexes.data();
+}
+
+GLsizei Mesh::getVertexLen() {
+    return vertexes.size();
+}
+
 
 void Mesh::AddBone(glm::fvec3 p, glm::fvec3 r) {
 	auto b = new Bone(p, r);
@@ -375,22 +380,35 @@ void Mesh::addVertex(Vertex ver) {
 	vertexes.push_back(ver);
 }
 
-void Mesh::UpdateAnimation(Animation *currentAnimation, size_t currentFrame, size_t animCounter, float dt, std::vector<Vertex> &smaVerts) {
+void Mesh::updateAnimation(Animation *currentAnimation, size_t *currentFrame, size_t *animCounter, float dt) {
 	if (currentAnimation == nullptr) {
+        //initilizeMesh();
 		return;
 	}
-	std::vector<Bone> bones;
-
-	KeyFrame *kf = currentAnimation->GetKeyframe(currentFrame);
-
-	animCounter += 1;
-	if (animCounter >= 1) {
-		animCounter = 0;
-		currentFrame++;
+    std::cout << "currentFrame " << (*currentFrame) << std::endl;
+    auto t1 = std::chrono::high_resolution_clock::now();
+    
+	(*animCounter) += 1;
+	if ((*animCounter) >= 1) {
+		(*animCounter) = 0;
+		(*currentFrame)++;
 	}
-	if (currentFrame >= currentAnimation->GetKeyframesNum()) {
-		currentFrame = 0;
+	if ((*currentFrame) >= currentAnimation->GetKeyframesNum()) {
+		(*currentFrame) = 0;
 	}
+    
+    getFrame(animVertexes, currentAnimation, *currentFrame);
+
+}
+
+void Mesh::getFrame(std::vector<Vertex> &frameVertexes, Animation *animationPtr, Sint16 frameIndex) {
+    KeyFrame *kf = animationPtr->GetKeyframe(frameIndex);
+    
+    frameVertexes.clear();
+    for (auto& v: vertexes) {
+        frameVertexes.push_back(v);
+    }
+    
 	for (Sint16 i = 0; i < vertexes.size(); i++) {
 		glm::fvec3 finalVecPositin(0.0f, 0.0f, 0.0f);
 
@@ -403,7 +421,7 @@ void Mesh::UpdateAnimation(Animation *currentAnimation, size_t currentFrame, siz
 				glm::mat4 bonemat = glm::inverse(init_bone->GetLocalToWorldMatrix());
 				glm::mat4 deformbonemat = deform_bone.GetLocalToWorldMatrix();
 
-				glm::fvec3 vertPos(smaVerts[i].pos);
+				glm::fvec3 vertPos(vertexes[i].pos);
 				vertPos = bonemat * glm::vec4(vertPos, 1.0f);
                 vertPos = deformbonemat * glm::vec4(vertPos, 1.0f);
 				vertPos *= weight;
@@ -412,10 +430,21 @@ void Mesh::UpdateAnimation(Animation *currentAnimation, size_t currentFrame, siz
 			}
 		}
 
-		animVertexes[i].pos.x = finalVecPositin.x;
-		animVertexes[i].pos.y = finalVecPositin.y;
-		animVertexes[i].pos.z = finalVecPositin.z;
+		frameVertexes[i].pos.x = finalVecPositin.x;
+		frameVertexes[i].pos.y = finalVecPositin.y;
+		frameVertexes[i].pos.z = finalVecPositin.z;
 	}
+}
+
+void Mesh::processWalkAnimation() {
+    Animation* walkAnim = getAnimation("Walk");
+    std::vector<Vertex> frameData;
+    for (size_t i = 0; i < walkAnim->GetKeyframesNum(); i++) {
+        getFrame(frameData, walkAnim, i);
+        for (size_t j = 0; j < frameData.size(); j++) { 
+            walkAnimationVertexes[i][j] = frameData[j];
+        }
+    }
 }
 
 void Mesh::initilizeMesh() {

@@ -8,9 +8,10 @@ AiAgent::~AiAgent()
 {
 }
 
-void AiAgent::init(Camera* cam, Pathfinder *pf){
+void AiAgent::init(Camera* cam, Pathfinder *pf, Mesh *m){
     camera = cam;
     pathfinder = pf;
+    mesh = m;
     
     position = glm::fvec3(0.0f, 0.0f, 0.0f);
     upVector = glm::fvec3(0.0f, 0.0f, 1.0f);
@@ -105,6 +106,9 @@ void AiAgent::move() {
                 if (currentPath >= (movementPath.size() - 1)) {
                     moving = false;
                     //std::cout << "no path left \n";
+                    currentAnimation = 0;
+                    currentFrame = 0;
+                    animCounter = 0;
                 }
             }
             
@@ -115,21 +119,29 @@ void AiAgent::move() {
             movementPath.clear();
             std::cout << "obstacle found at " << newPosition.x << " x " << newPosition.y << std::endl;
             auto index = pathfinder->getNodeIndex(newPosition);
+            currentAnimation = 0;
+            currentFrame = 0;
+            animCounter = 0;
+            
          //   std::cout << "index is " << index  << std::endl;
         }
     }
 }
 
-void AiAgent::update(AiAgent *obstacle) {
+void AiAgent::updateColisions(AiAgent *obstacle) {
+    if (moving) {
+        //avoidObstacle(obstacle);
+    }
+}
+void AiAgent::update() {
     
     if (moving) {
-        //
-        //avoidObstacle(obstacle);
         move();
         
         makeFinalMatrix();
     }
     pathfinder->setStaticObstacle(position);
+    mesh->updateAnimation(currentAnimation, &currentFrame, &animCounter, 1.0f);
 }
 
 void AiAgent::setPosition(glm::fvec3 pos) {
@@ -203,6 +215,9 @@ void AiAgent::onMessage(IMessage *message) {
                 currentPath = 0;
                 movementTarget = movementPath[1];
                 moving = true;
+                currentAnimation = mesh->getAnimation("Walk");
+                currentFrame = 0;
+                animCounter = 0;
                 if (movementTarget != position)
                     movementDirection = glm::normalize(movementTarget - position);
             }

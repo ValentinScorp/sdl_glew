@@ -29,8 +29,9 @@ void AiContainer::destroy() {
 
 void AiContainer::update() {
     for (auto &a : agents) {
+        a->update();
         for (auto &obstacles: agents) {
-            a->update(obstacles);
+            a->updateColisions(obstacles);
         }
     }
     pathfinder.aiMap.update();

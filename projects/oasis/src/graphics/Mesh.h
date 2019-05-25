@@ -44,6 +44,8 @@ private:
         
         glm::fvec3 position;
         glm::fvec3 rotation;
+        bool matrixCalculated = false;
+        glm::fmat4 finalMatrix;
     };
     
     class Weight {
@@ -105,8 +107,7 @@ public:
     };
     
 public:
-    Mesh() {
-    }
+    Mesh();
     virtual ~Mesh();
 
     void print() {
@@ -121,8 +122,6 @@ public:
     void loadObjMesh(std::string fileName);
     void loadSmaMesh(std::string fileName);
 
-    void update(Animation *currentAnimation, size_t currentFrame, size_t animCounter, float time);
-    
     GLsizeiptr getVertexBufferSize();
     GLvoid* getVertexBufferData();
     GLvoid* getVertexBufferAnimData();
@@ -136,8 +135,10 @@ public:
 	
 	virtual void addVertex(glm::fvec3 pos, glm::fvec3 nor, glm::fvec2 uv);
 	virtual void addVertex(Vertex ver);
-	void UpdateAnimation(Animation *currentAnimation, size_t currentFrame, size_t animCounter, float dt, std::vector<Vertex> &smaVerts);	
+	void updateAnimation(Animation *currentAnimation, size_t *currentFrame, size_t *animCounter, float dt);	
+    void getFrame(std::vector<Vertex> &frameVertexes, Animation *animationPtr, Sint16 frameIndex);
 	void initilizeMesh();
+    void processWalkAnimation();
 
 	size_t GetVertexesNum();
 	size_t GetVertexSize();
@@ -146,6 +147,8 @@ public:
     
     std::vector<Vertex> vertexes;
     std::vector<Vertex> animVertexes;
+    
+    std::vector<std::vector<Vertex>> walkAnimationVertexes;
     
     std::vector<Bone*> bones;
     std::vector<std::vector<Weight>> weights;

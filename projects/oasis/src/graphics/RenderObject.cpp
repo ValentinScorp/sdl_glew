@@ -43,10 +43,6 @@ void RenderObject::destroy() {
     mRenderer->destroyBuffer(glVbo);
 }
 
-void RenderObject::update(Mesh::Animation *currentAnimation, size_t currentFrame, size_t animCounter, float time) {
-    mesh->update(currentAnimation, currentFrame, animCounter, time);
-}
-
 void RenderObject::render(glm::fmat4 orientationMatrix) {
     glUseProgram(glProgram);
     
@@ -78,10 +74,3 @@ void RenderObject::render(glm::fmat4 orientationMatrix) {
     mesh->initilizeMesh();
 }
 
-Mesh::Animation* RenderObject::getAnimation(std::string animName) {
-    return mesh->getAnimation(animName);
-}
-
-void RenderObject::updateInitialMesh() {
-    mesh->initilizeMesh();
-}

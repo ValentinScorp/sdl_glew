@@ -2,7 +2,6 @@
 
 class Renderer;
 class AiAgent;
-class Mesh::Animation;
 class RenderObject;
 
 class WorldObject : private IMessageRecipient {
@@ -19,8 +18,6 @@ public:
     void update();
     void render();
     void destroy();
-    void startAnimation(std::string animName);
-    void stopAnimation();
     void onMessage(IMessage *message);
     
     std::string name;
@@ -31,7 +28,5 @@ public:
     
     // animation
     Mesh::Animation *currentAnimation = nullptr;
-    size_t currentFrame = 0;
-    size_t animCounter = 0;
 };
 

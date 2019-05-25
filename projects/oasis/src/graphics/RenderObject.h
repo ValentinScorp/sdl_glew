@@ -2,7 +2,6 @@
 
 class Renderer;
 class RenderObject;
-class Mesh;
 class IMessage;
 
 class RenderObject {
@@ -12,12 +11,9 @@ public:
     virtual ~RenderObject();
     
     void init(std::shared_ptr<Renderer> renderer, std::shared_ptr<IniFile> cfg, std::string objectName);
-    void update(Mesh::Animation *currentAnimation, size_t currentFrame, size_t animCounter, float time);
     void render(glm::fmat4 orientationMatrix);
     void destroy();
     
-    Mesh::Animation* getAnimation(std::string animName);
-    void updateInitialMesh();
     std::string name;
     
     Mesh *mesh = nullptr;

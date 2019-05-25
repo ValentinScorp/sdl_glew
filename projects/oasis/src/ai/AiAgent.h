@@ -11,8 +11,9 @@ public:
     
     void createSelectionBox(float unitWidth, float unitHeight);
     
-    void init(Camera* cam, Pathfinder *pf);
-    void update(AiAgent *obstacle);
+    void init(Camera* cam, Pathfinder *pf, Mesh *mesh = nullptr);    
+    void updateColisions(AiAgent *obstacle);
+    void update();
     void avoidObstacle(AiAgent *obstacle);
     void move();
     void setPosition(glm::fvec3 pos);
@@ -25,6 +26,10 @@ public:
     void onMessage(IMessage *message);
     
     Camera* camera = nullptr;
+    Mesh* mesh = nullptr;
+    Mesh::Animation* currentAnimation = nullptr;
+    size_t currentFrame = 0;
+    size_t animCounter = 0;
         
     glm::fvec3 position;
     glm::fvec3 upVector;
