@@ -61,20 +61,20 @@ private:
     public:
         unsigned int index;
     
-        std::vector<Bone*> bone;
+        std::vector<Bone*> bones;
         std::vector<glm::fvec3> rotations;
         std::vector<glm::fvec3> positions;
         
         glm::fvec3* GetRotation(Bone *b) {
-			for (size_t i = 0; i < bone.size(); i++) {
-				if (bone[i] == b)
+			for (size_t i = 0; i < bones.size(); i++) {
+				if (bones[i] == b)
 					return &rotations[i];
 			}
 			return nullptr;
 		}
 		glm::fvec3* GetPosition(Bone *b) {
-			for (size_t i = 0; i < bone.size(); i++) {
-				if (bone[i] == b)
+			for (size_t i = 0; i < bones.size(); i++) {
+				if (bones[i] == b)
 					return &positions[i];
 			}
 			return nullptr;
@@ -137,6 +137,7 @@ public:
 	virtual void addVertex(Vertex ver);
 	void updateAnimation(Animation *currentAnimation, size_t *currentFrame, size_t *animCounter, float dt);	
     void getFrame(std::vector<Vertex> &frameVertexes, Animation *animationPtr, Sint16 frameIndex);
+    void setAnimationData(Sint16 frameIndex);
 	void initilizeMesh();
     void processWalkAnimation();
 

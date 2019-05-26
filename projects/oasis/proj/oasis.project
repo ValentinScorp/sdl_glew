@@ -8,6 +8,8 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
+    <File Name="../src/Timer.cpp"/>
+    <File Name="../src/Timer.h"/>
     <File Name="../src/IniFile.cpp"/>
     <File Name="../src/IniFile.h"/>
     <VirtualDirectory Name="world">

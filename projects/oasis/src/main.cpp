@@ -144,7 +144,6 @@ int main(int argc, char **argv)
             runMainLoop = false;
         }
         
-        
         SDL_GL_MakeCurrent(window, gl_context);
 
         glClearColor(0.0f, 0.8f, 0.8f, 0.0f);

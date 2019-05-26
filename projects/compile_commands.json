@@ -1,0 +1,213 @@
+[{
+  "file": "/home/valentin/Documents/sdl_glew/projects/glew/src/GL/eglew.h",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/glew/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/glew/src/GL/eglew.h -o /home/valentin/Documents/sdl_glew/projects/glew/src/GL/eglew.h.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I./../src  -g"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/glew/src/GL/glew.h",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/glew/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/glew/src/GL/glew.h -o /home/valentin/Documents/sdl_glew/projects/glew/src/GL/glew.h.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I./../src  -g"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/glew/src/visualinfo.c",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/glew/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/glew/src/visualinfo.c -o /home/valentin/Documents/sdl_glew/projects/glew/src/visualinfo.c.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I./../src  -g"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/glew/src/glew.c",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/glew/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/glew/src/glew.c -o /home/valentin/Documents/sdl_glew/projects/glew/src/glew.c.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I./../src  -g"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/glew/src/glewinfo.c",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/glew/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/glew/src/glewinfo.c -o /home/valentin/Documents/sdl_glew/projects/glew/src/glewinfo.c.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I./../src  -g"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/glew/src/GL/glxew.h",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/glew/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/glew/src/GL/glxew.h -o /home/valentin/Documents/sdl_glew/projects/glew/src/GL/glxew.h.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I./../src  -g"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/glew/src/GL/wglew.h",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/glew/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/glew/src/GL/wglew.h -o /home/valentin/Documents/sdl_glew/projects/glew/src/GL/wglew.h.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I./../src  -g"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/Mesh.cpp",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/Mesh.cpp -o /home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/Mesh.cpp.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/Mesh.h",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/Mesh.h -o /home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/Mesh.h.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/Renderer.cpp",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/Renderer.cpp -o /home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/Renderer.cpp.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/RenderObject.h",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/RenderObject.h -o /home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/RenderObject.h.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/Console.h",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/Console.h -o /home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/Console.h.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/TerrainBrush.h",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/TerrainBrush.h -o /home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/TerrainBrush.h.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/Renderer.h",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/Renderer.h -o /home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/Renderer.h.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/UnitSelection.cpp",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/UnitSelection.cpp -o /home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/UnitSelection.cpp.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/gui/GuiPanel.cpp",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/gui/GuiPanel.cpp -o /home/valentin/Documents/sdl_glew/projects/oasis/src/gui/GuiPanel.cpp.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/gui/GuiPanel.h",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/gui/GuiPanel.h -o /home/valentin/Documents/sdl_glew/projects/oasis/src/gui/GuiPanel.h.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/TerrainBrush.cpp",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/TerrainBrush.cpp -o /home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/TerrainBrush.cpp.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/gui/Button.h",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/gui/Button.h -o /home/valentin/Documents/sdl_glew/projects/oasis/src/gui/Button.h.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/gui/Button.cpp",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/gui/Button.cpp -o /home/valentin/Documents/sdl_glew/projects/oasis/src/gui/Button.cpp.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/Camera.cpp",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/Camera.cpp -o /home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/Camera.cpp.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/RenderQuad.h",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/RenderQuad.h -o /home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/RenderQuad.h.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/gui/Listbox.h",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/gui/Listbox.h -o /home/valentin/Documents/sdl_glew/projects/oasis/src/gui/Listbox.h.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/gui/Listbox.cpp",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/gui/Listbox.cpp -o /home/valentin/Documents/sdl_glew/projects/oasis/src/gui/Listbox.cpp.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/ai/AiContainer.cpp",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/ai/AiContainer.cpp -o /home/valentin/Documents/sdl_glew/projects/oasis/src/ai/AiContainer.cpp.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/RenderObject.cpp",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/RenderObject.cpp -o /home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/RenderObject.cpp.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/ai/AiContainer.h",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/ai/AiContainer.h -o /home/valentin/Documents/sdl_glew/projects/oasis/src/ai/AiContainer.h.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/main.cpp",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/main.cpp -o /home/valentin/Documents/sdl_glew/projects/oasis/src/main.cpp.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/Timer.h",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/Timer.h -o /home/valentin/Documents/sdl_glew/projects/oasis/src/Timer.h.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/Precompiled.h",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/Precompiled.h -o /home/valentin/Documents/sdl_glew/projects/oasis/src/Precompiled.h.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/Auxiliary.h",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/Auxiliary.h -o /home/valentin/Documents/sdl_glew/projects/oasis/src/Auxiliary.h.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/ai/AiMap.h",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/ai/AiMap.h -o /home/valentin/Documents/sdl_glew/projects/oasis/src/ai/AiMap.h.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/Camera.h",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/Camera.h -o /home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/Camera.h.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/ai/AiAgent.cpp",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/ai/AiAgent.cpp -o /home/valentin/Documents/sdl_glew/projects/oasis/src/ai/AiAgent.cpp.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/MessageManager.h",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/MessageManager.h -o /home/valentin/Documents/sdl_glew/projects/oasis/src/MessageManager.h.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/Auxiliary.cpp",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/Auxiliary.cpp -o /home/valentin/Documents/sdl_glew/projects/oasis/src/Auxiliary.cpp.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/world/Terrain.h",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/world/Terrain.h -o /home/valentin/Documents/sdl_glew/projects/oasis/src/world/Terrain.h.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/Console.cpp",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/Console.cpp -o /home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/Console.cpp.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/Timer.cpp",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/Timer.cpp -o /home/valentin/Documents/sdl_glew/projects/oasis/src/Timer.cpp.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/ai/AiAgent.h",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/ai/AiAgent.h -o /home/valentin/Documents/sdl_glew/projects/oasis/src/ai/AiAgent.h.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/IniFile.cpp",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/IniFile.cpp -o /home/valentin/Documents/sdl_glew/projects/oasis/src/IniFile.cpp.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/world/WorldObject.cpp",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/world/WorldObject.cpp -o /home/valentin/Documents/sdl_glew/projects/oasis/src/world/WorldObject.cpp.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/world/World.cpp",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/world/World.cpp -o /home/valentin/Documents/sdl_glew/projects/oasis/src/world/World.cpp.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/UnitSelection.h",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/UnitSelection.h -o /home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/UnitSelection.h.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/ai/AiMap.cpp",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/ai/AiMap.cpp -o /home/valentin/Documents/sdl_glew/projects/oasis/src/ai/AiMap.cpp.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/IniFile.h",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/IniFile.h -o /home/valentin/Documents/sdl_glew/projects/oasis/src/IniFile.h.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/world/WorldObject.h",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/world/WorldObject.h -o /home/valentin/Documents/sdl_glew/projects/oasis/src/world/WorldObject.h.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/RenderQuad.cpp",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/RenderQuad.cpp -o /home/valentin/Documents/sdl_glew/projects/oasis/src/graphics/RenderQuad.cpp.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/MessageManager.cpp",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/MessageManager.cpp -o /home/valentin/Documents/sdl_glew/projects/oasis/src/MessageManager.cpp.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/world/Terrain.cpp",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/world/Terrain.cpp -o /home/valentin/Documents/sdl_glew/projects/oasis/src/world/Terrain.cpp.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/world/World.h",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/world/World.h -o /home/valentin/Documents/sdl_glew/projects/oasis/src/world/World.h.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/ai/Pathfinder.h",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/ai/Pathfinder.h -o /home/valentin/Documents/sdl_glew/projects/oasis/src/ai/Pathfinder.h.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }, {
+  "file": "/home/valentin/Documents/sdl_glew/projects/oasis/src/ai/Pathfinder.cpp",
+  "directory": "/home/valentin/Documents/sdl_glew/projects/oasis/proj",
+  "command": "clang  -c /home/valentin/Documents/sdl_glew/projects/oasis/src/ai/Pathfinder.cpp -o /home/valentin/Documents/sdl_glew/projects/oasis/src/ai/Pathfinder.cpp.o  -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include -I. -I. -I./../include -I./../../glew/src -I/usr/include/freetype2  -g  -O0  -Wall  -D_GLIBCXX_DEBUG"
+ }]

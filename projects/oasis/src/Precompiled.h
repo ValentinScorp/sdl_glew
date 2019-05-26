@@ -27,6 +27,7 @@
 #include <codecvt>
 #include <chrono>
 
+#include "Timer.h"
 #include "Auxiliary.h"
 #include "MessageManager.h"
 #include "IniFile.h"
@@ -34,8 +35,6 @@
 #include "gui/Button.h"
 #include "gui/Listbox.h"
 #include "gui/GuiPanel.h"
-
-
 
 #include "graphics/RenderQuad.h"
 #include "graphics/TerrainBrush.h"
@@ -50,7 +49,6 @@
 #include "ai/AiAgent.h"
 #include "ai/Pathfinder.h"
 #include "ai/AiContainer.h"
-
 
 #include "world/Terrain.h"
 #include "world/WorldObject.h"

@@ -4,9 +4,9 @@ glm::mat4 Mesh::Bone::GetLocalToWorldMatrix() {
     if (matrixCalculated) {
         return finalMatrix;
     }
-	finalMatrix = glm::mat4(1.0f);
-	glm::mat4 MatTemp = glm::mat4(1.0f);
-	glm::mat4 MatRot = glm::mat4(1.0f);
+    finalMatrix = glm::mat4(1.0f);
+    glm::mat4 MatTemp = glm::mat4(1.0f);
+    glm::mat4 MatRot = glm::mat4(1.0f);
 
     finalMatrix = glm::translate(finalMatrix, glm::fvec3(position.x, position.y, position.z));
     
@@ -19,9 +19,9 @@ glm::mat4 Mesh::Bone::GetLocalToWorldMatrix() {
     MatTemp = glm::rotate(MatTemp, rotation.z, glm::fvec3(0.0f, 0.0f, 1.0f));
     MatRot =  MatTemp * MatRot;
     
-	finalMatrix = finalMatrix * MatRot;
-
-	return finalMatrix;
+    finalMatrix = finalMatrix * MatRot;
+    matrixCalculated = true;
+    return finalMatrix;
 }
 
 Mesh::Mesh() {
@@ -31,13 +31,13 @@ Mesh::Mesh() {
 Mesh::~Mesh() {
     weights.clear();
 
-	for (auto a : animations)
-		if (a != nullptr)
-			delete a;
+    for (auto a : animations)
+        if (a != nullptr)
+            delete a;
 
-	for (auto b : bones)
-		if (b != nullptr)
-			delete b;
+    for (auto b : bones)
+        if (b != nullptr)
+            delete b;
 }
 
 void Mesh::loadObjMesh(std::string fileName) {
@@ -324,6 +324,8 @@ void Mesh::loadSmaMesh(std::string fileName) {
         vertexes.push_back(vert);
         animVertexes.push_back(vert);
     }
+    
+    //processWalkAnimation();
 }
 
 GLsizeiptr Mesh::getVertexBufferSize() {
@@ -344,83 +346,92 @@ GLsizei Mesh::getVertexLen() {
 
 
 void Mesh::AddBone(glm::fvec3 p, glm::fvec3 r) {
-	auto b = new Bone(p, r);
-	bones.push_back(b);
+    auto b = new Bone(p, r);
+    bones.push_back(b);
 }
 
 Mesh::Bone * Mesh::GetBone(size_t id) {
-	if (id < bones.size())
-		return bones[id];
-	return nullptr;
+    if (id < bones.size())
+        return bones[id];
+    return nullptr;
 }
 
 size_t Mesh::GetBonesNum() {
-	return bones.size();
+    return bones.size();
 }
 
 void Mesh::AddVertexWeights(std::vector<Weight> w) {
-	weights.push_back(w);
+    weights.push_back(w);
 }
 
 void Mesh::AddAnimation(Animation * anim) {
-	animations.push_back(anim);
+    animations.push_back(anim);
 }
 
 void Mesh::addVertex(glm::fvec3 pos, glm::fvec3 nor, glm::fvec2 uv) {
-	Vertex v;
-	v.pos = pos;
-	v.nor = nor;
-	v.tex = uv;
-	vertexes.push_back(v);
+    Vertex v;
+    v.pos = pos;
+    v.nor = nor;
+    v.tex = uv;
+    vertexes.push_back(v);
 
-	vertexes.push_back(Vertex(pos, nor, uv));
+    vertexes.push_back(Vertex(pos, nor, uv));
 }
 
 void Mesh::addVertex(Vertex ver) {
-	vertexes.push_back(ver);
+    vertexes.push_back(ver);
 }
 
 void Mesh::updateAnimation(Animation *currentAnimation, size_t *currentFrame, size_t *animCounter, float dt) {
-	if (currentAnimation == nullptr) {
+    if (currentAnimation == nullptr) {
         //initilizeMesh();
-		return;
-	}
+        return;
+    }
     std::cout << "currentFrame " << (*currentFrame) << std::endl;
-    auto t1 = std::chrono::high_resolution_clock::now();
+    //auto t1 = std::chrono::high_resolution_clock::now();
     
-	(*animCounter) += 1;
-	if ((*animCounter) >= 1) {
-		(*animCounter) = 0;
-		(*currentFrame)++;
-	}
-	if ((*currentFrame) >= currentAnimation->GetKeyframesNum()) {
-		(*currentFrame) = 0;
-	}
-    
-    getFrame(animVertexes, currentAnimation, *currentFrame);
-
-}
-
-void Mesh::getFrame(std::vector<Vertex> &frameVertexes, Animation *animationPtr, Sint16 frameIndex) {
-    KeyFrame *kf = animationPtr->GetKeyframe(frameIndex);
-    
-    frameVertexes.clear();
-    for (auto& v: vertexes) {
-        frameVertexes.push_back(v);
+    (*animCounter) += 1;
+    if ((*animCounter) >= 1) {
+        (*animCounter) = 0;
+        (*currentFrame)++;
+    }
+    if ((*currentFrame) >= currentAnimation->GetKeyframesNum()) {
+        (*currentFrame) = 0;
     }
     
-	for (Sint16 i = 0; i < vertexes.size(); i++) {
+    Timer animationFrameTimer;
+    animationFrameTimer.play();
+    //setAnimationData(*currentFrame);
+    getFrame(animVertexes, currentAnimation, *currentFrame);
+    animationFrameTimer.pause();
+    animationFrameTimer.print("animation frame time");
+}
+
+void Mesh::makeAnimationBones(Animation *animation) {
+    if (animation == nullptr) {
+        return;
+    }
+    std::vector<std::vector<Bone>> animationBones;
+    for (Sint16 i = 0; i < animation..size(); i++) {
+    
+        }
+    for (Sint16 i = 0; i < bones.size(); i++) {
+        
+    }
+    for (Sint16 i = 0; i < vertexes.size(); i++) {
 		glm::fvec3 finalVecPositin(0.0f, 0.0f, 0.0f);
 
 		for (Sint16 j = 0; j < weights[i].size(); j++) {
 			Bone* init_bone = weights[i][j].bone;
 			float weight = weights[i][j].weight;
-
+            
 			if (init_bone != nullptr) {
+                
 				Bone deform_bone(*(kf->GetPosition(init_bone)), *(kf->GetRotation(init_bone)));
 				glm::mat4 bonemat = glm::inverse(init_bone->GetLocalToWorldMatrix());
+                boneTimer.play();
 				glm::mat4 deformbonemat = deform_bone.GetLocalToWorldMatrix();
-
+                boneTimer.pause();
 				glm::fvec3 vertPos(vertexes[i].pos);
 				vertPos = bonemat * glm::vec4(vertPos, 1.0f);
                 vertPos = deformbonemat * glm::vec4(vertPos, 1.0f);
@@ -436,13 +447,69 @@ void Mesh::getFrame(std::vector<Vertex> &frameVertexes, Animation *animationPtr,
 	}
 }
 
+void Mesh::getFrame(std::vector<Vertex> &frameVertexes, Animation *animationPtr, Sint16 frameIndex) {
+    KeyFrame *kf = animationPtr->GetKeyframe(frameIndex);
+
+    frameVertexes.clear();
+    frameVertexes.resize(vertexes.size());
+    frameVertexes = vertexes;
+        
+    Timer boneTimer;
+    
+	for (Sint16 i = 0; i < vertexes.size(); i++) {
+		glm::fvec3 finalVecPositin(0.0f, 0.0f, 0.0f);
+
+		for (Sint16 j = 0; j < weights[i].size(); j++) {
+			Bone* init_bone = weights[i][j].bone;
+			float weight = weights[i][j].weight;
+            
+			if (init_bone != nullptr) {
+                
+				Bone deform_bone(*(kf->GetPosition(init_bone)), *(kf->GetRotation(init_bone)));
+				glm::mat4 bonemat = glm::inverse(init_bone->GetLocalToWorldMatrix());
+                boneTimer.play();
+				glm::mat4 deformbonemat = deform_bone.GetLocalToWorldMatrix();
+                boneTimer.pause();
+				glm::fvec3 vertPos(vertexes[i].pos);
+				vertPos = bonemat * glm::vec4(vertPos, 1.0f);
+                vertPos = deformbonemat * glm::vec4(vertPos, 1.0f);
+				vertPos *= weight;
+
+				finalVecPositin += vertPos;
+			}
+		}
+
+		frameVertexes[i].pos.x = finalVecPositin.x;
+		frameVertexes[i].pos.y = finalVecPositin.y;
+		frameVertexes[i].pos.z = finalVecPositin.z;
+	}
+    boneTimer.print("bone timer");
+}
+
 void Mesh::processWalkAnimation() {
     Animation* walkAnim = getAnimation("Walk");
+    if (walkAnim == nullptr) {
+        std::cout << "unable to get walk animation" << std::endl;
+        return;
+    }
     std::vector<Vertex> frameData;
+    std::cout << "frames max " << walkAnim->GetKeyframesNum() << std::endl;
+    
     for (size_t i = 0; i < walkAnim->GetKeyframesNum(); i++) {
+        std::cout << "framne no " << i << std::endl;
         getFrame(frameData, walkAnim, i);
+        std::cout << "vertices in frame " << frameData.size() << std::endl;
         for (size_t j = 0; j < frameData.size(); j++) { 
-            walkAnimationVertexes[i][j] = frameData[j];
+            walkAnimationVertexes.push_back(frameData);
+        }
+    }
+}
+
+void Mesh::setAnimationData(Sint16 frameIndex) {
+    std::cout << "set animation frame " << frameIndex << std::endl;
+    if (frameIndex >=0 && frameIndex < walkAnimationVertexes.size()) {
+        for (size_t i = 0; i < animVertexes.size(); i++) { 
+            animVertexes[i] = walkAnimationVertexes[frameIndex][i];
         }
     }
 }
@@ -451,29 +518,29 @@ void Mesh::initilizeMesh() {
     if (animVertexes.size() != vertexes.size()) {
         return;
     }
-	for (Sint16 i = 0; i < vertexes.size(); i++) {
-		animVertexes[i] = vertexes[i];
-	}
+    for (Sint16 i = 0; i < vertexes.size(); i++) {
+        animVertexes[i] = vertexes[i];
+    }
 }
 
 Mesh::Animation * Mesh::getAnimation(std::string aname) {
-	for (auto a : animations) {
-		if (a->GetName() == aname) {
-			return a;
-		}
-	}
-	return nullptr;
+    for (auto a : animations) {
+        if (a->GetName() == aname) {
+            return a;
+        }
+    }
+    return nullptr;
 }
 
 size_t Mesh::GetVertexesNum() {
-	return vertexes.size();
+    return vertexes.size();
 }
 
 size_t Mesh::GetVertexSize() {
-	return sizeof(Vertex);
+    return sizeof(Vertex);
 }
 
 Mesh::Vertex* Mesh::GetVertexes() {
-	return &vertexes[0];
+    return &vertexes[0];
 }
 
