@@ -13,6 +13,8 @@ public:
     virtual std::string getParentId(){ return std::string(""); }
     virtual std::string getSenderId(){ return std::string(""); }
     virtual bool isQuit() { return false; }
+    
+    bool destroyed = false;
 };
 
 class IMessageRecipient {
@@ -35,7 +37,7 @@ public:
     }
     
     void registerRecipient(IMessageRecipient *recipient) {
-        std::cout << "registering recip" << std::endl;
+        //std::cout << "registering recip" << std::endl;
         recipients.push_back(recipient);
     }
     void unregisterRecipient(IMessageRecipient *recipient) {

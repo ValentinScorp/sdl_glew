@@ -86,6 +86,7 @@ void Button::onMessage(IMessage *message) {
         glm::fvec2 pos = renderer->camera->convertMouseToScreen(message->getMousePosition());
         if (isPointOver(pos)) {
             color = colorOver;
+            message->destroyed = true;
         } else {
             color = colorBase;
         }
@@ -93,6 +94,7 @@ void Button::onMessage(IMessage *message) {
     if (message->getKeyPressed() == "left_mouse_button_pressed") {
         if (isPointOver(renderer->camera->convertMouseToScreen(message->getMousePosition()))) {
             color = colorPress;
+            message->destroyed = true;
         }
     }
     if (message->getKeyPressed() == "left_mouse_button_released") {
@@ -100,6 +102,7 @@ void Button::onMessage(IMessage *message) {
             if (color == colorPress) {
                 SMessageManager::getInstance().invokeMessage(new GuiButtonMessage(text));
             }
+            message->destroyed = true;
             color = colorOver;
         } else {
             color = colorBase;

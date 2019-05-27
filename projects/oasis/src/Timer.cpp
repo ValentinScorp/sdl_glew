@@ -26,6 +26,6 @@ void Timer::stop() {
 }
 
 void Timer::print(std::string text) {
-    std::cout << text << " -> " << std::chrono::duration_cast<std::chrono::milliseconds>(elapsedTime).count() << std::endl;
+    std::cout << text << " -> " << std::chrono::duration_cast<std::chrono::microseconds>(elapsedTime).count() << " microseconds" << std::endl;
 }
 

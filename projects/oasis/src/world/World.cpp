@@ -43,10 +43,11 @@ void World::addObject(std::string objectName, glm::fvec3 position) {
         return;
     }
     
-    if (!aiContainer->pathfinder.isObstacle(position)) {
-        glm::fvec3 adjusedPosition = aiContainer->pathfinder.getObstaclePosition(position);
+    if (!aiContainer->pathfinder.isObstacle(glm::fvec2(position.x, position.y))) {
+        glm::fvec2 obstaclePosition = aiContainer->pathfinder.getObstaclePosition(position);
+        glm::fvec3 adjusedPosition(obstaclePosition.x, obstaclePosition.y, terrain->getHeight(obstaclePosition));
         auto worldObject = std::make_shared<WorldObject>();
-        if (worldObject->init(objectName, renderer, aiContainer, worldObjectsDescription, adjusedPosition)) {
+        if (worldObject->init(objectName, this, renderer, aiContainer, worldObjectsDescription, adjusedPosition)) {
             worldObjects.push_back(std::move(worldObject));
         }
     }

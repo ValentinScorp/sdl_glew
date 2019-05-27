@@ -29,7 +29,7 @@ void Pathfinder::destroy() {
     delete renderQuad;
 }
 
-void Pathfinder::getPath(glm::fvec3 begin, glm::fvec3 end, std::vector<glm::fvec3> &path) {
+void Pathfinder::getPath(glm::fvec2 begin, glm::fvec2 end, std::vector<glm::fvec2> &path) {
     auto startIdx = getNodeIndex(begin);
     auto finishIdx = getNodeIndex(end);
     
@@ -43,19 +43,24 @@ void Pathfinder::getPath(glm::fvec3 begin, glm::fvec3 end, std::vector<glm::fvec
    // std::cout << std::endl;
     
     std::vector<Sint16> pathIndexes;
+    Timer findPath;
+    findPath.play();
     aiMap.getPath(pathIndexes, startIdx, finishIdx);
+    findPath.pause();
+    findPath.print("Path found in");
+    
   //  std::cout << std::endl;
     path.push_back(begin);
     //for (Sint16 i = 1; i < pathIndexes.size() - 1; i++) {
     for (Sint16 i = 0; i < pathIndexes.size(); i++) {
-        glm::fvec3 pos = getNodePosition(pathIndexes[i]);
+        glm::fvec2 pos = getNodePosition(pathIndexes[i]);
         path.push_back(pos);
     }
     path.push_back(end);
 }
 
-glm::fvec3 Pathfinder::getNodePosition(size_t index) {
-    glm::fvec3 position(0.0f);
+glm::fvec2 Pathfinder::getNodePosition(size_t index) {
+    glm::fvec2 position(0.0f);
     if (index != -1) {
     
         Sint16 x = index - (index / nodeRows) * nodeRows;
@@ -64,15 +69,14 @@ glm::fvec3 Pathfinder::getNodePosition(size_t index) {
        // std::cout << "path nodes " << x << " x " << y << std::endl;
         position.x = x * nodeWidth + nodeWidth / 2;
         position.y = y * nodeWidth + nodeWidth / 2;
-        position.z = 0.0; // todo terrain height
     }
     return position;
 }
-glm::fvec3 Pathfinder::getObstaclePosition(glm::fvec3 pos) {
+glm::fvec2 Pathfinder::getObstaclePosition(glm::fvec2 pos) {
     return getNodePosition(getNodeIndex(pos));
 }
 
-size_t Pathfinder::getNodeIndex(glm::fvec3 pos) {
+size_t Pathfinder::getNodeIndex(glm::fvec2 pos) {
     Sint16 xOffs = ((Uint16) (pos.x / nodeWidth));
     Sint16 yOffs = ((Uint16) (pos.y / nodeWidth));
     
@@ -85,7 +89,7 @@ size_t Pathfinder::getNodeIndex(glm::fvec3 pos) {
     return 0;
 }
 
-void Pathfinder::setStaticObstacle(glm::fvec3 position) {
+void Pathfinder::setStaticObstacle(glm::fvec2 position) {
     Sint16 nodeIndex = getNodeIndex(position);
     if (nodeIndex >= 0) {
         //std::cout << "setting obstacle at index  " << nodeIndex << std::endl;
@@ -95,13 +99,13 @@ void Pathfinder::setStaticObstacle(glm::fvec3 position) {
     }
 }
 
-void Pathfinder::removeStaticObstacle(glm::fvec3 position) {
+void Pathfinder::removeStaticObstacle(glm::fvec2 position) {
     Sint16 nodeIndex = getNodeIndex(position);
     if (nodeIndex >= 0)
         aiMap.clearObstacle(nodeIndex);
 }
 
-bool Pathfinder::isObstacle(glm::fvec3 position) {
+bool Pathfinder::isObstacle(glm::fvec2 position) {
     Sint16 nodeIndex = getNodeIndex(position);
     if (nodeIndex >= 0)
         return aiMap.isObstacle(nodeIndex);

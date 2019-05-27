@@ -11,7 +11,7 @@ public:
     void update();
     void render();
     
-    size_t createAgent();
+    size_t createAgent(WorldObject *wo);
     AiAgent* getAgent(size_t id);
     void destroyAgent(size_t id);
     

@@ -41,9 +41,9 @@ void AiContainer::render() {
     pathfinder.render();
 }
 
-size_t AiContainer::createAgent() {
+size_t AiContainer::createAgent(WorldObject *wo) {
     auto agent = new AiAgent();
-    agent->init(camera, &pathfinder);
+    agent->init(camera, &pathfinder, wo);
     agents.push_back(agent);
     return (agents.size() - 1);
 }

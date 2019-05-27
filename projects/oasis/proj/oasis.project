@@ -87,8 +87,9 @@
       <Linker Options="" Required="yes">
         <LibraryPath Value="./../lib"/>
         <LibraryPath Value="./../../glew/debug"/>
+        <Library Value="mingw32"/>
         <Library Value="glew"/>
-        <Library Value="GL"/>
+        <Library Value="opengl32"/>
         <Library Value="SDL2main"/>
         <Library Value="SDL2"/>
         <Library Value="SDL2_image"/>

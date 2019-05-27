@@ -95,6 +95,7 @@ public:
     void setSurfaceVertexTexure(glm::fvec2 mousePos, std::string texName);
     void setSurfaceVertexHeight(glm::fvec2 mousePos, float height);
     size_t getVertexIntersecIdx(glm::fvec2 mousePos);
+    float getHeight(glm::fvec2 position);
     
     void updateRenderData();
     void createCanvasMesh(std::shared_ptr<IniFile> cfg);

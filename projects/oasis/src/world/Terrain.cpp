@@ -258,6 +258,24 @@ size_t Terrain::getVertexIntersecIdx(glm::fvec2 mousePos) {
     return 0;
 }
 
+float Terrain::getHeight(glm::fvec2 position) {
+    RayVector positionRay;
+    positionRay.begin = glm::fvec3(position.x, position.y, 100);
+    positionRay.end = glm::fvec3(position.x, position.y, -100);
+    
+    for (auto &triangle: surface.triangles) {
+        aux::ray ray;
+        ray.begin = positionRay.begin;
+        ray.end = positionRay.end;
+        glm::fvec3 intersection;
+        auto t = &triangle - &surface.triangles[0];
+        if (surface.intersectRayTriangle(ray, t, intersection)) {
+            return intersection.z;
+        }
+    }
+    return 0;
+}
+
 void Terrain::setSurfaceVertexTexure(glm::fvec2 mousePos, std::string texName) {
     size_t vIdx = getVertexIntersecIdx(mousePos);
     surface.vertices[vIdx].terrainType = 2;
@@ -269,6 +287,7 @@ void Terrain::setSurfaceVertexHeight(glm::fvec2 mousePos, float height) {
     
     updateRenderData();
 }
+
 void Terrain::updateRenderData() {
     surface.recalcTriangleNormals();
     surface.recalcVertexNormals();

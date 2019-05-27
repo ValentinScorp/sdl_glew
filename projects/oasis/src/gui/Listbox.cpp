@@ -98,6 +98,7 @@ void ListboxItem::onMessage(IMessage *message) {
             if (isPointOver(pos)) {
                 if (color != colorPress)
                     color = colorOver;
+                message->destroyed = true;
             } else {
                 if (color != colorPress)
                     color = colorBase;
@@ -106,6 +107,7 @@ void ListboxItem::onMessage(IMessage *message) {
         if (message->getKeyPressed() == "left_mouse_button_pressed") {
             if (isPointOver(renderer->camera->convertMouseToScreen(message->getMousePosition()))) {
                 color = colorPress;
+                message->destroyed = true;
             }
         }
         if (message->getKeyPressed() == "left_mouse_button_released") {
@@ -117,6 +119,7 @@ void ListboxItem::onMessage(IMessage *message) {
                     SMessageManager::getInstance().invokeMessage(new GuiMessage("List box item changed", this->id, parent->id));
                 }
                 color = colorOver;
+                message->destroyed = true;
             } else {
                 color = colorBase;
             }
@@ -267,6 +270,7 @@ void Listbox::onMessage(IMessage *message) {
         if (message->getKeyPressed() == "motion") {
             glm::fvec2 pos = renderer->camera->convertMouseToScreen(message->getMousePosition());
             if (isPointOver(pos)) {
+                message->destroyed = true;
                 if (color != colorPress)
                     color = colorOver;
             } else {
@@ -276,6 +280,7 @@ void Listbox::onMessage(IMessage *message) {
         }
         if (message->getKeyPressed() == "left_mouse_button_pressed") {
             if (isPointOver(renderer->camera->convertMouseToScreen(message->getMousePosition()))) {
+                message->destroyed = true;
                 color = colorPress;
             }
         }

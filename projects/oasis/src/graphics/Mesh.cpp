@@ -21,6 +21,7 @@ glm::mat4 Mesh::Bone::GetLocalToWorldMatrix() {
     
     finalMatrix = finalMatrix * MatRot;
     matrixCalculated = true;
+    finalMatrixInverted = glm::inverse(finalMatrix);
     return finalMatrix;
 }
 
@@ -270,7 +271,7 @@ void Mesh::loadSmaMesh(std::string fileName) {
 			if (boneIndex >= 0 && boneIndex < GetBonesNum()) {
 				bone = GetBone(boneIndex);
 			}
-			Weight w(bone, weight);
+			Weight w(bone, boneIndex, weight);
 			vertexWeights.push_back(w);
 		}
 		AddVertexWeights(vertexWeights);
@@ -309,8 +310,9 @@ void Mesh::loadSmaMesh(std::string fileName) {
 
 				kf.rotations.push_back(rotation);
 				kf.positions.push_back(position);
-				kf.bone.push_back(GetBone(k));
+				kf.bones.push_back(GetBone(k));
 			}
+            kf.generateMatrices();
 			animation->AddKeyframe(kf);
 		}
 		AddAnimation(animation);
@@ -326,6 +328,16 @@ void Mesh::loadSmaMesh(std::string fileName) {
     }
     
     //processWalkAnimation();
+}
+
+void Mesh::KeyFrame::generateMatrices() {
+    initMatrix.resize(bones.size());
+    deformMatrix.resize(bones.size());
+    for (size_t i = 0; i < initMatrix.size(); i++) {
+        initMatrix[i] = glm::inverse(bones[i]->GetLocalToWorldMatrix());
+        Bone deformBone(positions[i], rotations[i]);
+        deformMatrix[i] = deformBone.GetLocalToWorldMatrix();
+    }
 }
 
 GLsizeiptr Mesh::getVertexBufferSize() {
@@ -384,10 +396,10 @@ void Mesh::addVertex(Vertex ver) {
 
 void Mesh::updateAnimation(Animation *currentAnimation, size_t *currentFrame, size_t *animCounter, float dt) {
     if (currentAnimation == nullptr) {
-        //initilizeMesh();
+        initilizeMesh();
         return;
     }
-    std::cout << "currentFrame " << (*currentFrame) << std::endl;
+    //std::cout << "currentFrame " << (*currentFrame) << std::endl;
     //auto t1 = std::chrono::high_resolution_clock::now();
     
     (*animCounter) += 1;
@@ -404,47 +416,7 @@ void Mesh::updateAnimation(Animation *currentAnimation, size_t *currentFrame, si
     //setAnimationData(*currentFrame);
     getFrame(animVertexes, currentAnimation, *currentFrame);
     animationFrameTimer.pause();
-    animationFrameTimer.print("animation frame time");
-}
-
-void Mesh::makeAnimationBones(Animation *animation) {
-    if (animation == nullptr) {
-        return;
-    }
-    std::vector<std::vector<Bone>> animationBones;
-    for (Sint16 i = 0; i < animation..size(); i++) {
-    
-        }
-    for (Sint16 i = 0; i < bones.size(); i++) {
-        
-    }
-    for (Sint16 i = 0; i < vertexes.size(); i++) {
-		glm::fvec3 finalVecPositin(0.0f, 0.0f, 0.0f);
-
-		for (Sint16 j = 0; j < weights[i].size(); j++) {
-			Bone* init_bone = weights[i][j].bone;
-			float weight = weights[i][j].weight;
-            
-			if (init_bone != nullptr) {
-                
-				Bone deform_bone(*(kf->GetPosition(init_bone)), *(kf->GetRotation(init_bone)));
-				glm::mat4 bonemat = glm::inverse(init_bone->GetLocalToWorldMatrix());
-                boneTimer.play();
-				glm::mat4 deformbonemat = deform_bone.GetLocalToWorldMatrix();
-                boneTimer.pause();
-				glm::fvec3 vertPos(vertexes[i].pos);
-				vertPos = bonemat * glm::vec4(vertPos, 1.0f);
-                vertPos = deformbonemat * glm::vec4(vertPos, 1.0f);
-				vertPos *= weight;
-
-				finalVecPositin += vertPos;
-			}
-		}
-
-		frameVertexes[i].pos.x = finalVecPositin.x;
-		frameVertexes[i].pos.y = finalVecPositin.y;
-		frameVertexes[i].pos.z = finalVecPositin.z;
-	}
+    //animationFrameTimer.print("animation frame time");
 }
 
 void Mesh::getFrame(std::vector<Vertex> &frameVertexes, Animation *animationPtr, Sint16 frameIndex) {
@@ -453,26 +425,18 @@ void Mesh::getFrame(std::vector<Vertex> &frameVertexes, Animation *animationPtr,
     frameVertexes.clear();
     frameVertexes.resize(vertexes.size());
     frameVertexes = vertexes;
-        
-    Timer boneTimer;
     
 	for (Sint16 i = 0; i < vertexes.size(); i++) {
 		glm::fvec3 finalVecPositin(0.0f, 0.0f, 0.0f);
 
 		for (Sint16 j = 0; j < weights[i].size(); j++) {
-			Bone* init_bone = weights[i][j].bone;
+			size_t boneIndex = weights[i][j].boneIndex;
 			float weight = weights[i][j].weight;
             
-			if (init_bone != nullptr) {
-                
-				Bone deform_bone(*(kf->GetPosition(init_bone)), *(kf->GetRotation(init_bone)));
-				glm::mat4 bonemat = glm::inverse(init_bone->GetLocalToWorldMatrix());
-                boneTimer.play();
-				glm::mat4 deformbonemat = deform_bone.GetLocalToWorldMatrix();
-                boneTimer.pause();
+            if (boneIndex < bones.size()) {
 				glm::fvec3 vertPos(vertexes[i].pos);
-				vertPos = bonemat * glm::vec4(vertPos, 1.0f);
-                vertPos = deformbonemat * glm::vec4(vertPos, 1.0f);
+				vertPos = kf->initMatrix[boneIndex] * glm::fvec4(vertPos, 1.0f);
+                vertPos = kf->deformMatrix[boneIndex] * glm::fvec4(vertPos, 1.0f);
 				vertPos *= weight;
 
 				finalVecPositin += vertPos;
@@ -483,7 +447,6 @@ void Mesh::getFrame(std::vector<Vertex> &frameVertexes, Animation *animationPtr,
 		frameVertexes[i].pos.y = finalVecPositin.y;
 		frameVertexes[i].pos.z = finalVecPositin.z;
 	}
-    boneTimer.print("bone timer");
 }
 
 void Mesh::processWalkAnimation() {

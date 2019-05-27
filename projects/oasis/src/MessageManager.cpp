@@ -2,7 +2,8 @@
 
 void SMessageManager::distributeMessages() {
     for (auto m: messages) {
-        invokeMessage(m);
+        if (!m->destroyed)
+            invokeMessage(m);
     }
     messages.clear();
 }
@@ -10,7 +11,8 @@ void SMessageManager::distributeMessages() {
 void SMessageManager::invokeMessage(IMessage *message) {
     for (size_t i = 0; i < recipients.size(); i++) {
         if (recipients[i]) {
-            recipients[i]->onMessage(message);
+            if (!message->destroyed)
+                recipients[i]->onMessage(message);
         }
     }
     delete message;

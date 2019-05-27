@@ -169,7 +169,10 @@ float AiMap::getPathLen(std::vector<Sint16> &path) {
     return len;
 }
 
-bool AiMap::getPath(std::vector<Sint16> &path, Sint16 start, Sint16 end) {
+bool AiMap::getPath(std::vector<Sint16> &path, Sint16 start, Sint16 end) {   
+    Timer mainSearchTimer;
+    Timer currentNodeFindTimer;
+    
     for (size_t i = 0; i < width * height; i++) {
         nodes[i].reset();
     }
@@ -203,8 +206,9 @@ bool AiMap::getPath(std::vector<Sint16> &path, Sint16 start, Sint16 end) {
     std::list<Sint16> closedSet;
     
     openSet.push_front(start);
-    
+    Timer findOpenTimer;
     while (openSet.size() > 0) {
+        currentNodeFindTimer.play();
         Sint16 currentNode = openSet.front();
         for (auto &i: openSet) {
             if (nodes[i].getFullDistance() < nodes[currentNode].getFullDistance()) {
@@ -220,7 +224,11 @@ bool AiMap::getPath(std::vector<Sint16> &path, Sint16 start, Sint16 end) {
         openSet.remove(currentNode);
         closedSet.push_front(currentNode);
         
+        currentNodeFindTimer.pause();
+        
         if (currentNode == end) {
+            Timer pathSmoothTime;
+            pathSmoothTime.play();
             std::vector<Sint16> reversePath;
             Sint16 itNode = end;
             while (itNode != start) {
@@ -236,9 +244,9 @@ bool AiMap::getPath(std::vector<Sint16> &path, Sint16 start, Sint16 end) {
             if (reversePath.size() == 0) {
                 return false;
             }
-            for (Sint16 i = (reversePath.size() - 1); i >= 0; i--) {
-                path.push_back(reversePath[i]);
-            }
+            //for (Sint16 i = (reversePath.size() - 1); i >= 0; i--) {
+            //    path.push_back(reversePath[i]);
+           // }
 
  //           std::cout << "path found " << std::endl;
   //          for (Sint16 i = 0; i < path.size(); i++) {
@@ -246,37 +254,38 @@ bool AiMap::getPath(std::vector<Sint16> &path, Sint16 start, Sint16 end) {
   //          }
 
  //           std::cout << "smoothing path " << std::endl;
-            std::vector<Sint16> tmpPath;
-            for (Sint16 i = 1; i < path.size() - 1; i++) {
-                tmpPath.push_back(path[i]);
-            }
-            //smoothPath(reversePath);
+           
             reverseAndSmoothPath(reversePath);
-            //smoothPath(tmpPath);
-            //path.clear();
-            //path = tmpPath;
+            path.clear();
             path = reversePath;
 
  //           for (Sint16 i = 0; i < path.size(); i++) {
       //          std::cout << nodes[path[i]].selfX << " x " << nodes[path[i]].selfY << std::endl;
     //        }
           //  std::cout << std::endl;
+            pathSmoothTime.pause();
+            pathSmoothTime.print("smooth path");
+            findOpenTimer.print("find open time");
+            mainSearchTimer.print("main search time");
+            currentNodeFindTimer.print("current node time");
             return true;
         }
         
+        mainSearchTimer.play();
         for (Sint16 i = 0; i < AiMapNode::NEIB_MAX; i++) {
             Sint16 neib = nodes[currentNode].neibours[i];
             if (neib >= 0) {
                 auto it = std::find(closedSet.begin(), closedSet.end(), neib);
-                if (currentNode == 130 && i == 4) {
-                 //   std::cout << "checking neib of -> "<< 131 << "neib index " << neib  <<  "walkable neib " << i << " -> " << neibIsCornerAndHasNeibBlock(currentNode, i) << std::endl;
-                }
+                
                 if (isObstacle(neib) || it != closedSet.end() || neibIsCornerAndHasNeibBlock(currentNode, i)) {
                     continue;
                 } else {
+
                     Sint16 newNeibStartDistanse = nodes[currentNode].startNodeDistance + getDistance(currentNode, neib);
+                    findOpenTimer.play();
                     auto it = std::find(openSet.begin(), openSet.end(), neib);
-                    if (newNeibStartDistanse < nodes[neib].startNodeDistance || it == openSet.end()) {
+                    findOpenTimer.pause();
+                    if (newNeibStartDistanse < nodes[neib].startNodeDistance || it == openSet.end()) {  
                         nodes[neib].startNodeDistance = newNeibStartDistanse;
                         nodes[neib].endNodeDistance = getDistance(neib, end);
                         nodes[neib].parentNode = currentNode;
@@ -288,6 +297,7 @@ bool AiMap::getPath(std::vector<Sint16> &path, Sint16 start, Sint16 end) {
                 }
             }
         }
+        mainSearchTimer.pause();
     }
     
     return false;
@@ -361,30 +371,31 @@ bool AiMap::isLineOfSight(Sint16 nodeIndexA, Sint16 nodeIndexB) {
     for (Sint16 i = 0; i < width * height; i++) {
         nodes[i].resetWatch();
     }
-//    std::cout << "watch sight from " << nodes[nodeIndexA].selfX << " x " << nodes[nodeIndexA].selfY << std::endl;
+   // std::cout << "watch sight from " << nodes[nodeIndexA].selfX << " x " << nodes[nodeIndexA].selfY << std::endl;
  //   std::cout << "            to   " << nodes[nodeIndexB].selfX << " x " << nodes[nodeIndexB].selfY << std::endl;
     Sint16 currentNodeIndex = nodeIndexA;
     while (currentNodeIndex != nodeIndexB) {
         Sint16 minNeibIndex = -1;
         Sint16 minNeibIndexSecond = -1;
+        Sint16 minNeibIndexThird = -1;
         Uint16 minDistance = 0;
         Uint16 minDistanceB = 0;
-//        std::cout << std::endl << std::endl;
-//       std::cout << "checking node pos " << nodes[currentNodeIndex].selfX << " x " << nodes[currentNodeIndex].selfY << std::endl;
+       // std::cout << std::endl << std::endl;
+       // std::cout << "checking node pos " << nodes[currentNodeIndex].selfX << " x " << nodes[currentNodeIndex].selfY << std::endl;
         for (Sint16 i = 1; i < AiMapNode::NEIB_MAX; i+=2) {
             Sint16 neibIndex = nodes[currentNodeIndex].neibours[i];
-//            std::cout << std::endl;
-//            std::cout << "neib " << i << "   index " << neibIndex << std::endl;
+           //std::cout << std::endl;
+            //std::cout << "neib " << i << "   index " << neibIndex << std::endl;
             if (neibIndex != -1) {
-           //     std::cout << "neib was watched " << nodes[neibIndex].viewSightWatched << std::endl;
+                //std::cout << "neib was watched " << nodes[neibIndex].viewSightWatched << std::endl;
                 if (neibIndex == nodeIndexB) {
                     return true;
                 }
                 if (nodes[neibIndex].viewSightWatched == false) {
- //                   std::cout << "neib node pos " << nodes[neibIndex].selfX << " x " << nodes[neibIndex].selfY << std::endl;
-//                    std::cout << "neib node pos " << nodes[neibIndex].selfPos.x << " x " << nodes[neibIndex].selfPos.y << std::endl;
- //                   std::cout << "start  " << nodes[nodeIndexA].selfX << " x " << nodes[nodeIndexA].selfY << std::endl;
-//                    std::cout << "end    " << nodes[nodeIndexB].selfX << " x " << nodes[nodeIndexB].selfY << std::endl;
+                  //  std::cout << "neib node pos " << nodes[neibIndex].selfX << " x " << nodes[neibIndex].selfY << std::endl;
+                  //  std::cout << "neib node pos " << nodes[neibIndex].selfPos.x << " x " << nodes[neibIndex].selfPos.y << std::endl;
+                  //  std::cout << "start  " << nodes[nodeIndexA].selfX << " x " << nodes[nodeIndexA].selfY << std::endl;
+                 //   std::cout << "end    " << nodes[nodeIndexB].selfX << " x " << nodes[nodeIndexB].selfY << std::endl;
                     Uint16 newDistanceA = calcSimplifiedDistance(neibIndex, nodeIndexA);
                     Uint16 newDistanceB = calcSimplifiedDistance(neibIndex, nodeIndexB);
                     Uint16 newDistance = newDistanceA + newDistanceB;
@@ -394,18 +405,26 @@ bool AiMap::isLineOfSight(Sint16 nodeIndexA, Sint16 nodeIndexB) {
                         minDistanceB = newDistanceB;
                         minNeibIndex = neibIndex;
                         minNeibIndexSecond = -1;
-                      //  std::cout << "new min dist " << minDistance << " index " << minNeibIndex << std::endl;
+                        minNeibIndexThird = -1;
+                   //     std::cout << "new min dist " << minDistance << " index " << minNeibIndex << std::endl;
                     } else {
                         if (newDistance == minDistance) {
                             if (newDistanceB < minDistanceB) {
-                            ///   std::cout << "distances equal but new distance to B is less " << neibIndex << std::endl;
+                             //  std::cout << "distances equal but new distance to B is less " << neibIndex << std::endl;
                                 minDistance = newDistance;
                                 minDistanceB = newDistanceB;
                                 minNeibIndex = neibIndex;
                                 minNeibIndexSecond = -1;
                             } else {
-                             //   std::cout << "second found " << neibIndex << std::endl;
-                                minNeibIndexSecond = neibIndex;
+                                
+                                if (minNeibIndexSecond == -1) {
+                               //     std::cout << "second found " << neibIndex << std::endl;
+                                    minNeibIndexSecond = neibIndex;
+                                }
+                                else {
+                              //      std::cout << "third found " << neibIndex << std::endl;
+                                    minNeibIndexThird = neibIndex;
+                                }
                             }
                         }
                     }
@@ -423,6 +442,10 @@ bool AiMap::isLineOfSight(Sint16 nodeIndexA, Sint16 nodeIndexB) {
         }
         if (minNeibIndexSecond != -1) {
             if (nodes[minNeibIndexSecond].blockLevel > 0)
+                return false;
+        }
+        if (minNeibIndexThird != -1) {
+            if (nodes[minNeibIndexThird].blockLevel > 0)
                 return false;
         }
         nodes[currentNodeIndex].viewSightWatched = true;
@@ -450,9 +473,16 @@ Sint16 AiMap::findClosestVisible(std::vector<Sint16> &path, Sint16 startIndex) {
 }
 
 void AiMap::reverseAndSmoothPath(std::vector<Sint16> &revPath) {
-    if (revPath.size() <= 2) {
+    if (revPath.size() == 1) {
         return;
     }
+    if (revPath.size() == 2) {
+        Sint16 last = revPath[1];
+        revPath[1] = revPath[0];
+        revPath[0] = last;
+        return;
+    }
+    
     std::vector<Sint16> newPath;
     
     // smooth from end
@@ -462,7 +492,10 @@ void AiMap::reverseAndSmoothPath(std::vector<Sint16> &revPath) {
         return;
     }
     newPath.push_back(revPath[0]);
+   // std::cout << "->>>>>>>>>>>>>>>>>>>>>>\n";
+ //   std::cout << "form path " << nodes[revPath[0]].selfX << " x " << nodes[revPath[0]].selfY << std::endl;
     for (Sint16 i = closestToEnd; i < revPath.size(); i++) {
+   //     std::cout << "form path " << nodes[revPath[i]].selfX << " x " << nodes[revPath[i]].selfY << std::endl;
         newPath.push_back(revPath[i]);
     }
     //
@@ -482,14 +515,35 @@ void AiMap::reverseAndSmoothPath(std::vector<Sint16> &revPath) {
     }
     std::vector<Sint16> path;
     path.push_back(revPath[0]);
-    path.push_back(revPath[closestToStart]);
+  //  std::cout << "->>>>>>>>>>>>>>>>>>>>>>\n";
+  //  std::cout << "next path " << nodes[revPath[0]].selfX << " x " << nodes[revPath[0]].selfY << std::endl;
     for (Sint16 i = closestToStart; i < revPath.size(); i++) {
+      //  std::cout << "next path " << nodes[revPath[i]].selfX << " x " << nodes[revPath[i]].selfY << std::endl;
         path.push_back(revPath[i]);
     }
     // smooth the rest - todo need optimize to not include first and last points
-    smoothPath(path);
+    //smoothPath(path);
+    
     revPath.clear();
-    revPath = path;
+    
+    if (path.size() <= 3) {
+        revPath = path;
+        return;
+    }
+    revPath.push_back(path[0]);
+    Sint16 last = path[path.size() - 1];
+    path.pop_back();
+    Sint16 nextIndex = 1;
+    while(nextIndex < path.size() && nextIndex != -1) {
+        revPath.push_back(path[nextIndex]);
+        nextIndex = findClosestVisible(path, nextIndex);
+        if (nextIndex == path.size() - 1) {
+            revPath.push_back(path[nextIndex]);
+            break;
+        }
+    }
+    revPath.push_back(last);
+    //revPath = path;
 }
 
 void AiMap::smoothPath(std::vector<Sint16> &path) {

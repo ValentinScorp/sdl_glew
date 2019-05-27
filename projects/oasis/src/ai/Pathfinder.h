@@ -11,14 +11,14 @@ public:
     void render();
     void destroy();
     
-    void getPath(glm::fvec3 begin, glm::fvec3 end, std::vector<glm::fvec3> &path);
-    size_t getNodeIndex(glm::fvec3 pos);
-    glm::fvec3 getNodePosition(size_t index);
-    glm::fvec3 getObstaclePosition(glm::fvec3 pos);
+    void getPath(glm::fvec2 begin, glm::fvec2 end, std::vector<glm::fvec2> &path);
+    size_t getNodeIndex(glm::fvec2 pos);
+    glm::fvec2 getNodePosition(size_t index);
+    glm::fvec2 getObstaclePosition(glm::fvec2 pos);
     
-    void setStaticObstacle(glm::fvec3 position);
-    void removeStaticObstacle(glm::fvec3 position);
-    bool isObstacle(glm::fvec3 position);
+    void setStaticObstacle(glm::fvec2 position);
+    void removeStaticObstacle(glm::fvec2 position);
+    bool isObstacle(glm::fvec2 position);
     
     AiMap aiMap;
     

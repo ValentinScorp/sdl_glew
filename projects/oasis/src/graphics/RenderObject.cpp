@@ -70,7 +70,5 @@ void RenderObject::render(glm::fmat4 orientationMatrix) {
     glDisableVertexAttribArray(2);
     glBindVertexArray(0);
     glUseProgram(0);
-    
-    mesh->initilizeMesh();
 }
 

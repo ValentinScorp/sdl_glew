@@ -37,33 +37,41 @@ private:
     
     class Bone {
     public:
+        Bone() {}
         Bone(glm::fvec3 p, glm::fvec3 r) :position(p), rotation(r) {}
 		~Bone() {}
-
+        
         glm::mat4 GetLocalToWorldMatrix();
         
         glm::fvec3 position;
         glm::fvec3 rotation;
         bool matrixCalculated = false;
         glm::fmat4 finalMatrix;
+        glm::fmat4 finalMatrixInverted;
     };
     
     class Weight {
     public:
-        Weight(Bone *b, float w) : bone(b), weight(w) {}
+        Weight(Bone *b, size_t boneId, float w) : bone(b), boneIndex(boneId), weight(w) {}
 		~Weight() {}
         
         Bone *bone;
+        size_t boneIndex = 0;
         float weight;
     };
     
     class KeyFrame {
     public:
+        KeyFrame() {}
+        ~KeyFrame(){}
+    
         unsigned int index;
     
         std::vector<Bone*> bones;
         std::vector<glm::fvec3> rotations;
         std::vector<glm::fvec3> positions;
+        std::vector<glm::fmat4> initMatrix;
+        std::vector<glm::fmat4> deformMatrix;
         
         glm::fvec3* GetRotation(Bone *b) {
 			for (size_t i = 0; i < bones.size(); i++) {
@@ -79,7 +87,27 @@ private:
 			}
 			return nullptr;
 		}
-
+        void resize(size_t bonesMax) {
+            bones.resize(bonesMax);
+            positions.resize(bonesMax);
+            rotations.resize(bonesMax);
+            initMatrix.resize(bonesMax);
+            deformMatrix.resize(bonesMax);
+        }
+        KeyFrame& operator=(const KeyFrame& other) {
+            if (this != &other) {
+                resize(other.bones.size());
+                for (size_t i = 0; i < other.bones.size(); i++) {
+                    bones[i] = other.bones[i];
+                    positions[i] = other.positions[i];
+                    rotations[i] = other.rotations[i];
+                    initMatrix[i] = other.initMatrix[i];
+                    deformMatrix[i] = other.deformMatrix[i];
+                }
+            }
+            return *this;
+        }
+        void generateMatrices();
     };
     
 public:

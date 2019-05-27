@@ -20,11 +20,12 @@ public:
     
     virtual void onMessage(IMessage *message);
     
+    std::shared_ptr<Terrain> terrain = nullptr;
+    
 private:
     std::shared_ptr<Renderer> renderer = nullptr;
     std::shared_ptr<AiContainer> aiContainer = nullptr;
     std::shared_ptr<IniFile> worldObjectsDescription = nullptr;
-    std::shared_ptr<Terrain> terrain = nullptr;
     
     std::vector<std::shared_ptr<WorldObject>> worldObjects;
     
