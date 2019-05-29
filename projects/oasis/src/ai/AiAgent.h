@@ -20,6 +20,7 @@ public:
     void move();
     void setPosition(glm::fvec2 pos);
     void setObstacleOnAiMap();
+    void tryMove(glm::fvec2 newPos);
     
     void onMessage(IMessage *message);
     

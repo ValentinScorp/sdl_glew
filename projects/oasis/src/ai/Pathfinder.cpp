@@ -57,6 +57,10 @@ void Pathfinder::getPath(glm::fvec2 begin, glm::fvec2 end, std::vector<glm::fvec
         path.push_back(pos);
     }
     path.push_back(end);
+    for (Sint16 i = 0; i < pathIndexes.size(); i++) {
+        glm::fvec2 pos = getNodePosition(pathIndexes[i]);
+        std::cout << "found path " << pos.x << " x " << pos.y << std::endl;
+    }
 }
 
 glm::fvec2 Pathfinder::getNodePosition(size_t index) {

@@ -348,7 +348,7 @@ Uint16 AiMap::calcSimplifiedDistance(Sint16 pA, Sint16 pB) {
     if (pA == -1 || pB == -1) {
         return 0;
     }
-    return 1000 * glm::sqrt((glm::pow((float)(nodes[pA].selfPos.x - nodes[pB].selfPos.x), 2) + glm::pow((float)(nodes[pA].selfPos.y - nodes[pB].selfPos.y), 2)));
+    return 100 * glm::sqrt((glm::pow((float)(nodes[pA].selfPos.x - nodes[pB].selfPos.x), 2) + glm::pow((float)(nodes[pA].selfPos.y - nodes[pB].selfPos.y), 2)));
 }
 
 Uint16 AiMap::calcSimplifiedDistance(Sint16 pMid, Sint16 pA, Sint16 pB) {
@@ -588,3 +588,5 @@ void AiMap::smoothPath(std::vector<Sint16> &path) {
     path.clear();
     path = newPath;
 }
+
+

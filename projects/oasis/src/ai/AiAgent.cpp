@@ -85,6 +85,33 @@ void AiAgent::avoidObstacle(AiAgent *obstacle) {
     movementDirection = glm::normalize(movementTarget - position);
 }
 */
+
+void AiAgent::tryMove(glm::fvec2 newPos) {
+    pathfinder->removeStaticObstacle(position);
+    if (pathfinder->isObstacle(newPos) == false) {
+        pathfinder->setStaticObstacle(newPos);
+        setPosition(newPos);
+        
+        float distance = glm::length(movementPath[currentPath + 1] - newPos);
+      
+        if (glm::abs(glm::length(movementPath[currentPath + 1] - newPos) <= movementSpeed)) {
+            currentPath++;
+            if (currentPath >= (movementPath.size() - 1)) {
+                moving = false;
+                worldObject->stopAnimation();
+            }
+        }
+    } else {
+        pathfinder->setStaticObstacle(position);
+        moving = false;
+        currentPath = 0;
+        movementPath.clear();
+        std::cout << "obstacle found at " << newPos.x << " x " << newPos.y << std::endl;
+        auto index = pathfinder->getNodeIndex(newPos);
+        worldObject->stopAnimation();
+    }
+}
+
 void AiAgent::move() {
     if (currentPath < (movementPath.size() - 1)) {
         //std::cout << movementDirection.x << " x " << movementDirection.y << " x " << movementDirection.z << std::endl;
@@ -92,32 +119,8 @@ void AiAgent::move() {
             movementDirection = glm::normalize(movementPath[currentPath + 1] - position);
         //std::cout << movementDirection.x << " x " << movementDirection.y << " x " << movementDirection.z << std::endl;
         glm::fvec2 newPosition = position + movementDirection * movementSpeed;
-        pathfinder->removeStaticObstacle(position);
-        if (pathfinder->isObstacle(newPosition) == false) {
-            pathfinder->setStaticObstacle(newPosition);
-            setPosition(newPosition);
-            
-            float distance = glm::length(movementPath[currentPath + 1] - newPosition);
-          //  std::cout << distance << std::endl;
-            if (glm::abs(glm::length(movementPath[currentPath + 1] - newPosition) <= movementSpeed)) {
-                currentPath++;
-                //std::cout << "currentPath " << currentPath << std::endl;
-                if (currentPath >= (movementPath.size() - 1)) {
-                    moving = false;
-                    //std::cout << "no path left \n";
-                    worldObject->stopAnimation();
-                }
-            }
-        } else {
-            pathfinder->setStaticObstacle(position);
-            moving = false;
-            currentPath = 0;
-            movementPath.clear();
-            std::cout << "obstacle found at " << newPosition.x << " x " << newPosition.y << std::endl;
-            auto index = pathfinder->getNodeIndex(newPosition);
-            worldObject->stopAnimation();
-         //   std::cout << "index is " << index  << std::endl;
-        }
+        
+        tryMove(newPosition);
     }
 }
 
