@@ -4,6 +4,8 @@ class Camera;
 class Pathfinder;
 class WorldObject;
 
+typedef std::vector<glm::fvec3> Path;
+
 // todo when agents removed messeges sending error occured
 class AiAgent : public IMessageRecipient {
 public:
@@ -21,6 +23,8 @@ public:
     void setPosition(glm::fvec2 pos);
     void setObstacleOnAiMap();
     void tryMove(glm::fvec2 newPos);
+    void startMove(glm::fvec3 destination);
+    void createPath(glm::fvec2 destination);
     
     void onMessage(IMessage *message);
     
@@ -33,6 +37,13 @@ public:
     //glm::fmat4 rotationMatrix;
     
    // glm::fmat4 orientationMatrix;
+    
+    glm::fvec2 location;
+    glm::fvec2 velocity;
+    glm::fvec2 acceleration;
+    float MAX_SPEED = 4;
+    float MAX_FORCE = 0.01;
+    
     
     bool selected = false;
     bool moving = false;

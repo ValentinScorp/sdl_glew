@@ -264,10 +264,10 @@ bool AiMap::getPath(std::vector<Sint16> &path, Sint16 start, Sint16 end) {
     //        }
           //  std::cout << std::endl;
             pathSmoothTime.pause();
-            pathSmoothTime.print("smooth path");
-            findOpenTimer.print("find open time");
-            mainSearchTimer.print("main search time");
-            currentNodeFindTimer.print("current node time");
+           // pathSmoothTime.print("smooth path");
+           // findOpenTimer.print("find open time");
+           // mainSearchTimer.print("main search time");
+           // currentNodeFindTimer.print("current node time");
             return true;
         }
         

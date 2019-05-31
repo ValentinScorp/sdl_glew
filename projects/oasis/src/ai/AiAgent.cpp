@@ -1,7 +1,9 @@
 #include "../Precompiled.h"
 
 AiAgent::AiAgent() {
-    
+    location = glm::fvec3(0.0f);
+    velocity = glm::fvec3(0.0f);
+    acceleration = glm::fvec3(0.0f);
 }
 
 AiAgent::~AiAgent()
@@ -105,23 +107,57 @@ void AiAgent::tryMove(glm::fvec2 newPos) {
         pathfinder->setStaticObstacle(position);
         moving = false;
         currentPath = 0;
-        movementPath.clear();
+        
         std::cout << "obstacle found at " << newPos.x << " x " << newPos.y << std::endl;
+        std::cout << "path is: \n";
+        for (auto& p: movementPath) {
+            std::cout << p.x << " x " << p.y << std::endl;
+        }
+            
+        movementPath.clear();
         auto index = pathfinder->getNodeIndex(newPos);
         worldObject->stopAnimation();
     }
 }
 
 void AiAgent::move() {
+    if (movementPath.size() > 1) {
+        location = position;
+        
+        glm::fvec2 desiredVector = glm::normalize(movementPath[1] - location);
+        desiredVector *= MAX_SPEED;
+        glm::fvec2 steerForce = desiredVector - velocity;
+        if (steerForce.x > MAX_FORCE) {
+            steerForce.x = MAX_FORCE;
+        }
+        if (steerForce.y > MAX_FORCE) {
+            steerForce.y = MAX_FORCE;
+        }
+
+        acceleration += steerForce;
+                
+        velocity += acceleration;
+        if (velocity.x > MAX_SPEED) {
+            velocity.x = MAX_SPEED;
+        }
+        if (velocity.y > MAX_SPEED) {
+            velocity.y = MAX_SPEED;
+        }
+
+        location += velocity;
+        acceleration = glm::fvec2(0.0f, 0.0f);
+        
+        position = location;
+    }
+    /*
     if (currentPath < (movementPath.size() - 1)) {
-        //std::cout << movementDirection.x << " x " << movementDirection.y << " x " << movementDirection.z << std::endl;
-        if (position != movementPath[currentPath + 1])
+        if (position != movementPath[currentPath + 1]) {
             movementDirection = glm::normalize(movementPath[currentPath + 1] - position);
-        //std::cout << movementDirection.x << " x " << movementDirection.y << " x " << movementDirection.z << std::endl;
+        }
         glm::fvec2 newPosition = position + movementDirection * movementSpeed;
         
         tryMove(newPosition);
-    }
+    }*/
 }
 
 void AiAgent::updateColisions(AiAgent *obstacle) {
@@ -146,6 +182,29 @@ void AiAgent::setObstacleOnAiMap() {
     pathfinder->setStaticObstacle(position);
 }
 
+void AiAgent::createPath(glm::fvec2 destination) {
+    movementPath.clear();
+    movementPath.push_back(position);
+    movementPath.push_back(destination);
+    //pathfinder->removeStaticObstacle(position);
+    //pathfinder->getPath(position, glm::fvec2(destination.x, destination.y), movementPath);
+    //pathfinder->setStaticObstacle(position);
+}
+
+void AiAgent::startMove(glm::fvec3 destination) {
+    currentPath = 0;
+    createPath(destination);
+
+    if(movementPath.size() > 1) {
+        currentPath = 0;
+        movementTarget = movementPath[1];
+        moving = true;
+        worldObject->beginAnimation("Walk");
+        if (movementTarget != position)
+            movementDirection = glm::normalize(movementTarget - position);
+    }
+}
+
 void AiAgent::onMessage(IMessage *message) {
     if (message == nullptr) {
         return;
@@ -166,29 +225,9 @@ void AiAgent::onMessage(IMessage *message) {
             selected = selectionBox.isIntersected(ray);
         }
     }
-     if (message->getMessage() == "unit_walk") {
+    if (message->getMessage() == "unit_walk") {
         if (selected) {
-            glm::fvec3 dest3D = message->getPosition();
-            glm::fvec2 dest(dest3D.x, dest3D.y);
-            
-            currentPath = 0;
-            movementPath.clear();
-            pathfinder->removeStaticObstacle(position);
-            pathfinder->getPath(position, dest, movementPath);
-            pathfinder->setStaticObstacle(position);
-          //  std::cout << std::endl;
-          //  std::cout << "Path found " << std::endl;
-         //   for (auto &p: movementPath) {
-         //       std::cout << p.x << " x " << p.y << std::endl;
-         //   }
-            if(movementPath.size() > 1) {
-                currentPath = 0;
-                movementTarget = movementPath[1];
-                moving = true;
-                worldObject->beginAnimation("Walk");
-                if (movementTarget != position)
-                    movementDirection = glm::normalize(movementTarget - position);
-            }
+            startMove(message->getPosition());
         }
     }
 }
