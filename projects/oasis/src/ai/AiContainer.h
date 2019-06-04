@@ -1,6 +1,6 @@
 #pragma once
 
-class AiContainer
+class AiContainer : public IMessageRecipient
 {
 public:
     AiContainer();
@@ -12,12 +12,16 @@ public:
     void render();
     
     size_t createAgent(WorldObject *wo);
-    AiAgent* getAgent(size_t id);
+    //AiAgent* createAgent(WorldObject *wo);
+    //AiAgent* getAgent(size_t id);
+    AiAgent& getAgent(size_t id);
     void destroyAgent(size_t id);
+    
+    void onMessage(IMessage *message);
     
     Pathfinder pathfinder;
 private:
-    std::vector<AiAgent*> agents;
+    std::vector<AiAgent> agents;
     Camera *camera = nullptr;
     
     

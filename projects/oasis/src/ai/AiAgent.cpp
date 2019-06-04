@@ -120,34 +120,71 @@ void AiAgent::tryMove(glm::fvec2 newPos) {
     }
 }
 
-void AiAgent::move() {
+glm::fvec2 AiAgent::calcSteerForce(glm::fvec2 pos, glm::fvec2 dest, glm::fvec2 vel) {
+    glm::fvec2 desiredVector = glm::normalize(dest - pos);
+    desiredVector *= MAX_SPEED;
+    glm::fvec2 steerForce = desiredVector - vel;
+    if (glm::length(steerForce) > MAX_FORCE) {
+        steerForce = glm::normalize(steerForce);
+        steerForce *= MAX_FORCE;
+    }
+    return steerForce;
+}
+
+glm::fvec2 AiAgent::calcSeparationForce(std::vector<AiAgent> &agents, glm::fvec2 pos, glm::fvec2 vel) {
+    float desiredSeparation = 5.0f;
+    glm::fvec2 steer = glm::fvec2(0.0f, 0.0f);
+    Sint16 count = 0;
+    
+    for (size_t i = 0; i < agents.size(); i++) {
+    //for (auto &a: globalAgents) {
+        float d = glm::length(agents[i].position - pos);
+        if (d > 0 && d < desiredSeparation) {
+            glm::fvec2 diff = pos - agents[i].position;
+            diff = glm::normalize(diff);
+            diff = diff / d;
+            steer += diff;
+            count++;
+        }
+    }
+    if (count > 0) {
+        steer = steer / (float) count;
+    }
+    if (glm::length(steer) > 0) {
+        steer = glm::normalize(steer);
+        steer *= MAX_SPEED;
+        steer = steer - vel;
+        if (glm::length(steer) > MAX_FORCE) {
+            steer = glm::normalize(steer);
+            steer *= MAX_FORCE;
+        }
+    }
+    return steer;
+}
+
+void AiAgent::move(std::vector<AiAgent> &agents) {
     if (movementPath.size() > 1) {
         location = position;
         
-        glm::fvec2 desiredVector = glm::normalize(movementPath[1] - location);
-        desiredVector *= MAX_SPEED;
-        glm::fvec2 steerForce = desiredVector - velocity;
-        if (steerForce.x > MAX_FORCE) {
-            steerForce.x = MAX_FORCE;
-        }
-        if (steerForce.y > MAX_FORCE) {
-            steerForce.y = MAX_FORCE;
-        }
-
+        auto steerForce = calcSteerForce(location, movementPath[1], velocity);
+        auto separationForce = calcSeparationForce(agents, location, velocity);
+        
         acceleration += steerForce;
-                
+        acceleration += separationForce;
         velocity += acceleration;
-        if (velocity.x > MAX_SPEED) {
-            velocity.x = MAX_SPEED;
-        }
-        if (velocity.y > MAX_SPEED) {
-            velocity.y = MAX_SPEED;
+        
+        if (glm::length(velocity) > MAX_SPEED) {
+            velocity = glm::normalize(velocity);
+            velocity *= MAX_SPEED;
         }
 
         location += velocity;
         acceleration = glm::fvec2(0.0f, 0.0f);
         
-        position = location;
+        movementDirection = glm::normalize(velocity);
+        pathfinder->removeStaticObstacle(position);
+        setPosition(location);
+        pathfinder->setStaticObstacle(position);
     }
     /*
     if (currentPath < (movementPath.size() - 1)) {
@@ -165,12 +202,11 @@ void AiAgent::updateColisions(AiAgent *obstacle) {
         //avoidObstacle(obstacle);
     }
 }
-void AiAgent::update() {
+void AiAgent::update(std::vector<AiAgent> &agents) {
     
     if (moving) {
-        move();
+        move(agents);
     }
-    pathfinder->setStaticObstacle(position);
 }
 
 void AiAgent::setPosition(glm::fvec2 pos) {
@@ -178,6 +214,9 @@ void AiAgent::setPosition(glm::fvec2 pos) {
     selectionBox.position = glm::fvec3(pos.x, pos.y, 0.0); // todo send this to WorldObject class
 }
 
+void AiAgent::setCollisionRadius(float radius) {
+    collisionRadius = radius;
+}
 void AiAgent::setObstacleOnAiMap() {
     pathfinder->setStaticObstacle(position);
 }

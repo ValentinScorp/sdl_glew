@@ -5,7 +5,7 @@ WorldObject::WorldObject() {
 }
 
 WorldObject::~WorldObject() {
-    
+    std::cout << "delete world object" << std::endl;
 }
 
 bool WorldObject::init( std::string name, 
@@ -14,34 +14,36 @@ bool WorldObject::init( std::string name,
                         std::shared_ptr<AiContainer> aiContainer, 
                         std::shared_ptr<IniFile> iniFile, 
                         glm::fvec3 position) {
-    
+    this->aiContainer = aiContainer;
     if (iniFile->isSectionExist(name)) {
         world = w;
         renderObject = renderer->getRenderObject(name);
         if (renderObject == nullptr) {
             return false;
         }
-        auto id = aiContainer->createAgent(this);
-        auto agent = aiContainer->getAgent(id);
-        agent->collisionRadius = iniFile->getParameter(name, "collisionRadius").toFloat();
-        agent->selectable = iniFile->getParameter(name, "selectable").toInt();
-        agent->setPosition(position);
+        aiAgentId = aiContainer->createAgent(this);
+        AiAgent& agent = aiContainer->getAgent(aiAgentId);
+        
+        agent.setCollisionRadius(iniFile->getParameter(name, "collisionRadius").toFloat());
+        agent.selectable = iniFile->getParameter(name, "selectable").toInt();
+        agent.setPosition(position);
         if (iniFile->getParameter(name, "staticPosition").toInt()) {
-            agent->setObstacleOnAiMap();
+            agent.setObstacleOnAiMap();
         }
         
         float unitWidth = 4.0;
-        float unitHeight = 12.0;
+        float unitHeight = 10.0;
         
         unitSelection = std::make_shared<UnitSelection>();
         unitSelection->init(renderer, unitWidth);
-        unitSelection->position.x = agent->position.x;
-        unitSelection->position.y = agent->position.y;
+        unitSelection->position.x = agent.position.x;
+        unitSelection->position.y = agent.position.y;
         unitSelection->position.z += 0.1;
             
-        agent->createSelectionBox(unitWidth, unitHeight);
-        aiAgent = agent;
-    
+        agent.createSelectionBox(unitWidth, unitHeight);
+        
+       // std::cout << "posittion " << agent.position.x << " x " << agent.position.y << std::endl;
+            
         return true;
     }
     
@@ -58,8 +60,9 @@ void WorldObject::destroy() {
 
 void WorldObject::update() {
     if (unitSelection) {
-        unitSelection->position.x = aiAgent->position.x;
-        unitSelection->position.y = aiAgent->position.y;
+        //std::cout << "posittion " << aiContainer->getAgent(aiAgentId).position.x << " x " << aiContainer->getAgent(aiAgentId).position.y << std::endl;
+        unitSelection->position.x = aiContainer->getAgent(aiAgentId).position.x;
+        unitSelection->position.y = aiContainer->getAgent(aiAgentId).position.y;
         unitSelection->position.z = 0.1;
     }
 }
@@ -79,11 +82,13 @@ glm::fmat4 WorldObject::makeFinalMatrix(glm::fvec3 position, glm::fmat4 rotation
 }
 
 void WorldObject::render() {
-    glm::fvec3 unitWorldPosition(aiAgent->position.x, 
-                                 aiAgent->position.y,
-                                 world->terrain->getHeight(glm::fvec2(aiAgent->position.x, aiAgent->position.y)));
-    glm::fvec3 unitWorldDirection(aiAgent->movementDirection.x,
-                                  aiAgent->movementDirection.y,
+//    std::cout << "posittion " << aiAgent->position.x << " x " << aiAgent->position.y << std::endl;
+    
+    glm::fvec3 unitWorldPosition(aiContainer->getAgent(aiAgentId).position.x, 
+                                 aiContainer->getAgent(aiAgentId).position.y,
+                                 world->terrain->getHeight(glm::fvec2(aiContainer->getAgent(aiAgentId).position.x, aiContainer->getAgent(aiAgentId).position.y)));
+    glm::fvec3 unitWorldDirection(aiContainer->getAgent(aiAgentId).movementDirection.x,
+                                  aiContainer->getAgent(aiAgentId).movementDirection.y,
                                   0.0f);
     
     glm::fmat4 rotationMatrix = getRotationMatrix(unitWorldDirection, glm::fvec3(0.0f, 0.0f, 1.0f));
@@ -92,7 +97,7 @@ void WorldObject::render() {
     renderObject->mesh->updateAnimation(currentAnimation, &currentFrame, &animCounter, 1.0f);
     renderObject->render(finalMatrix);
     
-    if (aiAgent->selected) {
+    if (aiContainer->getAgent(aiAgentId).selected) {
         unitSelection->render();
     }
 }

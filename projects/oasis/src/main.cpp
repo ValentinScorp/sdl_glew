@@ -114,13 +114,13 @@ int main(int argc, char **argv)
     
     World world;
     world.init(renderer, aiContainer);
-    world.addObject("Tree", glm::fvec3(7.0f, 5.0f, 0.0f));
-    world.addObject("Tree", glm::fvec3(17.0f, 5.0f, 0.0f));
-    world.addObject("Tree", glm::fvec3(9.0f, 7.0f, 0.0f));
-    world.addObject("Tree", glm::fvec3(11.0f, 7.0f, 0.0f));
-    world.addObject("Tree", glm::fvec3(13.0f, 7.0f, 0.0f));
-    world.addObject("Tree", glm::fvec3(15.0f, 7.0f, 0.0f));
-    world.addObject("Tree", glm::fvec3(17.0f, 7.0f, 0.0f));
+    //world.addObject("Tree", glm::fvec3(7.0f, 5.0f, 0.0f));
+   // world.addObject("Tree", glm::fvec3(17.0f, 5.0f, 0.0f));
+   // world.addObject("Tree", glm::fvec3(9.0f, 7.0f, 0.0f));
+   // world.addObject("Tree", glm::fvec3(11.0f, 7.0f, 0.0f));
+   // world.addObject("Tree", glm::fvec3(13.0f, 7.0f, 0.0f));
+   // world.addObject("Tree", glm::fvec3(15.0f, 7.0f, 0.0f));
+   // world.addObject("Tree", glm::fvec3(17.0f, 7.0f, 0.0f));
     
     
     GLenum err1;

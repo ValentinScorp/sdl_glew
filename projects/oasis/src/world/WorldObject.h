@@ -32,7 +32,9 @@ public:
     std::shared_ptr<RenderObject> renderObject = nullptr;
     std::shared_ptr<UnitSelection> unitSelection = nullptr;
     //std::shared_ptr<Renderer> renderer = nullptr;
-    AiAgent *aiAgent = nullptr;
+    //AiAgent *aiAgent = nullptr;
+    std::shared_ptr<AiContainer> aiContainer = nullptr;
+    size_t aiAgentId = 0;
     World *world = nullptr;
     // animation
     Mesh::Animation *currentAnimation = nullptr;

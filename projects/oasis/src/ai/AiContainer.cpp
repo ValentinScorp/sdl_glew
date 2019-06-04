@@ -20,19 +20,12 @@ void AiContainer::init(std::shared_ptr<Renderer> renderer, Camera *cam, std::sha
 }
 
 void AiContainer::destroy() {
-    for (auto& a: agents) {
-        if (a != nullptr) {
-            delete a;
-        }
-    }
+    agents.clear();
 }
 
 void AiContainer::update() {
     for (auto &a : agents) {
-        a->update();
-        for (auto &obstacles: agents) {
-            a->updateColisions(obstacles);
-        }
+        a.update(agents);
     }
     pathfinder.aiMap.update();
 }
@@ -42,19 +35,42 @@ void AiContainer::render() {
 }
 
 size_t AiContainer::createAgent(WorldObject *wo) {
-    auto agent = new AiAgent();
-    agent->init(camera, &pathfinder, wo);
+    AiAgent agent;
+    agent.init(camera, &pathfinder, wo);
     agents.push_back(agent);
     return (agents.size() - 1);
 }
 
-AiAgent* AiContainer::getAgent(size_t id){
+/*
+AiAgent* AiContainer::createAgent(WorldObject *wo) {
+    AiAgent agent;
+    agent.init(camera, &pathfinder, wo);
+    agents.push_back(agent);
+    SMessageManager::getInstance().registerRecipient(&agents.back());
+    return &agents.back();
+}*/
+/*
+AiAgent* AiContainer::getAgent(size_t id) {
+    std::cout << "getting agent id pointer " << id << std::endl;    
+    //AiAgent &agent = agents.at(id);
+    AiAgent* firstElement = agents.data();
+    for (size_t i = 0; i < agents.size(); i++) {
+        if (i == id) {
+            return firstElement;
+        }
+        firstElement++;
+    }
+    std::cout << "element not found" << std::endl;
+    return nullptr;
+}
+*/
+
+AiAgent& AiContainer::getAgent(size_t id) {
     return agents[id];
 }
 
-void AiContainer::destroyAgent(size_t id) {
-    if (agents[id] != nullptr){
-        delete agents[id];
-        agents[id] = nullptr;
+void AiContainer::onMessage(IMessage *message) {
+    for (auto& a: agents) {
+        a.onMessage(message);
     }
 }
