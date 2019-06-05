@@ -41,7 +41,8 @@ public:
     glm::fvec2 velocity;
     glm::fvec2 acceleration;
     float MAX_SPEED = 0.2;
-    float MAX_FORCE = 0.1;
+    float MAX_STEER_FORCE = 0.1;
+    float MAX_SEPAR_FORCE = 0.1;
     
     bool selected = false;
     bool moving = false;
@@ -50,6 +51,7 @@ public:
     float movementSpeed = 0.3;
     glm::fvec2 movementTarget = { 0.0f, 0.0f };
     
+    bool lockSelectable = false;
     bool selectable = false;
     bool dynamic = false;
     float collisionRadius = 3;

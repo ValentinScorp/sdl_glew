@@ -83,6 +83,14 @@ void sendEvents() {
                 if (event.key.keysym.sym == SDLK_DOWN) {
                     SMessageManager::getInstance().invokeMessage(new KeyboardMessage("arrow_down"));
                 }
+                if (event.key.keysym.sym == SDLK_LCTRL) {
+                    SMessageManager::getInstance().invokeMessage(new KeyboardMessage("lctrl_pressed"));
+                }
+                break;
+            case SDL_KEYUP:
+                if (event.key.keysym.sym == SDLK_LCTRL) {
+                    SMessageManager::getInstance().invokeMessage(new KeyboardMessage("lctrl_released"));
+                }
                 break;
             default:
                 break;

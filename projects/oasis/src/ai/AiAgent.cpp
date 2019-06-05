@@ -124,9 +124,9 @@ glm::fvec2 AiAgent::calcSteerForce(glm::fvec2 pos, glm::fvec2 dest, glm::fvec2 v
     glm::fvec2 desiredVector = glm::normalize(dest - pos);
     desiredVector *= MAX_SPEED;
     glm::fvec2 steerForce = desiredVector - vel;
-    if (glm::length(steerForce) > MAX_FORCE) {
+    if (glm::length(steerForce) > MAX_STEER_FORCE) {
         steerForce = glm::normalize(steerForce);
-        steerForce *= MAX_FORCE;
+        steerForce *= MAX_STEER_FORCE;
     }
     return steerForce;
 }
@@ -154,9 +154,9 @@ glm::fvec2 AiAgent::calcSeparationForce(std::vector<AiAgent> &agents, glm::fvec2
         steer = glm::normalize(steer);
         steer *= MAX_SPEED;
         steer = steer - vel;
-        if (glm::length(steer) > MAX_FORCE) {
+        if (glm::length(steer) > MAX_SEPAR_FORCE) {
             steer = glm::normalize(steer);
-            steer *= MAX_FORCE;
+            steer *= MAX_SEPAR_FORCE;
         }
     }
     return steer;
@@ -254,6 +254,12 @@ void AiAgent::onMessage(IMessage *message) {
     }
     if (message->getKeyPressed() == "s") {
     }
+    if (message->getKeyPressed() == "lctrl_pressed") {
+        lockSelectable = true;
+    }
+    if (message->getKeyPressed() == "lctrl_released") {
+        lockSelectable = false;
+    }
     if (message->getKeyPressed() == "left_mouse_button_pressed") {
         if (selectable && message && camera) {
             glm::fvec2 pos = message->getMousePosition();
@@ -261,7 +267,9 @@ void AiAgent::onMessage(IMessage *message) {
             aux::ray ray;
             ray.begin = camRay.begin;
             ray.end = camRay.end;
-            selected = selectionBox.isIntersected(ray);
+            if ((lockSelectable && selected == false) || !lockSelectable) {
+                selected = selectionBox.isIntersected(ray);
+            }
         }
     }
     if (message->getMessage() == "unit_walk") {
