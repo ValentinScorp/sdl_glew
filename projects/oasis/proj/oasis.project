@@ -21,6 +21,8 @@
       <File Name="../src/world/World.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ai">
+      <File Name="../src/ai/AiObstacle.h"/>
+      <File Name="../src/ai/AiObstacle.cpp"/>
       <File Name="../src/ai/AiMap.h"/>
       <File Name="../src/ai/AiMap.cpp"/>
       <File Name="../src/ai/Pathfinder.h"/>

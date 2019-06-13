@@ -41,29 +41,12 @@ size_t AiContainer::createAgent(WorldObject *wo) {
     return (agents.size() - 1);
 }
 
-/*
-AiAgent* AiContainer::createAgent(WorldObject *wo) {
-    AiAgent agent;
-    agent.init(camera, &pathfinder, wo);
-    agents.push_back(agent);
-    SMessageManager::getInstance().registerRecipient(&agents.back());
-    return &agents.back();
-}*/
-/*
-AiAgent* AiContainer::getAgent(size_t id) {
-    std::cout << "getting agent id pointer " << id << std::endl;    
-    //AiAgent &agent = agents.at(id);
-    AiAgent* firstElement = agents.data();
-    for (size_t i = 0; i < agents.size(); i++) {
-        if (i == id) {
-            return firstElement;
-        }
-        firstElement++;
-    }
-    std::cout << "element not found" << std::endl;
-    return nullptr;
+size_t AiContainer::createObstacle(WorldObject *wo) {
+    AiObstacle obstacle;
+    obstacle.init(camera, &pathfinder, wo);
+    obstacles.push_back(obstacle);
+    return (obstacles.size() - 1);
 }
-*/
 
 AiAgent& AiContainer::getAgent(size_t id) {
     return agents[id];

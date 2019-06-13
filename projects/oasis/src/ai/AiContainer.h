@@ -12,8 +12,8 @@ public:
     void render();
     
     size_t createAgent(WorldObject *wo);
-    //AiAgent* createAgent(WorldObject *wo);
-    //AiAgent* getAgent(size_t id);
+    size_t createObstacle(WorldObject *wo);
+    
     AiAgent& getAgent(size_t id);
     void destroyAgent(size_t id);
     
@@ -22,6 +22,7 @@ public:
     Pathfinder pathfinder;
 private:
     std::vector<AiAgent> agents;
+    std::vector<AiObstacle> obstacles;
     Camera *camera = nullptr;
     
     
