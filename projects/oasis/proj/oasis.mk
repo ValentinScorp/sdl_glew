@@ -13,7 +13,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=valen
-Date                   :=13/06/2019
+Date                   :=14/06/2019
 CodeLitePath           :="C:/Program Files/CodeLite"
 LinkerName             :=C:/MinGW/bin/g++.exe
 SharedObjectLinkerName :=C:/MinGW/bin/g++.exe -shared -fPIC
@@ -62,8 +62,8 @@ AS       := C:/MinGW/bin/as.exe
 ## User defined environment variables
 ##
 CodeLiteDir:=C:\Program Files\CodeLite
-Objects0=$(IntermediateDirectory)/up_src_graphics_Mesh.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_Renderer.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_RenderObject.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_Camera.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_Console.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_world_World.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_main.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_Auxiliary.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_MessageManager.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_Timer.cpp$(ObjectSuffix) \
-	$(IntermediateDirectory)/up_src_world_Terrain.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_IniFile.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_ai_AiMap.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_ai_AiObstacle.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_gui_GuiPanel.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_ai_Pathfinder.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_gui_Button.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_TerrainBrush.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_ai_AiAgent.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_world_WorldObject.cpp$(ObjectSuffix) \
+Objects0=$(IntermediateDirectory)/up_src_graphics_Mesh.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_Renderer.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_RenderObject.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_Camera.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_Console.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_TerrainBrush.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_world_World.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_world_WorldObject.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_main.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_Auxiliary.cpp$(ObjectSuffix) \
+	$(IntermediateDirectory)/up_src_MessageManager.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_Timer.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_world_Terrain.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_IniFile.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_ai_AiMap.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_ai_AiObstacle.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_gui_GuiPanel.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_ai_Pathfinder.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_gui_Button.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_ai_AiAgent.cpp$(ObjectSuffix) \
 	$(IntermediateDirectory)/up_src_ai_AiContainer.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_gui_Listbox.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_RenderQuad.cpp$(ObjectSuffix) $(IntermediateDirectory)/up_src_graphics_UnitSelection.cpp$(ObjectSuffix) 
 
 
@@ -147,6 +147,14 @@ $(IntermediateDirectory)/up_src_graphics_Console.cpp$(DependSuffix): ../src/grap
 $(IntermediateDirectory)/up_src_graphics_Console.cpp$(PreprocessSuffix): ../src/graphics/Console.cpp
 	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_graphics_Console.cpp$(PreprocessSuffix) ../src/graphics/Console.cpp
 
+$(IntermediateDirectory)/up_src_graphics_TerrainBrush.cpp$(ObjectSuffix): ../src/graphics/TerrainBrush.cpp $(IntermediateDirectory)/up_src_graphics_TerrainBrush.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/graphics/TerrainBrush.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_graphics_TerrainBrush.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/up_src_graphics_TerrainBrush.cpp$(DependSuffix): ../src/graphics/TerrainBrush.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/up_src_graphics_TerrainBrush.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/up_src_graphics_TerrainBrush.cpp$(DependSuffix) -MM ../src/graphics/TerrainBrush.cpp
+
+$(IntermediateDirectory)/up_src_graphics_TerrainBrush.cpp$(PreprocessSuffix): ../src/graphics/TerrainBrush.cpp
+	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_graphics_TerrainBrush.cpp$(PreprocessSuffix) ../src/graphics/TerrainBrush.cpp
+
 $(IntermediateDirectory)/up_src_world_World.cpp$(ObjectSuffix): ../src/world/World.cpp $(IntermediateDirectory)/up_src_world_World.cpp$(DependSuffix)
 	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/world/World.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_world_World.cpp$(ObjectSuffix) $(IncludePath)
 $(IntermediateDirectory)/up_src_world_World.cpp$(DependSuffix): ../src/world/World.cpp
@@ -154,6 +162,14 @@ $(IntermediateDirectory)/up_src_world_World.cpp$(DependSuffix): ../src/world/Wor
 
 $(IntermediateDirectory)/up_src_world_World.cpp$(PreprocessSuffix): ../src/world/World.cpp
 	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_world_World.cpp$(PreprocessSuffix) ../src/world/World.cpp
+
+$(IntermediateDirectory)/up_src_world_WorldObject.cpp$(ObjectSuffix): ../src/world/WorldObject.cpp $(IntermediateDirectory)/up_src_world_WorldObject.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/world/WorldObject.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_world_WorldObject.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/up_src_world_WorldObject.cpp$(DependSuffix): ../src/world/WorldObject.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/up_src_world_WorldObject.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/up_src_world_WorldObject.cpp$(DependSuffix) -MM ../src/world/WorldObject.cpp
+
+$(IntermediateDirectory)/up_src_world_WorldObject.cpp$(PreprocessSuffix): ../src/world/WorldObject.cpp
+	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_world_WorldObject.cpp$(PreprocessSuffix) ../src/world/WorldObject.cpp
 
 $(IntermediateDirectory)/up_src_main.cpp$(ObjectSuffix): ../src/main.cpp $(IntermediateDirectory)/up_src_main.cpp$(DependSuffix)
 	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/main.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_main.cpp$(ObjectSuffix) $(IncludePath)
@@ -243,14 +259,6 @@ $(IntermediateDirectory)/up_src_gui_Button.cpp$(DependSuffix): ../src/gui/Button
 $(IntermediateDirectory)/up_src_gui_Button.cpp$(PreprocessSuffix): ../src/gui/Button.cpp
 	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_gui_Button.cpp$(PreprocessSuffix) ../src/gui/Button.cpp
 
-$(IntermediateDirectory)/up_src_graphics_TerrainBrush.cpp$(ObjectSuffix): ../src/graphics/TerrainBrush.cpp $(IntermediateDirectory)/up_src_graphics_TerrainBrush.cpp$(DependSuffix)
-	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/graphics/TerrainBrush.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_graphics_TerrainBrush.cpp$(ObjectSuffix) $(IncludePath)
-$(IntermediateDirectory)/up_src_graphics_TerrainBrush.cpp$(DependSuffix): ../src/graphics/TerrainBrush.cpp
-	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/up_src_graphics_TerrainBrush.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/up_src_graphics_TerrainBrush.cpp$(DependSuffix) -MM ../src/graphics/TerrainBrush.cpp
-
-$(IntermediateDirectory)/up_src_graphics_TerrainBrush.cpp$(PreprocessSuffix): ../src/graphics/TerrainBrush.cpp
-	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_graphics_TerrainBrush.cpp$(PreprocessSuffix) ../src/graphics/TerrainBrush.cpp
-
 $(IntermediateDirectory)/up_src_ai_AiAgent.cpp$(ObjectSuffix): ../src/ai/AiAgent.cpp $(IntermediateDirectory)/up_src_ai_AiAgent.cpp$(DependSuffix)
 	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/ai/AiAgent.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_ai_AiAgent.cpp$(ObjectSuffix) $(IncludePath)
 $(IntermediateDirectory)/up_src_ai_AiAgent.cpp$(DependSuffix): ../src/ai/AiAgent.cpp
@@ -258,14 +266,6 @@ $(IntermediateDirectory)/up_src_ai_AiAgent.cpp$(DependSuffix): ../src/ai/AiAgent
 
 $(IntermediateDirectory)/up_src_ai_AiAgent.cpp$(PreprocessSuffix): ../src/ai/AiAgent.cpp
 	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_ai_AiAgent.cpp$(PreprocessSuffix) ../src/ai/AiAgent.cpp
-
-$(IntermediateDirectory)/up_src_world_WorldObject.cpp$(ObjectSuffix): ../src/world/WorldObject.cpp $(IntermediateDirectory)/up_src_world_WorldObject.cpp$(DependSuffix)
-	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/world/WorldObject.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_world_WorldObject.cpp$(ObjectSuffix) $(IncludePath)
-$(IntermediateDirectory)/up_src_world_WorldObject.cpp$(DependSuffix): ../src/world/WorldObject.cpp
-	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/up_src_world_WorldObject.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/up_src_world_WorldObject.cpp$(DependSuffix) -MM ../src/world/WorldObject.cpp
-
-$(IntermediateDirectory)/up_src_world_WorldObject.cpp$(PreprocessSuffix): ../src/world/WorldObject.cpp
-	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/up_src_world_WorldObject.cpp$(PreprocessSuffix) ../src/world/WorldObject.cpp
 
 $(IntermediateDirectory)/up_src_ai_AiContainer.cpp$(ObjectSuffix): ../src/ai/AiContainer.cpp $(IntermediateDirectory)/up_src_ai_AiContainer.cpp$(DependSuffix)
 	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/Users/valen/Documents/sdl_glew/projects/oasis/src/ai/AiContainer.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/up_src_ai_AiContainer.cpp$(ObjectSuffix) $(IncludePath)
