@@ -162,11 +162,14 @@ glm::fvec2 AiAgent::calcSeparationForce(std::vector<AiAgent> &agents, glm::fvec2
     return steer;
 }
 
-void AiAgent::move(std::vector<AiAgent> &agents) {
+void AiAgent::calcNextPosition(std::vector<AiAgent> &agents, glm::fvec2 &nextPos) {
     if (movementPath.size() > 1) {
         location = position;
-        
-        auto steerForce = calcSteerForce(location, movementPath[1], velocity);
+              
+        glm::fvec2 steerForce = glm::fvec2(0.0f, 0.0f);
+        if (location != movementPath[currentPath + 1]) {
+            steerForce = calcSteerForce(location, movementPath[currentPath + 1], velocity);
+        }
         auto separationForce = calcSeparationForce(agents, location, velocity);
         
         acceleration += steerForce;
@@ -182,19 +185,25 @@ void AiAgent::move(std::vector<AiAgent> &agents) {
         acceleration = glm::fvec2(0.0f, 0.0f);
         
         movementDirection = glm::normalize(velocity);
-        pathfinder->removeStaticObstacle(position);
-        setPosition(location);
-        pathfinder->setStaticObstacle(position);
+        
+        nextPos = location;
     }
-    /*
+}
+
+void AiAgent::move(std::vector<AiAgent> &agents) {
+    
     if (currentPath < (movementPath.size() - 1)) {
         if (position != movementPath[currentPath + 1]) {
             movementDirection = glm::normalize(movementPath[currentPath + 1] - position);
         }
-        glm::fvec2 newPosition = position + movementDirection * movementSpeed;
+        //glm::fvec2 newPosition = position + movementDirection * movementSpeed;
+        glm::fvec2 newPosition = position;
+        //std::cout << "new position " << newPosition.x << " x " << newPosition.y << std::endl;
         
+        calcNextPosition(agents, newPosition);
         tryMove(newPosition);
-    }*/
+        //std::cout << "new position " << newPosition.x << " x " << newPosition.y << std::endl;
+    }
 }
 
 void AiAgent::updateColisions(AiAgent *obstacle) {
@@ -223,11 +232,11 @@ void AiAgent::setObstacleOnAiMap() {
 
 void AiAgent::createPath(glm::fvec2 destination) {
     movementPath.clear();
-    movementPath.push_back(position);
-    movementPath.push_back(destination);
-    //pathfinder->removeStaticObstacle(position);
-    //pathfinder->getPath(position, glm::fvec2(destination.x, destination.y), movementPath);
-    //pathfinder->setStaticObstacle(position);
+   // movementPath.push_back(position);
+   // movementPath.push_back(destination);
+    pathfinder->removeStaticObstacle(position);
+    pathfinder->getPath(position, glm::fvec2(destination.x, destination.y), movementPath);
+    pathfinder->setStaticObstacle(position);
 }
 
 void AiAgent::startMove(glm::fvec3 destination) {

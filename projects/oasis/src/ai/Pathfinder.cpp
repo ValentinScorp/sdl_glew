@@ -69,10 +69,11 @@ glm::fvec2 Pathfinder::getNodePosition(size_t index) {
     
         Sint16 x = index - (index / nodeRows) * nodeRows;
         Sint16 y = index / nodeRows;
-       // std::cout << "index " << index << std::endl;
-       // std::cout << "path nodes " << x << " x " << y << std::endl;
-        position.x = x * nodeWidth + nodeWidth / 2;
-        position.y = y * nodeWidth + nodeWidth / 2;
+        //std::cout << "index " << index << std::endl;
+        //std::cout << "path nodes " << x << " x " << y << std::endl;
+        position.x = (float)x * (float)nodeWidth + (float)nodeWidth / 2;
+        position.y = (float)y * (float)nodeWidth + (float)nodeWidth / 2;
+        //std::cout << "position " << position.x << " x " << position.y << std::endl;
     }
     return position;
 }

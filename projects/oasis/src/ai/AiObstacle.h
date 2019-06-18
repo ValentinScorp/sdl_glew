@@ -11,11 +11,12 @@ public:
     AiObstacle(const AiObstacle &) = default;
     
     void init(Camera* cam, Pathfinder *pf, WorldObject* wo);
+    void placeLink(glm::fvec2 pos);
    
     Camera* camera = nullptr;
     WorldObject* worldObject = nullptr;
     Pathfinder* pathfinder = nullptr;
     
-    glm::fvec2 position;
+    std::vector<glm::fvec2> positions;
 };
 

@@ -38,6 +38,17 @@ void World::render() {
     }
 }
 
+void World::addObstacle(glm::fvec3 position) {
+    if (!worldObjectsDescription->isSectionExist("Banner")) {
+        return;
+    }
+    
+    //auto worldObject = std::make_shared<WorldObject>();
+    //if (worldObject->init("Banner", this, renderer, aiContainer, worldObjectsDescription, adjusedPosition)) {
+    //    worldObjects.push_back(std::move(worldObject));
+    //}
+}
+
 void World::addObject(std::string objectName, glm::fvec3 position) {
     if (!worldObjectsDescription->isSectionExist(objectName)) {
         return;
@@ -60,7 +71,9 @@ void World::onMessage(IMessage *message) {
         }
         if (message->getKeyPressed() == "left_mouse_button_pressed") {
             auto mousePos = message->getMousePosition();
-            addObject(currentObjectSelected, terrain->getTerrainPoint(mousePos));
+            if (currentObjectSelected != "Banner") {
+                addObject(currentObjectSelected, terrain->getTerrainPoint(mousePos));
+            }
         }
     }
 }

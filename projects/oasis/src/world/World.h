@@ -17,6 +17,7 @@ public:
     void render();
     
     void addObject(std::string objectName, glm::fvec3 position);
+    void addObstacle(glm::fvec3 position);
     
     virtual void onMessage(IMessage *message);
     

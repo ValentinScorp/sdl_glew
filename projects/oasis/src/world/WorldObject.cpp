@@ -30,9 +30,9 @@ bool WorldObject::init( std::string name,
         if (iniFile->getParameter(name, "staticPosition").toInt()) {
             agent.setObstacleOnAiMap();
         }
-        
-        float unitWidth = 4.0;
-        float unitHeight = 10.0;
+
+        float unitWidth = iniFile->getParameter(name, "unitSize").toFloat();
+        float unitHeight = iniFile->getParameter(name, "unitHeight").toFloat();
         
         unitSelection = std::make_shared<UnitSelection>();
         unitSelection->init(renderer, unitWidth);

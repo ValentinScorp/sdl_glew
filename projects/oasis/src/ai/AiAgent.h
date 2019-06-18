@@ -29,6 +29,7 @@ public:
     glm::fvec2 calcSteerForce(glm::fvec2 pos, glm::fvec2 dest, glm::fvec2 vel);
     glm::fvec2 calcSeparationForce(std::vector<AiAgent> &agents, glm::fvec2 pos, glm::fvec2 vel);
     void setCollisionRadius(float radius);
+    void calcNextPosition(std::vector<AiAgent> &agents, glm::fvec2 &nextPos);
     
     void onMessage(IMessage *message);
     
