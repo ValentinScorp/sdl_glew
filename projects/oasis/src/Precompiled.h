@@ -11,6 +11,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/ext.hpp>
+#include <glm/gtx/perpendicular.hpp> 
 
 #include <stdio.h>
 #include <vector>
@@ -37,6 +38,7 @@
 #include "gui/GuiPanel.h"
 
 #include "graphics/RenderQuad.h"
+#include "graphics/RenderLine.h"
 #include "graphics/TerrainBrush.h"
 #include "graphics/Console.h"
 #include "graphics/Camera.h"

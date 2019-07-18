@@ -25,6 +25,6 @@ private:
     std::vector<AiObstacle> obstacles;
     Camera *camera = nullptr;
     
-    
+    std::shared_ptr<Renderer> renderer = nullptr;
 };
 

@@ -73,6 +73,8 @@ void World::onMessage(IMessage *message) {
             auto mousePos = message->getMousePosition();
             if (currentObjectSelected != "Banner") {
                 addObject(currentObjectSelected, terrain->getTerrainPoint(mousePos));
+            } else {
+                aiContainer->createObstacle(nullptr);
             }
         }
     }

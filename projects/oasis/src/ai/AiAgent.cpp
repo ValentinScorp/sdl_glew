@@ -6,14 +6,15 @@ AiAgent::AiAgent() {
     acceleration = glm::fvec3(0.0f);
 }
 
-AiAgent::~AiAgent()
-{
+AiAgent::~AiAgent() {
+    destroyRenderLine();
 }
 
-void AiAgent::init(Camera* cam, Pathfinder *pf, WorldObject* wo){
+void AiAgent::init(Camera* cam, Pathfinder *pf, WorldObject* wo, std::shared_ptr<Renderer> r){
     camera = cam;
     pathfinder = pf;
     worldObject = wo;
+    renderer = r;
     
     position = glm::fvec2(0.0f, 0.0f);
    //position = glm::fvec3(0.0f, 0.0f, 0.0f);
@@ -22,6 +23,12 @@ void AiAgent::init(Camera* cam, Pathfinder *pf, WorldObject* wo){
     
    // setPosition(position);
     //makeFinalMatrix();
+}
+
+void AiAgent::render() {
+    if (renderLine) {
+        renderLine->renderAt(glm::fvec3(0.0f, 0.0f, 0.0f));
+    }
 }
 
 void AiAgent::createSelectionBox(float unitWidth, float unitHeight) {
@@ -237,6 +244,20 @@ void AiAgent::createPath(glm::fvec2 destination) {
     pathfinder->removeStaticObstacle(position);
     pathfinder->getPath(position, glm::fvec2(destination.x, destination.y), movementPath);
     pathfinder->setStaticObstacle(position);
+    
+    destroyRenderLine();
+    if (movementPath.size() > 2) {
+        renderLine = new RenderLine();
+        renderLine->init(renderer, glm::fvec3(movementPath[1].x, movementPath[1].y, 0.2f), glm::fvec3(movementPath[2].x, movementPath[2].y, 0.2f), 4.0f);
+    }
+}
+
+void AiAgent::destroyRenderLine() {
+    if (renderLine) {
+        renderLine->destroy();
+        delete renderLine;
+        renderLine = nullptr;
+    }
 }
 
 void AiAgent::startMove(glm::fvec3 destination) {

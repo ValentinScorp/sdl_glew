@@ -39,13 +39,13 @@ void RenderObject::destroy() {
     mRenderer->unloadTexture(glTexture);
     mRenderer->destroyBuffer(glCameraMatricesUbo);
     mRenderer->destroyProgram(glProgram);
-    mRenderer->destroyBuffer(glVao);
+    mRenderer->destroyVertexArray(glVao);
     mRenderer->destroyBuffer(glVbo);
 }
 
 void RenderObject::render(glm::fmat4 orientationMatrix) {
     glUseProgram(glProgram);
-    
+       
     mRenderer->updateView(glCameraMatricesUbo);
     glUniformMatrix4fv(glModelMatrixUniform, 1, GL_FALSE, glm::value_ptr(orientationMatrix));
     glBindBuffer(GL_ARRAY_BUFFER, glVbo);

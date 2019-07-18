@@ -15,9 +15,10 @@ public:
     
     void createSelectionBox(float unitWidth, float unitHeight);
     
-    void init(Camera* cam, Pathfinder *pf, WorldObject* wo);
+    void init(Camera* cam, Pathfinder *pf, WorldObject* wo, std::shared_ptr<Renderer> r);
     void updateColisions(AiAgent *obstacle);
     void update(std::vector<AiAgent> &agents);
+    void render();
     bool lineIntersetsCircle(glm::fvec3 p1, glm::fvec3 p2, glm::fvec3 center, float radius);
     void avoidObstacle(AiAgent *obstacle);
     void move(std::vector<AiAgent> &agents);
@@ -30,6 +31,7 @@ public:
     glm::fvec2 calcSeparationForce(std::vector<AiAgent> &agents, glm::fvec2 pos, glm::fvec2 vel);
     void setCollisionRadius(float radius);
     void calcNextPosition(std::vector<AiAgent> &agents, glm::fvec2 &nextPos);
+    void destroyRenderLine();
     
     void onMessage(IMessage *message);
     
@@ -61,5 +63,8 @@ public:
     Pathfinder* pathfinder = nullptr;
     std::vector<glm::fvec2> movementPath;
     size_t currentPath = 0;
+    
+    RenderLine *renderLine = nullptr;
+    std::shared_ptr<Renderer> renderer = nullptr;
 };
 

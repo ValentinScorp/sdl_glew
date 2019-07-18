@@ -85,7 +85,7 @@ void Terrain::destroy() {
      
     mRenderer->destroyBuffer(glCameraMatricesUbo);
     mRenderer->destroyProgram(glProgram);
-    mRenderer->destroyBuffer(glVao);
+    mRenderer->destroyVertexArray(glVao);
     mRenderer->destroyBuffer(glVbo);
     
     terrainBrush->destroy();
@@ -137,12 +137,12 @@ void Terrain::render() {
         
         glDrawArrays(GL_TRIANGLES, i * 6, 6);
         
-        mRenderer->undindTexture(5);
-        mRenderer->undindTexture(4);
-        mRenderer->undindTexture(3);
-        mRenderer->undindTexture(2);
-        mRenderer->undindTexture(1);
-        mRenderer->undindTexture(0);
+        mRenderer->unbindTexture(5);
+        mRenderer->unbindTexture(4);
+        mRenderer->unbindTexture(3);
+        mRenderer->unbindTexture(2);
+        mRenderer->unbindTexture(1);
+        mRenderer->unbindTexture(0);
     }
 
     glDisableVertexAttribArray(0);

@@ -16,6 +16,7 @@ void AiContainer::init(std::shared_ptr<Renderer> renderer, Camera *cam, std::sha
     Uint16 hTilesInPatch = cfg->getParameter("Terrain", "hTilesInPatch").toInt();
     float tileSize = cfg->getParameter("Terrain", "tileSize").toFloat();
     
+    this->renderer = renderer;
     pathfinder.init(renderer, wPatchesNum * wTilesInPatch * 2, hPatchesNum * hTilesInPatch * 2, tileSize / 2);
 }
 
@@ -32,11 +33,14 @@ void AiContainer::update() {
 
 void AiContainer::render() {
     pathfinder.render();
+    for (AiAgent& a : agents) {
+        a.render();
+    }
 }
 
 size_t AiContainer::createAgent(WorldObject *wo) {
     AiAgent agent;
-    agent.init(camera, &pathfinder, wo);
+    agent.init(camera, &pathfinder, wo, renderer);
     agents.push_back(agent);
     return (agents.size() - 1);
 }

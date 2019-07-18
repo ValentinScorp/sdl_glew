@@ -150,6 +150,7 @@ GLuint loadShader(std::string fileName, GLenum shaderType) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Compile failure in vertex shader -> %s\n%s\n", fileName.c_str(), strInfoLog);
         delete[] strInfoLog;
     }
+        
     return glShader;
 }
 
@@ -171,6 +172,7 @@ GLuint Renderer::createProgram(GLuint vertexShader, GLuint fragmentShader) {
     }
     glDetachShader(glProgram, vertexShader);
     glDetachShader(glProgram, fragmentShader);
+    showError("createProgram GLint");
     
     return glProgram;
 }
@@ -185,6 +187,7 @@ GLuint Renderer::createProgram(std::string vertexShaderFile, std::string fragmen
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
     
+    showError("createProgram string");
     return glProgram;
 }
 
@@ -208,6 +211,8 @@ GLuint Renderer::createUbo(GLuint program, std::string paramName, GLsizeiptr siz
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
     glBindBufferRange(GL_UNIFORM_BUFFER, uniformBlockBindingCounter, glUniformBufferObject, 0, size);
     uniformBlockBindingCounter++;
+    
+    showError("createUbo");
     return glUniformBufferObject;
 }
 
@@ -217,12 +222,13 @@ GLuint Renderer::createVbo(const GLvoid *data, GLsizeiptr size) {
     glBindBuffer(GL_ARRAY_BUFFER, glVbo);
     glBufferData(GL_ARRAY_BUFFER, size, data, GL_STREAM_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    
+    showError("createVbo");
     return glVbo;
 }
 
 void Renderer::destroyBuffer(GLuint buffer) {
     glDeleteBuffers(1, &buffer);
+    showError("destroyBuffer");
 }
 
 GLuint Renderer::createVao(GLuint glVbo, GLsizeiptr attribNum1, GLsizeiptr attribNum2, GLsizeiptr attribNum3, GLsizeiptr attribNum4, GLsizeiptr attribNum5, GLsizeiptr componentSize) {
@@ -249,13 +255,19 @@ GLuint Renderer::createVao(GLuint glVbo, GLsizeiptr attribNum1, GLsizeiptr attri
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
     
+    showError("createVao");
     return glVao;
+}
+
+void Renderer::destroyVertexArray(GLuint vao) {
+    glDeleteVertexArrays(1, &vao);
 }
 
 void Renderer::sendSubDataToVbo(GLuint glVbo, GLintptr offset, void* data, GLsizeiptr size) {
     glBindBuffer(GL_ARRAY_BUFFER, glVbo);
     glBufferSubData(GL_ARRAY_BUFFER, offset, size, data);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+    showError("sendSubDataToVbo");
 }
 
 void Renderer::sendTexture(Uint16 texNum, GLuint glTexture, GLuint glProgram, std::string textureNameInProgram) {
@@ -274,9 +286,11 @@ void Renderer::sendTexture(Uint16 texNum, GLuint glTexture, GLuint glProgram, st
     glActiveTexture(textureUnit);
     glBindTexture(GL_TEXTURE_2D, glTexture);
     glUniform1i(glGetUniformLocation(glProgram, textureNameInProgram.c_str()), texNum);
+    
+    showError("sendTexture");
 }
 
-void Renderer::undindTexture(Uint16 texNum) {
+void Renderer::unbindTexture(Uint16 texNum) {
     switch(texNum) {
         case 0: glActiveTexture(GL_TEXTURE0); break;
         case 1: glActiveTexture(GL_TEXTURE1); break;
@@ -289,11 +303,13 @@ void Renderer::undindTexture(Uint16 texNum) {
         default: break;
     }
     glBindTexture(GL_TEXTURE_2D, 0);
+    showError("unbindTexture");
 }
 
 
 void Renderer::destroyVertexArrays(GLuint vertexArray) {
     glDeleteVertexArrays(1, &vertexArray);
+    showError("destroyVertexArrays");
 }
 
 void Renderer::updateView(GLuint glUboMatricesInShader) {
@@ -303,9 +319,23 @@ void Renderer::updateView(GLuint glUboMatricesInShader) {
         glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(viewMatrix));
         glBindBuffer(GL_UNIFORM_BUFFER, 0);
         
+        showError("updateView 1");
+        
         glm::mat4 camMatrix = camera->getCamMatrix();
         glBindBuffer(GL_UNIFORM_BUFFER, glUboMatricesInShader);
+        showError("updateView 1.1");
         glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(camMatrix));
+        showError("updateView 1.2");
         glBindBuffer(GL_UNIFORM_BUFFER, 0);
+        
+        showError("updateView 2");
+    }
+}
+
+void Renderer::showError(std::string descr) {
+    GLenum err;
+    while ((err = glGetError()) != GL_NO_ERROR) {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "%s\n", descr.c_str());
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "OpenGL cycle error -> %d\n", err);
     }
 }

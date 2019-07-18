@@ -67,6 +67,6 @@ void UnitSelection::destroy() {
     mRenderer->unloadTexture(glTexture);
     mRenderer->destroyBuffer(glCameraMatricesUbo);
     mRenderer->destroyProgram(glProgram);
-    mRenderer->destroyBuffer(glVao);
+    mRenderer->destroyVertexArray(glVao);
     mRenderer->destroyBuffer(glVbo);
 }

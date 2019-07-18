@@ -26,12 +26,15 @@ public:
     void destroyBuffer(GLuint buffer);
     
     GLuint createVao(GLuint glVbo, GLsizeiptr attribNum1, GLsizeiptr attribNum2, GLsizeiptr attribNum3, GLsizeiptr attribNum4, GLsizeiptr attribNum5, GLsizeiptr componentSize);
+    void destroyVertexArray(GLuint vao);
     void sendSubDataToVbo(GLuint glVbo, GLintptr offset, void* data, GLsizeiptr size);
     void sendTexture(Uint16 texNum, GLuint glTexture, GLuint glProgram, std::string textureNameInProgram);
-    void undindTexture(Uint16 texNum);
+    void unbindTexture(Uint16 texNum);
     
     void destroyVertexArrays(GLuint vertexArray);
     void updateView(GLuint glUboMatricesInShader);
+    
+    void showError(std::string descr);
     
     Camera *camera = nullptr;
     Terrain *terrain = nullptr;
