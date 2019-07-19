@@ -25,5 +25,7 @@ public:
     GLuint glVao = 0;
     
     std::shared_ptr<Renderer> mRenderer = nullptr;
+    
+    bool initialized = false;
 };
 

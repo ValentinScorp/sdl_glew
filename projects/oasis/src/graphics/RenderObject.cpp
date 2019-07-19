@@ -27,23 +27,31 @@ void RenderObject::init(std::shared_ptr<Renderer> renderer, std::shared_ptr<IniF
                                         "data/" + cfg->getParameter(objectName, "fragmentShader").value);
     
     glModelMatrixUniform = renderer->getParamFromProgram(glProgram, "modelMatrix");
-    glCameraMatricesUbo = renderer->createUbo(glProgram, "cameraMatrices", sizeof(glm::mat4) * 2);
+    GLuint bindingPoint = 0;
+    glCameraMatricesUbo = renderer->createUbo(glProgram, "cameraMatrices", sizeof(glm::mat4) * 2, bindingPoint);
     
     glVbo = renderer->createVbo(mesh->getVertexBufferData(), mesh->getVertexBufferSize());
     glVao = renderer->createVao(glVbo, 3, 3, 2, 0, 0, sizeof(float));
     
     renderer->updateView(glCameraMatricesUbo);
+    
+    initialized = true;
 }
 
 void RenderObject::destroy() {
     mRenderer->unloadTexture(glTexture);
-    mRenderer->destroyBuffer(glCameraMatricesUbo);
+    mRenderer->destroyBuffer("RenderObject glCameraMatricesUbo " + name, glCameraMatricesUbo);
     mRenderer->destroyProgram(glProgram);
     mRenderer->destroyVertexArray(glVao);
-    mRenderer->destroyBuffer(glVbo);
+    mRenderer->destroyBuffer("RenderObject glVbo " + name, glVbo);
+    
+    initialized = false;
 }
 
 void RenderObject::render(glm::fmat4 orientationMatrix) {
+    if (initialized == false) {
+        return;
+    }
     glUseProgram(glProgram);
        
     mRenderer->updateView(glCameraMatricesUbo);

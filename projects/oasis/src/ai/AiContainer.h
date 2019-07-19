@@ -12,17 +12,18 @@ public:
     void render();
     
     size_t createAgent(WorldObject *wo);
-    size_t createObstacle(WorldObject *wo);
+    AiObstacle* createObstacle(WorldObject *wo);
     
-    AiAgent& getAgent(size_t id);
+    AiAgent* getAgent(size_t id);
     void destroyAgent(size_t id);
     
     void onMessage(IMessage *message);
     
     Pathfinder pathfinder;
+    
 private:
-    std::vector<AiAgent> agents;
-    std::vector<AiObstacle> obstacles;
+    std::vector<AiAgent*> agentsPtr;
+    std::vector<AiObstacle*> obstacles;
     Camera *camera = nullptr;
     
     std::shared_ptr<Renderer> renderer = nullptr;

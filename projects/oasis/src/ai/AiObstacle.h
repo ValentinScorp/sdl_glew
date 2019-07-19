@@ -10,13 +10,19 @@ public:
     virtual ~AiObstacle();
     AiObstacle(const AiObstacle &) = default;
     
-    void init(Camera* cam, Pathfinder *pf, WorldObject* wo);
-    void placeLink(glm::fvec2 pos);
+    void init(Camera* cam, Pathfinder *pf, WorldObject* wo, std::shared_ptr<Renderer> r);
+    void destroy();
+    void render();
+    void createRenderWall();
    
     Camera* camera = nullptr;
     WorldObject* worldObject = nullptr;
     Pathfinder* pathfinder = nullptr;
     
-    std::vector<glm::fvec2> positions;
+    glm::fvec2 positionA;
+    glm::fvec2 positionB;
+    
+    RenderLine* renderLine = nullptr;
+    std::shared_ptr<Renderer> renderer = nullptr;
 };
 

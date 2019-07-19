@@ -91,8 +91,8 @@ void Console::init(std::shared_ptr<Renderer> renderer, std::shared_ptr<IniFile> 
 void Console::destroy() {
     // todo destroy char textures
     mRenderer->destroyProgram(glFontProgram);
-    mRenderer->destroyBuffer(glFontVao);
-    mRenderer->destroyBuffer(glFontVbo);
+    mRenderer->destroyVertexArray(glFontVao);
+    mRenderer->destroyBuffer("Console glFontVbo", glFontVbo);
 }
 
 void Console::loadFont(std::string path) {

@@ -43,6 +43,13 @@ void Renderer::loadObjects(std::string iniFile) {
     }
 }
 
+void Renderer::unloadObjects() {
+    for (auto &ro : renderObjects) {
+        ro->destroy();
+    }
+    renderObjects.clear();
+}
+
 std::shared_ptr<RenderObject> Renderer::getRenderObject(std::string name) {
     for (auto &object: renderObjects) {
         if (object->name == name) {
@@ -199,18 +206,30 @@ GLuint Renderer::getParamFromProgram(GLuint program, std::string paramName) {
     return glGetUniformLocation(program, paramName.c_str());
 }
 
-GLuint Renderer::createUbo(GLuint program, std::string paramName, GLsizeiptr size) {
+GLuint Renderer::createUbo(GLuint program, std::string paramName, GLsizeiptr size, GLuint &bindingPoint) {
     
     GLuint uniformBlockIndex = glGetUniformBlockIndex(program, paramName.c_str());
-    glUniformBlockBinding(program, uniformBlockIndex, uniformBlockBindingCounter);
-        
+    showError("createUbo 1");
+    
+    glUniformBlockBinding(program, uniformBlockIndex, bindingPoint);
+   // std::cout << "program  " << program << std::endl;
+   // std::cout << "uniformBlockIndex " << uniformBlockIndex << std::endl;
+   // std::cout << "uniformBlockBindingCounter " << uniformBlockBindingCounter << std::endl;
+    showError("createUbo 2");
+    
     GLuint glUniformBufferObject = 0;
     glGenBuffers(1, &glUniformBufferObject);
+    showError("createUbo 3");
     glBindBuffer(GL_UNIFORM_BUFFER, glUniformBufferObject);
+    showError("createUbo 4");
     glBufferData(GL_UNIFORM_BUFFER, size, NULL, GL_STREAM_DRAW);
+    showError("createUbo 5");
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
-    glBindBufferRange(GL_UNIFORM_BUFFER, uniformBlockBindingCounter, glUniformBufferObject, 0, size);
-    uniformBlockBindingCounter++;
+    showError("createUbo 6");
+    
+    
+    glBindBufferRange(GL_UNIFORM_BUFFER, bindingPoint, glUniformBufferObject, 0, size);
+    //uniformBlockBindingCounter++;
     
     showError("createUbo");
     return glUniformBufferObject;
@@ -226,9 +245,9 @@ GLuint Renderer::createVbo(const GLvoid *data, GLsizeiptr size) {
     return glVbo;
 }
 
-void Renderer::destroyBuffer(GLuint buffer) {
+void Renderer::destroyBuffer(std::string bufferName, GLuint buffer) {
     glDeleteBuffers(1, &buffer);
-    showError("destroyBuffer");
+    showError(bufferName + std::string(" destroyBuffer"));
 }
 
 GLuint Renderer::createVao(GLuint glVbo, GLsizeiptr attribNum1, GLsizeiptr attribNum2, GLsizeiptr attribNum3, GLsizeiptr attribNum4, GLsizeiptr attribNum5, GLsizeiptr componentSize) {

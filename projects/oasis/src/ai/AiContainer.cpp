@@ -21,43 +21,55 @@ void AiContainer::init(std::shared_ptr<Renderer> renderer, Camera *cam, std::sha
 }
 
 void AiContainer::destroy() {
-    agents.clear();
+    for (auto &a: agentsPtr) {
+        a->destroy();
+    }
+    agentsPtr.clear();
+    
+    for (auto &o: obstacles) {
+        o->destroy();
+    }
+    obstacles.clear();
 }
 
 void AiContainer::update() {
-    for (auto &a : agents) {
-        a.update(agents);
+    for (AiAgent* a : agentsPtr) {
+        a->update(agentsPtr);
     }
     pathfinder.aiMap.update();
 }
 
 void AiContainer::render() {
     pathfinder.render();
-    for (AiAgent& a : agents) {
-        a.render();
+    for (AiAgent* a : agentsPtr) {
+        a->render();
+    }
+    for (auto &o: obstacles) {
+        o->render();
     }
 }
 
 size_t AiContainer::createAgent(WorldObject *wo) {
-    AiAgent agent;
-    agent.init(camera, &pathfinder, wo, renderer);
-    agents.push_back(agent);
-    return (agents.size() - 1);
+    auto agent = new AiAgent();
+    agent->init(camera, &pathfinder, wo, renderer);
+    agentsPtr.push_back(agent);
+    
+    return (agentsPtr.size() - 1);
 }
 
-size_t AiContainer::createObstacle(WorldObject *wo) {
-    AiObstacle obstacle;
-    obstacle.init(camera, &pathfinder, wo);
+AiObstacle* AiContainer::createObstacle(WorldObject *wo) {
+    AiObstacle* obstacle = new AiObstacle();
+    obstacle->init(camera, &pathfinder, wo, renderer);
     obstacles.push_back(obstacle);
-    return (obstacles.size() - 1);
+    return obstacle;
 }
 
-AiAgent& AiContainer::getAgent(size_t id) {
-    return agents[id];
+AiAgent* AiContainer::getAgent(size_t id) {
+    return agentsPtr[id];
 }
 
 void AiContainer::onMessage(IMessage *message) {
-    for (auto& a: agents) {
-        a.onMessage(message);
+    for (auto& a: agentsPtr) {
+        a->onMessage(message);
     }
 }

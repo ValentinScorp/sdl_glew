@@ -46,7 +46,7 @@ void Button::init(std::shared_ptr<Renderer> renderer, glm::fvec2 position, glm::
 void Button::destroy() {
     renderer->destroyProgram(glProgram);
     renderer->destroyVertexArray(glVao);
-    renderer->destroyBuffer(glVbo);
+    renderer->destroyBuffer("Button glVbo", glVbo);
 }
 
 void Button::render() {

@@ -22,7 +22,8 @@ void RenderQuad::init(std::shared_ptr<Renderer> renderer, float width) {
     
     glProgram = renderer->createProgram("data/terrainBrush.vert", "data/terrainBrush.frag");
     glModelMatrixUniform = renderer->getParamFromProgram(glProgram, "modelMatrix");
-    glCameraMatricesUbo = renderer->createUbo(glProgram, "cameraMatrices", sizeof(glm::mat4) * 2);
+    GLuint bindingPoint = 0;
+    glCameraMatricesUbo = renderer->createUbo(glProgram, "cameraMatrices", sizeof(glm::mat4) * 2, bindingPoint);
     glVbo = renderer->createVbo(vertexes.data(), vertexes.size() * sizeof(Vertex));
     glVao = renderer->createVao(glVbo, 3, 0, 0, 0, 0, sizeof(float));
     
@@ -30,10 +31,10 @@ void RenderQuad::init(std::shared_ptr<Renderer> renderer, float width) {
 }
 
 void RenderQuad::destroy() {
-    renderer->destroyBuffer(glCameraMatricesUbo);
+    renderer->destroyBuffer("RenderQuad glCameraMatricesUbo", glCameraMatricesUbo);
     renderer->destroyProgram(glProgram);
     renderer->destroyVertexArray(glVao);
-    renderer->destroyBuffer(glVbo);
+    renderer->destroyBuffer("RenderQuad glVbo", glVbo);
 }
 
 void RenderQuad::renderAt(glm::fvec3 position) {

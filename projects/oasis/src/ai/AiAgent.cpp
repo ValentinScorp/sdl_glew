@@ -25,9 +25,15 @@ void AiAgent::init(Camera* cam, Pathfinder *pf, WorldObject* wo, std::shared_ptr
     //makeFinalMatrix();
 }
 
+void AiAgent::destroy() {
+    destroyRenderLine();
+}
+
 void AiAgent::render() {
-    if (renderLine) {
-        renderLine->renderAt(glm::fvec3(0.0f, 0.0f, 0.0f));
+    for (auto &rl: renderPath) {
+        if (rl) {
+            rl->renderAt();
+        }
     }
 }
 
@@ -138,16 +144,16 @@ glm::fvec2 AiAgent::calcSteerForce(glm::fvec2 pos, glm::fvec2 dest, glm::fvec2 v
     return steerForce;
 }
 
-glm::fvec2 AiAgent::calcSeparationForce(std::vector<AiAgent> &agents, glm::fvec2 pos, glm::fvec2 vel) {
+glm::fvec2 AiAgent::calcSeparationForce(std::vector<AiAgent*> &agents, glm::fvec2 pos, glm::fvec2 vel) {
     float desiredSeparation = 5.0f;
     glm::fvec2 steer = glm::fvec2(0.0f, 0.0f);
     Sint16 count = 0;
     
     for (size_t i = 0; i < agents.size(); i++) {
     //for (auto &a: globalAgents) {
-        float d = glm::length(agents[i].position - pos);
+        float d = glm::length(agents[i]->position - pos);
         if (d > 0 && d < desiredSeparation) {
-            glm::fvec2 diff = pos - agents[i].position;
+            glm::fvec2 diff = pos - agents[i]->position;
             diff = glm::normalize(diff);
             diff = diff / d;
             steer += diff;
@@ -169,7 +175,7 @@ glm::fvec2 AiAgent::calcSeparationForce(std::vector<AiAgent> &agents, glm::fvec2
     return steer;
 }
 
-void AiAgent::calcNextPosition(std::vector<AiAgent> &agents, glm::fvec2 &nextPos) {
+void AiAgent::calcNextPosition(std::vector<AiAgent*> &agents, glm::fvec2 &nextPos) {
     if (movementPath.size() > 1) {
         location = position;
               
@@ -197,7 +203,7 @@ void AiAgent::calcNextPosition(std::vector<AiAgent> &agents, glm::fvec2 &nextPos
     }
 }
 
-void AiAgent::move(std::vector<AiAgent> &agents) {
+void AiAgent::move(std::vector<AiAgent*> &agents) {
     
     if (currentPath < (movementPath.size() - 1)) {
         if (position != movementPath[currentPath + 1]) {
@@ -218,7 +224,7 @@ void AiAgent::updateColisions(AiAgent *obstacle) {
         //avoidObstacle(obstacle);
     }
 }
-void AiAgent::update(std::vector<AiAgent> &agents) {
+void AiAgent::update(std::vector<AiAgent*> &agents) {
     
     if (moving) {
         move(agents);
@@ -246,18 +252,27 @@ void AiAgent::createPath(glm::fvec2 destination) {
     pathfinder->setStaticObstacle(position);
     
     destroyRenderLine();
-    if (movementPath.size() > 2) {
-        renderLine = new RenderLine();
-        renderLine->init(renderer, glm::fvec3(movementPath[1].x, movementPath[1].y, 0.2f), glm::fvec3(movementPath[2].x, movementPath[2].y, 0.2f), 4.0f);
+    if (movementPath.size() > 1) {
+        for (size_t i = 0; i < (movementPath.size() - 1); i++) {
+            RenderLine* renderLine = new RenderLine();
+            renderLine->init(renderer, 
+                             glm::fvec3(movementPath[i].x, movementPath[i].y, 0.2f), 
+                             glm::fvec3(movementPath[i+1].x, movementPath[i+1].y, 0.2f), 
+                             0.5f);
+            renderPath.push_back(renderLine);
+        }
     }
 }
 
 void AiAgent::destroyRenderLine() {
-    if (renderLine) {
-        renderLine->destroy();
-        delete renderLine;
-        renderLine = nullptr;
+    for (size_t i = 0; i < renderPath.size(); i++) {
+        if (renderPath[i]) {
+            renderPath[i]->destroy();
+            delete renderPath[i];
+            renderPath[i] = nullptr;
+        }
     }
+    renderPath.clear();
 }
 
 void AiAgent::startMove(glm::fvec3 destination) {

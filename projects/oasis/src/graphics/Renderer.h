@@ -12,6 +12,7 @@ public:
     
     void init(std::shared_ptr<IniFile> config);
     void loadObjects(std::string iniFile);
+    void unloadObjects();
     std::shared_ptr<RenderObject> getRenderObject(std::string name);
     GLuint createTexture(GLsizei width, GLsizei height, GLenum internalFormat, GLenum format, GLvoid *data);
     GLuint loadTexture(std::string fileName, bool flipVertical = false);
@@ -21,9 +22,9 @@ public:
     void destroyProgram(GLuint program);
     
     GLuint getParamFromProgram(GLuint program, std::string paramName);
-    GLuint createUbo(GLuint program, std::string paramName, GLsizeiptr size);
+    GLuint createUbo(GLuint program, std::string paramName, GLsizeiptr size, GLuint &bindingPoint);
     GLuint createVbo(const GLvoid *data, GLsizeiptr size);
-    void destroyBuffer(GLuint buffer);
+    void destroyBuffer(std::string bufferName, GLuint buffer);
     
     GLuint createVao(GLuint glVbo, GLsizeiptr attribNum1, GLsizeiptr attribNum2, GLsizeiptr attribNum3, GLsizeiptr attribNum4, GLsizeiptr attribNum5, GLsizeiptr componentSize);
     void destroyVertexArray(GLuint vao);

@@ -70,7 +70,7 @@ int main(int argc, char **argv)
     
     if (window == NULL) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to create SDL window -> %s", SDL_GetError());
-        SDL_Quit();       
+        SDL_Quit();
         return -1;
     }
     
@@ -172,8 +172,9 @@ int main(int argc, char **argv)
     }
     
     guiPanel.destroy();
-    //objectRoman.destroy();
+    //objectRoman.destroy();    
     world.destroy();
+    renderer->unloadObjects();
     Console::getInstance().destroy();
     aiContainer->destroy();
         

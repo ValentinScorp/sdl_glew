@@ -57,7 +57,7 @@ void ListboxItem::init(std::shared_ptr<Renderer> renderer, glm::fvec2 position, 
 void ListboxItem::destroy() {
     renderer->destroyProgram(glProgram);
     renderer->destroyVertexArray(glVao);
-    renderer->destroyBuffer(glVbo);
+    renderer->destroyBuffer("ListboxItem glVbo", glVbo);
 }
 
 void ListboxItem::render() {
@@ -213,7 +213,7 @@ void Listbox::destroy() {
     
     renderer->destroyProgram(glProgram);
     renderer->destroyVertexArray(glVao);
-    renderer->destroyBuffer(glVbo);
+    renderer->destroyBuffer("Listbox glVbo", glVbo);
 }
 
 void Listbox::render() {

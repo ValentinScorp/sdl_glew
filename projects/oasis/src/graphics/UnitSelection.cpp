@@ -27,7 +27,8 @@ void UnitSelection::init(std::shared_ptr<Renderer> renderer, float size) {
     glModelMatrixUniform = mRenderer->getParamFromProgram(glProgram, "modelMatrix");   
     glGetUniformLocation(glProgram, "modelMatrix"); 
     
-    glCameraMatricesUbo = mRenderer->createUbo(glProgram, "cameraMatrices", sizeof(glm::mat4) * 2);
+    GLuint bindingPoint = 0;
+    glCameraMatricesUbo = mRenderer->createUbo(glProgram, "cameraMatrices", sizeof(glm::mat4) * 2, bindingPoint);
  
     glVbo = mRenderer->createVbo(vertices.data(), vertices.size() * sizeof(Vertex));
     glVao = mRenderer->createVao(glVbo, 3, 2, 0, 0, 0, sizeof(float));
@@ -65,8 +66,8 @@ void UnitSelection::render() {
 
 void UnitSelection::destroy() {
     mRenderer->unloadTexture(glTexture);
-    mRenderer->destroyBuffer(glCameraMatricesUbo);
+    mRenderer->destroyBuffer("UnitSelection glCameraMatricesUbo", glCameraMatricesUbo);
     mRenderer->destroyProgram(glProgram);
     mRenderer->destroyVertexArray(glVao);
-    mRenderer->destroyBuffer(glVbo);
+    mRenderer->destroyBuffer("UnitSelection glVbo", glVbo);
 }

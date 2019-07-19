@@ -31,7 +31,8 @@ public:
 	~RenderLine();
     
     void init(std::shared_ptr<Renderer> renderer, glm::fvec3 pointA, glm::fvec3 pointB, float width);
-	void renderAt(glm::fvec3 position);
+    void initWall(std::shared_ptr<Renderer> renderer, glm::fvec3 pointA, glm::fvec3 pointB, float height);
+	void renderAt(glm::fvec3 position = glm::fvec3(0.0f, 0.0f, 0.0f));
     void destroy();
 private:
 	std::shared_ptr<Renderer> renderer;
@@ -44,5 +45,7 @@ private:
     GLuint glVao = 0;
     
     glm::fmat4 orientationMatrix;
+    
+    bool initialized = false;
 };
 

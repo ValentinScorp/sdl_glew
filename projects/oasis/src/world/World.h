@@ -31,5 +31,9 @@ private:
     std::vector<std::shared_ptr<WorldObject>> worldObjects;
     
     std::string currentObjectSelected;
+    
+    glm::fvec2 lastObstaclePoint = glm::fvec2(0.0f, 0.0f);
+    bool obstaclePlaceBegin = false;
+    AiObstacle* currentObstacle = nullptr;
 };
 

@@ -59,7 +59,8 @@ void Terrain::init(std::shared_ptr<Renderer> renderer) {
     glUniform_lightIntensity = renderer->getParamFromProgram(glProgram, "lightIntensity");
     glUniform_ambientIntensity = renderer->getParamFromProgram(glProgram, "ambientIntensity");
     
-    glCameraMatricesUbo = renderer->createUbo(glProgram, "cameraMatrices", sizeof(glm::mat4) * 2);
+    GLuint bindingPoint = 0;
+    glCameraMatricesUbo = renderer->createUbo(glProgram, "cameraMatrices", sizeof(glm::mat4) * 2, bindingPoint);
         
     glVbo = renderer->createVbo(vertexes.data(), vertexes.size() * sizeof(Vertex));
     glVao = renderer->createVao(glVbo, 3, 3, 2, 2, 0, sizeof(float));
@@ -83,10 +84,10 @@ void Terrain::destroy() {
     mRenderer->unloadTexture(glAlphaFull);
     mRenderer->unloadTexture(glAlphaDiag);
      
-    mRenderer->destroyBuffer(glCameraMatricesUbo);
+    mRenderer->destroyBuffer("Terrain glCameraMatricesUbo", glCameraMatricesUbo);
     mRenderer->destroyProgram(glProgram);
     mRenderer->destroyVertexArray(glVao);
-    mRenderer->destroyBuffer(glVbo);
+    mRenderer->destroyBuffer("Terrain glVbo", glVbo);
     
     terrainBrush->destroy();
     terrainBrush.reset();
