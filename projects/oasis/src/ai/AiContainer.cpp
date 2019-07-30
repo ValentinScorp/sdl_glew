@@ -64,6 +64,10 @@ AiObstacle* AiContainer::createObstacle(WorldObject *wo) {
     return obstacle;
 }
 
+void AiContainer::calcBlockNodes(AiObstacle *obstacle) {
+    pathfinder.placeBlocks(obstacle->positionA, obstacle->positionB);
+}
+
 AiAgent* AiContainer::getAgent(size_t id) {
     return agentsPtr[id];
 }

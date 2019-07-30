@@ -22,6 +22,7 @@ public:
     Sint16 neibours[NEIB_MAX];
     
     Sint16 blockLevel = 0;
+    Sint16 agent = 0;
     
     Sint16 startNodeDistance = 0;
     Sint16 endNodeDistance = 0;
@@ -47,7 +48,10 @@ public:
     Sint16 getNodesCount();
     void setObstacle(Sint16 nodeIndex);
     void clearObstacle(Sint16 nodeIndex);
+    void setAgent(Sint16 nodeIndex);
+    void clearAgent(Sint16 nodeIndex);
     bool isObstacle(Sint16 nodeIndex);
+    bool isAgent(Sint16 nodeIndex);
     float getDistance(Sint16 nodeA, Sint16 nodeB);
     
     bool getPath(std::vector<Sint16> &path, Sint16 start, Sint16 end);

@@ -50,15 +50,15 @@ void Pathfinder::getPath(glm::fvec2 begin, glm::fvec2 end, std::vector<glm::fvec
   //  findPath.print("Path found in");
     
   //  std::cout << std::endl;
-    path.push_back(begin);
+   // path.push_back(begin);
     //for (Sint16 i = 1; i < pathIndexes.size() - 1; i++) {
-    for (Sint16 i = 0; i < pathIndexes.size(); i++) {
+    for (Uint16 i = 0; i < pathIndexes.size(); i++) {
         glm::fvec2 pos = getNodePosition(pathIndexes[i]);
         path.push_back(pos);
     }
-    path.push_back(end);
-    for (Sint16 i = 0; i < pathIndexes.size(); i++) {
-        glm::fvec2 pos = getNodePosition(pathIndexes[i]);
+    //path.push_back(end);
+    for (Uint16 i = 0; i < pathIndexes.size(); i++) {
+     //   glm::fvec2 pos = getNodePosition(pathIndexes[i]);
        // std::cout << "found path " << pos.x << " x " << pos.y << std::endl;
     }
 }
@@ -110,8 +110,45 @@ void Pathfinder::removeStaticObstacle(glm::fvec2 position) {
         aiMap.clearObstacle(nodeIndex);
 }
 
+void Pathfinder::setDynamicObstacle(glm::fvec2 position) {
+    Sint16 nodeIndex = getNodeIndex(position);
+    if (nodeIndex >= 0) {
+        //std::cout << "setting obstacle at index  " << nodeIndex << std::endl;
+        //std::cout << "setting obstacle at node pos  " << aiMap.nodes[nodeIndex].selfX << " x " << aiMap.nodes[nodeIndex].selfY << std::endl;
+        aiMap.setAgent(nodeIndex);
+        
+    }
+}
+
+void Pathfinder::removeDynamicObstacle(glm::fvec2 position) {
+    Sint16 nodeIndex = getNodeIndex(position);
+    if (nodeIndex >= 0)
+        aiMap.clearAgent(nodeIndex);
+}
+
+
 bool Pathfinder::isObstacle(glm::fvec2 position) {
     Sint16 nodeIndex = getNodeIndex(position);
     if (nodeIndex >= 0)
         return aiMap.isObstacle(nodeIndex);
+    
+    return false;
+}
+
+void Pathfinder::placeBlocks(glm::fvec2 a, glm::fvec2 b) {
+    
+    glm::fvec2 dir = b - a;
+    float len = glm::length(dir);
+    
+    dir = glm::normalize(dir);
+    
+    Uint16 step = 1;
+    if (nodeWidth != 0)
+        step = len / nodeWidth;
+    
+    float w = nodeWidth;
+    for (Uint16 i = 0; i < step + 1; i++) {
+        glm::fvec2 point = a + dir * w * (float)i;
+        setStaticObstacle(point);
+    }
 }

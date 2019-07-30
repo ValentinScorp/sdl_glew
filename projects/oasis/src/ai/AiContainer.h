@@ -14,6 +14,8 @@ public:
     size_t createAgent(WorldObject *wo);
     AiObstacle* createObstacle(WorldObject *wo);
     
+    void calcBlockNodes(AiObstacle *obstacle);
+    
     AiAgent* getAgent(size_t id);
     void destroyAgent(size_t id);
     

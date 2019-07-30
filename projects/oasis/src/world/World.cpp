@@ -85,6 +85,7 @@ void World::onMessage(IMessage *message) {
                     currentObstacle->positionA = lastObstaclePoint;
                     currentObstacle->positionB = glm::fvec2(terrain->getTerrainPoint(mousePos).x,
                                                             terrain->getTerrainPoint(mousePos).y);
+                    aiContainer->calcBlockNodes(currentObstacle);
                     currentObstacle->createRenderWall();
                     lastObstaclePoint = glm::fvec2(terrain->getTerrainPoint(mousePos).x,
                                                    terrain->getTerrainPoint(mousePos).y);

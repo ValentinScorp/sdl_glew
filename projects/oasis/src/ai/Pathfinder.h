@@ -18,7 +18,13 @@ public:
     
     void setStaticObstacle(glm::fvec2 position);
     void removeStaticObstacle(glm::fvec2 position);
+    
+    void setDynamicObstacle(glm::fvec2 position);
+    void removeDynamicObstacle(glm::fvec2 position);
+    
     bool isObstacle(glm::fvec2 position);
+    
+    void placeBlocks(glm::fvec2 a, glm::fvec2 b);
     
     AiMap aiMap;
     

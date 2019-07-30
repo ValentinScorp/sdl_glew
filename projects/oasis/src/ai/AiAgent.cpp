@@ -102,9 +102,17 @@ void AiAgent::avoidObstacle(AiAgent *obstacle) {
 */
 
 void AiAgent::tryMove(glm::fvec2 newPos) {
-    pathfinder->removeStaticObstacle(position);
+    
+    // todo rewrite movement
+    // 1. check (poisition - newPos) not intersect obstacles
+    // 2. if intersect adjust newPos to not intersect obstacle
+    // 3. check adjusted position not intersects with agents
+    // 4. if intersects do something (stop, avoid, recalc path, tell agent to go away)
+    // 5. check additional stop move conditions
+    
+    pathfinder->removeDynamicObstacle(position);
     if (pathfinder->isObstacle(newPos) == false) {
-        pathfinder->setStaticObstacle(newPos);
+        pathfinder->setDynamicObstacle(newPos);
         setPosition(newPos);
         
         float distance = glm::length(movementPath[currentPath + 1] - newPos);
@@ -117,7 +125,7 @@ void AiAgent::tryMove(glm::fvec2 newPos) {
             }
         }
     } else {
-        pathfinder->setStaticObstacle(position);
+        pathfinder->setDynamicObstacle(position);
         moving = false;
         currentPath = 0;
         
@@ -240,16 +248,16 @@ void AiAgent::setCollisionRadius(float radius) {
     collisionRadius = radius;
 }
 void AiAgent::setObstacleOnAiMap() {
-    pathfinder->setStaticObstacle(position);
+    pathfinder->setDynamicObstacle(position);
 }
 
 void AiAgent::createPath(glm::fvec2 destination) {
     movementPath.clear();
    // movementPath.push_back(position);
    // movementPath.push_back(destination);
-    pathfinder->removeStaticObstacle(position);
+    pathfinder->removeDynamicObstacle(position);
     pathfinder->getPath(position, glm::fvec2(destination.x, destination.y), movementPath);
-    pathfinder->setStaticObstacle(position);
+    pathfinder->setDynamicObstacle(position);
     
     destroyRenderLine();
     if (movementPath.size() > 1) {

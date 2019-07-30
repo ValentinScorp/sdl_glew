@@ -115,6 +115,14 @@ void AiMap::clearObstacle(Sint16 nodeIndex) {
     nodes[nodeIndex].blockLevel = 0;
 }
 
+void AiMap::setAgent(Sint16 nodeIndex) {
+    nodes[nodeIndex].agent = 1;
+}
+
+void AiMap::clearAgent(Sint16 nodeIndex) {
+    nodes[nodeIndex].agent = 0;
+}
+
 void AiMap::render(RenderQuad *renderQuad, float nodeWidth) {
     for (Sint16 i = 0; i < getNodesCount(); i++) {
         if (nodes[i].blockLevel != 0) {
