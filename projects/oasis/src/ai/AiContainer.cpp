@@ -26,10 +26,10 @@ void AiContainer::destroy() {
     }
     agentsPtr.clear();
     
-    for (auto &o: obstacles) {
-        o->destroy();
+    for (auto &w: walls) {
+        w->destroy();
     }
-    obstacles.clear();
+    walls.clear();
 }
 
 void AiContainer::update() {
@@ -44,8 +44,8 @@ void AiContainer::render() {
     for (AiAgent* a : agentsPtr) {
         a->render();
     }
-    for (auto &o: obstacles) {
-        o->render();
+    for (auto &w: walls) {
+        w->render();
     }
 }
 
@@ -57,15 +57,15 @@ size_t AiContainer::createAgent(WorldObject *wo) {
     return (agentsPtr.size() - 1);
 }
 
-AiObstacle* AiContainer::createObstacle(WorldObject *wo) {
-    AiObstacle* obstacle = new AiObstacle();
-    obstacle->init(camera, &pathfinder, wo, renderer);
-    obstacles.push_back(obstacle);
-    return obstacle;
+AiWall* AiContainer::createObstacle(WorldObject *wo) {
+    AiWall* wall = new AiWall();
+    wall->init(camera, &pathfinder, wo, renderer);
+    walls.push_back(wall);
+    return wall;
 }
 
-void AiContainer::calcBlockNodes(AiObstacle *obstacle) {
-    pathfinder.placeBlocks(obstacle->positionA, obstacle->positionB);
+void AiContainer::calcBlockNodes(AiWall *wall) {
+    pathfinder.placeBlocks(wall->positionA, wall->positionB);
 }
 
 AiAgent* AiContainer::getAgent(size_t id) {

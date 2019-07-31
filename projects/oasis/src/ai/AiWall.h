@@ -4,11 +4,11 @@ class Camera;
 class Pathfinder;
 class WorldObject;
 
-class AiObstacle {
+class AiWall {
 public:
-    AiObstacle();
-    virtual ~AiObstacle();
-    AiObstacle(const AiObstacle &) = default;
+    AiWall();
+    ~AiWall();
+    AiWall(const AiWall &) = default;
     
     void init(Camera* cam, Pathfinder *pf, WorldObject* wo, std::shared_ptr<Renderer> r);
     void destroy();

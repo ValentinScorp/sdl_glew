@@ -32,8 +32,8 @@ private:
     
     std::string currentObjectSelected;
     
-    glm::fvec2 lastObstaclePoint = glm::fvec2(0.0f, 0.0f);
-    bool obstaclePlaceBegin = false;
-    AiObstacle* currentObstacle = nullptr;
+    glm::fvec2 lastWallPoint = glm::fvec2(0.0f, 0.0f);
+    bool wallPlaceBegin = false;
+    AiWall* currentWall = nullptr;
 };
 

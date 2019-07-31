@@ -12,9 +12,9 @@ public:
     void render();
     
     size_t createAgent(WorldObject *wo);
-    AiObstacle* createObstacle(WorldObject *wo);
+    AiWall* createObstacle(WorldObject *wo);
     
-    void calcBlockNodes(AiObstacle *obstacle);
+    void calcBlockNodes(AiWall *obstacle);
     
     AiAgent* getAgent(size_t id);
     void destroyAgent(size_t id);
@@ -25,7 +25,7 @@ public:
     
 private:
     std::vector<AiAgent*> agentsPtr;
-    std::vector<AiObstacle*> obstacles;
+    std::vector<AiWall*> walls;
     Camera *camera = nullptr;
     
     std::shared_ptr<Renderer> renderer = nullptr;

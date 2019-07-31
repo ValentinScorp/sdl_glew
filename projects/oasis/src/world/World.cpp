@@ -67,7 +67,7 @@ void World::addObject(std::string objectName, glm::fvec3 position) {
 void World::onMessage(IMessage *message) {
     if (message) {
         if (message->getMessage() == "List box item changed") {
-            obstaclePlaceBegin = false;
+            wallPlaceBegin = false;
             currentObjectSelected = message->getSenderId();
         }
         if (message->getKeyPressed() == "left_mouse_button_pressed") {
@@ -76,18 +76,18 @@ void World::onMessage(IMessage *message) {
                 addObject(currentObjectSelected, terrain->getTerrainPoint(mousePos));
             } 
             if (currentObjectSelected == "Banner") {
-                if (!obstaclePlaceBegin) {
-                    obstaclePlaceBegin = true;
-                    lastObstaclePoint = glm::fvec2(terrain->getTerrainPoint(mousePos).x,
+                if (!wallPlaceBegin) {
+                    wallPlaceBegin = true;
+                    lastWallPoint = glm::fvec2(terrain->getTerrainPoint(mousePos).x,
                                                    terrain->getTerrainPoint(mousePos).y);
                 } else {
-                    currentObstacle = aiContainer->createObstacle(nullptr);
-                    currentObstacle->positionA = lastObstaclePoint;
-                    currentObstacle->positionB = glm::fvec2(terrain->getTerrainPoint(mousePos).x,
+                    currentWall = aiContainer->createObstacle(nullptr);
+                    currentWall->positionA = lastWallPoint;
+                    currentWall->positionB = glm::fvec2(terrain->getTerrainPoint(mousePos).x,
                                                             terrain->getTerrainPoint(mousePos).y);
-                    aiContainer->calcBlockNodes(currentObstacle);
-                    currentObstacle->createRenderWall();
-                    lastObstaclePoint = glm::fvec2(terrain->getTerrainPoint(mousePos).x,
+                    aiContainer->calcBlockNodes(currentWall);
+                    currentWall->createRenderWall();
+                    lastWallPoint = glm::fvec2(terrain->getTerrainPoint(mousePos).x,
                                                    terrain->getTerrainPoint(mousePos).y);
                 }
             }
