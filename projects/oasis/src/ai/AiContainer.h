@@ -12,7 +12,8 @@ public:
     void render();
     
     size_t createAgent(WorldObject *wo);
-    AiWall* createObstacle(WorldObject *wo);
+    AiWall* createWall();
+    AiObstacle* createObstacle(glm::fvec2 pos, float radius);
     
     void calcBlockNodes(AiWall *obstacle);
     
@@ -26,6 +27,7 @@ public:
 private:
     std::vector<AiAgent*> agentsPtr;
     std::vector<AiWall*> walls;
+    std::vector<AiObstacle*> obstacles;
     Camera *camera = nullptr;
     
     std::shared_ptr<Renderer> renderer = nullptr;

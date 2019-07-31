@@ -27,8 +27,8 @@ void GuiPanel::init(std::shared_ptr<Renderer> renderer) {
     testlistbox->addItem("None");
     testlistbox->addItem("Tree");
     testlistbox->addItem("Roman");
-    testlistbox->addItem("Banner");
-    testlistbox->addItem("Item 3");
+    testlistbox->addItem("Wall");
+    testlistbox->addItem("Obstacle");
     listboxes.push_back(std::move(testlistbox));
 }
 

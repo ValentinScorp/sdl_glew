@@ -72,16 +72,16 @@ void World::onMessage(IMessage *message) {
         }
         if (message->getKeyPressed() == "left_mouse_button_pressed") {
             auto mousePos = message->getMousePosition();
-            if (currentObjectSelected != "Banner") {
+            if (currentObjectSelected != "Banner" && currentObjectSelected != "Obstacle") {
                 addObject(currentObjectSelected, terrain->getTerrainPoint(mousePos));
             } 
-            if (currentObjectSelected == "Banner") {
+            if (currentObjectSelected == "Wall") {
                 if (!wallPlaceBegin) {
                     wallPlaceBegin = true;
                     lastWallPoint = glm::fvec2(terrain->getTerrainPoint(mousePos).x,
                                                    terrain->getTerrainPoint(mousePos).y);
                 } else {
-                    currentWall = aiContainer->createObstacle(nullptr);
+                    currentWall = aiContainer->createWall();
                     currentWall->positionA = lastWallPoint;
                     currentWall->positionB = glm::fvec2(terrain->getTerrainPoint(mousePos).x,
                                                             terrain->getTerrainPoint(mousePos).y);
@@ -90,6 +90,11 @@ void World::onMessage(IMessage *message) {
                     lastWallPoint = glm::fvec2(terrain->getTerrainPoint(mousePos).x,
                                                    terrain->getTerrainPoint(mousePos).y);
                 }
+            }
+            if (currentObjectSelected == "Obstacle") {
+                auto mousePos = message->getMousePosition();
+                auto terrainPoint = terrain->getTerrainPoint(mousePos);
+                aiContainer->createObstacle(glm::fvec2(terrainPoint.x, terrainPoint.y), 4.0f);
             }
         }
     }

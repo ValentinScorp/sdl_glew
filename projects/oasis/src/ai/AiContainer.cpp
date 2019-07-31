@@ -30,6 +30,11 @@ void AiContainer::destroy() {
         w->destroy();
     }
     walls.clear();
+    
+    for (auto &o: obstacles) {
+        o->destroy();
+    }
+    obstacles.clear();
 }
 
 void AiContainer::update() {
@@ -47,6 +52,9 @@ void AiContainer::render() {
     for (auto &w: walls) {
         w->render();
     }
+    for (auto &o: obstacles) {
+        o->render();
+    }
 }
 
 size_t AiContainer::createAgent(WorldObject *wo) {
@@ -57,11 +65,17 @@ size_t AiContainer::createAgent(WorldObject *wo) {
     return (agentsPtr.size() - 1);
 }
 
-AiWall* AiContainer::createObstacle(WorldObject *wo) {
+AiWall* AiContainer::createWall() {
     AiWall* wall = new AiWall();
-    wall->init(camera, &pathfinder, wo, renderer);
+    wall->init(camera, &pathfinder, renderer);
     walls.push_back(wall);
     return wall;
+}
+
+AiObstacle* AiContainer::createObstacle(glm::fvec2 pos, float radius) {
+    AiObstacle* obstacle = new AiObstacle();
+    obstacle->init(camera, &pathfinder, renderer, pos, radius);
+    obstacles.push_back(obstacle);
 }
 
 void AiContainer::calcBlockNodes(AiWall *wall) {

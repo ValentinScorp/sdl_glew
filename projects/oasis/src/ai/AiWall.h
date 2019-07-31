@@ -10,13 +10,12 @@ public:
     ~AiWall();
     AiWall(const AiWall &) = default;
     
-    void init(Camera* cam, Pathfinder *pf, WorldObject* wo, std::shared_ptr<Renderer> r);
+    void init(Camera* cam, Pathfinder *pf, std::shared_ptr<Renderer> r);
     void destroy();
     void render();
     void createRenderWall();
    
     Camera* camera = nullptr;
-    WorldObject* worldObject = nullptr;
     Pathfinder* pathfinder = nullptr;
     
     glm::fvec2 positionA;

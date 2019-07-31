@@ -49,6 +49,7 @@
 
 #include "ai/AiMap.h"
 #include "ai/AiWall.h"
+#include "ai/AiObstacle.h"
 #include "ai/AiAgent.h"
 #include "ai/Pathfinder.h"
 #include "ai/AiContainer.h"

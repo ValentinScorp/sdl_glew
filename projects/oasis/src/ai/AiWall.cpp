@@ -7,10 +7,9 @@ AiWall::AiWall() {
 AiWall::~AiWall() {
 }
 
-void AiWall::init(Camera* cam, Pathfinder *pf, WorldObject* wo, std::shared_ptr<Renderer> r) {
+void AiWall::init(Camera* cam, Pathfinder *pf, std::shared_ptr<Renderer> r) {
     camera = cam;
     pathfinder = pf;
-    worldObject = wo;
     renderer = r;
 }
 
